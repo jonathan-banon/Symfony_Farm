@@ -36,7 +36,10 @@
 					<p>Nav4</p>
 				</div>
 			</div>
-			<button class="btn bg-primary">Connexion</button>
+			<a href="{{ app.user ? path('app_logout') : path('app_login') }}" class="btn bg-primary text-white py-2 px-4 rounded-full">
+				{{ app.user ? 'Déconnexion' : 'Connexion' }}
+			</a>
+
 		</div>
 	</div>
 {% endblock %}
