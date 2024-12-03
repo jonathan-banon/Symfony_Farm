@@ -2,11 +2,41 @@
 
 
 {% block body %}
-	<style></style>
+	<style>
+		.btn {
+			font-size: 1.5rem;
+			padding: 15px;
+			border: ;
+			border-radius: 20px;
+			width: fit-content;
+			height: fit-content;
+		}
 
+		.nav-container {
+			display: flex;
+			min-width: 50%;
+			justify-content: space-around;
+			align-items: end;
+		}
+	</style>
 	<div>
-		<h1 class="text-3xl font-bold underline">
-			Hello world!
-		</h1>
+		<div class="bg-secondary min-h-52 flex justify-around items-center">
+			<img src="{{ asset('images/logo.svg') }}" alt="Logo">
+			<div class="nav-container">
+				<div>
+					<p>Nav1</p>
+				</div>
+				<div>
+					<p>Nav2</p>
+				</div>
+				<div>
+					<p>Nav3</p>
+				</div>
+				<div>
+					<p>Nav4</p>
+				</div>
+			</div>
+			<button class="btn bg-primary">Connexion</button>
+		</div>
 	</div>
 {% endblock %}
