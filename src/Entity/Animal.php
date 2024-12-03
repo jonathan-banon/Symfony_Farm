@@ -30,6 +30,9 @@ class Animal
     #[ORM\JoinColumn(nullable: false)]
     private ?Type $type = null;
 
+    #[ORM\ManyToOne(inversedBy: 'animal')]
+    private ?Photo $pictures = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -91,6 +94,18 @@ class Animal
     public function setType(?Type $type): static
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    public function getPictures(): ?Photo
+    {
+        return $this->pictures;
+    }
+
+    public function setPictures(?Photo $pictures): static
+    {
+        $this->pictures = $pictures;
 
         return $this;
     }
