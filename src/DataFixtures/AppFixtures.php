@@ -16,7 +16,6 @@ class AppFixtures extends Fixture
     {
         $faker = Factory::create();
 
-        // Créer des types
         $types = ['Chien', 'Chat', 'Cheval'];
         $typeObjects = [];
 
@@ -27,7 +26,6 @@ class AppFixtures extends Fixture
             $typeObjects[] = $type;
         }
 
-        // Créer des races pour chaque type
         $breeds = [
             'Chien' => ['Labrador', 'Golden Retriever', 'Bulldog'],
             'Chat' => ['Siamois', 'Persan', 'Maine Coon'],
@@ -49,22 +47,18 @@ class AppFixtures extends Fixture
             }
         }
 
-        // Créer des animaux avec des types et des races associées
         for ($i = 0; $i < 9; $i++) {
             $animal = new Animal();
             $animal->setName($faker->name);
             $animal->setPrice($faker->randomFloat(2, 10, 500));
-            $animal->setAge($faker->numberBetween(1, 15)); // Âge entre 1 et 15
+            $animal->setAge($faker->numberBetween(1, 15)); 
             $animal->setDescription($faker->sentence(10));
 
-            // Attribuer un type aléatoire
             $type = $typeObjects[array_rand($typeObjects)];
             $animal->setType($type);
 
-            // Attribuer une race aléatoire
             if ($type->getName() !== 'Oiseau') {
                 $breed = $breedObjects[array_rand($breedObjects)];
-                // Vous pouvez associer un `breed` si nécessaire
             }
 
             $manager->persist($animal);

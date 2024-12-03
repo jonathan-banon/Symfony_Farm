@@ -1,45 +1,86 @@
 {% extends 'base.html.twig' %}
 
-
 {% block body %}
-	<style>
-		.btn {
-			font-size: 1.5rem;
-			padding: 15px;
-			border: ;
-			border-radius: 20px;
-			width: fit-content;
-			height: fit-content;
-		}
+    <style>
+        .btn {
+            font-size: 1.5rem;
+            padding: 15px;
+            border-radius: 20px;
+            width: fit-content;
+            height: fit-content;
+        }
 
-		.nav-container {
-			display: flex;
-			min-width: 50%;
-			justify-content: space-around;
-			align-items: end;
-		}
-	</style>
-	<div>
-		<div class="bg-secondary min-h-52 flex justify-around items-center">
-			<img src="{{ asset('images/logo.svg') }}" alt="Logo">
-			<div class="nav-container">
-				<div>
-					<p>Nav1</p>
-				</div>
-				<div>
-					<p>Nav2</p>
-				</div>
-				<div>
-					<p>Nav3</p>
-				</div>
-				<div>
-					<p>Nav4</p>
-				</div>
-			</div>
-			<a href="{{ app.user ? path('app_logout') : path('app_login') }}" class="btn bg-primary text-white py-2 px-4 rounded-full">
-				{{ app.user ? 'Déconnexion' : 'Connexion' }}
-			</a>
+        .nav-container {
+            display: flex;
+            min-width: 50%;
+            justify-content: space-around;
+            align-items: end;
+        }
 
-		</div>
-	</div>
+        #animals-list {
+            margin-top: 20px;
+        }
+
+        .animal-item {
+            padding: 5px;
+            margin: 5px 0;
+            background-color: #f1f1f1;
+            border-radius: 5px;
+        }
+    </style>
+    <div>
+        <div class="bg-secondary min-h-52 flex justify-around items-center">
+            <img src="{{ asset('images/logo.svg') }}" alt="Logo">
+            <div class="nav-container">
+                {% for type in types %}
+                    <div>
+                        <button class="btn bg-primary text-white py-2 px-4 rounded-full" data-type-id="{{ type.id }}">
+                            {{ type.name }}
+                        </button>
+                    </div>
+                {% endfor %}
+            </div>
+            <a href="{{ app.user ? path('app_logout') : path('app_login') }}" class="btn bg-primary text-white py-2 px-4 rounded-full">
+                {{ app.user ? 'Déconnexion' : 'Connexion' }}
+            </a>
+        </div>
+
+        <div id="animals-list">
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const buttons = document.querySelectorAll('.btn.bg-primary');
+            const animalsListDiv = document.getElementById('animals-list');
+
+            buttons.forEach(function(button) {
+                button.addEventListener('click', function() {
+                    const typeId = this.getAttribute('data-type-id');
+
+                    fetch(`/types/animals/${typeId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            animalsListDiv.innerHTML = '';
+
+                            if (data.length === 0) {
+                                animalsListDiv.innerHTML = '<p>Aucun animal trouvé pour ce type.</p>';
+                            } else {
+                                const ul = document.createElement('ul');
+                                data.forEach(function(animal) {
+                                    const li = document.createElement('li');
+                                    li.classList.add('animal-item');
+                                    li.textContent = animal.name;
+                                    ul.appendChild(li);
+                                });
+                                animalsListDiv.appendChild(ul);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Erreur lors de la récupération des animaux:', error);
+                        });
+                });
+            });
+        });
+    </script>
 {% endblock %}
