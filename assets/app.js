@@ -5,5 +5,9 @@
  * which should already be in your base.html.twig.
  */
 import './styles/app.css';
+import { createApp } from 'vue';
+import App from './js/components/App.vue';
+
+createApp(App).mount('#app');
 
 console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');
