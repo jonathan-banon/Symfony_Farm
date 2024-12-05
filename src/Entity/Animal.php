@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\AnimalRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -30,8 +32,9 @@ class Animal
     #[ORM\JoinColumn(nullable: false)]
     private ?Type $type = null;
 
-    #[ORM\ManyToOne(inversedBy: 'animal')]
-    private ?Photo $pictures = null;
+    #[ORM\ManyToOne(inversedBy: 'animals')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Breed $breed = null;
 
     public function getId(): ?int
     {
@@ -46,7 +49,6 @@ class Animal
     public function setName(string $name): static
     {
         $this->name = $name;
-
         return $this;
     }
 
@@ -58,7 +60,6 @@ class Animal
     public function setAge(int $age): static
     {
         $this->age = $age;
-
         return $this;
     }
 
@@ -70,7 +71,6 @@ class Animal
     public function setDescription(string $description): static
     {
         $this->description = $description;
-
         return $this;
     }
 
@@ -82,7 +82,6 @@ class Animal
     public function setPrice(int $price): static
     {
         $this->price = $price;
-
         return $this;
     }
 
@@ -94,19 +93,17 @@ class Animal
     public function setType(?Type $type): static
     {
         $this->type = $type;
-
         return $this;
     }
 
-    public function getPictures(): ?Photo
+    public function getBreed(): ?Breed
     {
-        return $this->pictures;
+        return $this->breed;
     }
 
-    public function setPictures(?Photo $pictures): static
+    public function setBreed(?Breed $breed): static
     {
-        $this->pictures = $pictures;
-
+        $this->breed = $breed;
         return $this;
     }
 }

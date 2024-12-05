@@ -24,16 +24,10 @@ class Type
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    /**
-     * @var Collection<int, Breed>
-     */
-    #[ORM\OneToMany(targetEntity: Breed::class, mappedBy: 'type')]
-    private Collection $breeds;
 
     public function __construct()
     {
         $this->animals = new ArrayCollection();
-        $this->breeds = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -83,33 +77,4 @@ class Type
         return $this;
     }
 
-    /**
-     * @return Collection<int, Breed>
-     */
-    public function getBreeds(): Collection
-    {
-        return $this->breeds;
-    }
-
-    public function addBreed(Breed $breed): static
-    {
-        if (!$this->breeds->contains($breed)) {
-            $this->breeds->add($breed);
-            $breed->setType($this);
-        }
-
-        return $this;
-    }
-
-    public function removeBreed(Breed $breed): static
-    {
-        if ($this->breeds->removeElement($breed)) {
-            // set the owning side to null (unless already changed)
-            if ($breed->getType() === $this) {
-                $breed->setType(null);
-            }
-        }
-
-        return $this;
-    }
 }

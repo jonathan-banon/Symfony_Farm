@@ -1,7 +1,5 @@
 <template>
     <div>
-        <h1 class="text-xl">test</h1>
-
         <div class="bg-secondary min-h-52 flex justify-around items-center">
             <img :src="urlLogo" alt="Logo">
             <div class="nav-container">
@@ -14,14 +12,19 @@
                 {{ isUserLoggedIn ? 'Déconnexion' : 'Connexion' }}
             </a>
         </div>
+        <div class="home-container flex justify-around">
+            <div class="filter-container">
 
-        <div id="animals-list">
-            <ul>
-                <li v-for="animal in animals" :key="animal.id" class="animal-item">
-                    {{ animal.name }}
-                </li>
-            </ul>
-            <p v-if="animals.length === 0">Aucun animal trouvé pour ce type.</p>
+            </div>
+            <div class="animals-container">
+                <div v-for="animal in animals" :key="animal.id" class="animal-item">
+                    <div class="animal-picture"></div>
+                    <div class="animal-content">
+                        <p>{{ animal.name }}</p>
+                    </div>
+                </div>
+                <p v-if="animals.length === 0">Aucun animal trouvé pour ce type.</p>
+            </div>
         </div>
     </div>
 </template>
@@ -60,6 +63,14 @@ export default {
 </script>
 
 <style scoped>
+.filter-container {
+    width: 28vw;
+    height: 70vh;
+}
+.animals-container {
+    width: 70vw;
+}
+
 .btn {
     font-size: 1.5rem;
     padding: 15px;
@@ -73,10 +84,6 @@ export default {
     min-width: 50%;
     justify-content: space-around;
     align-items: end;
-}
-
-#animals-list {
-    margin-top: 20px;
 }
 
 .animal-item {
