@@ -18,15 +18,12 @@ class Photo
     #[ORM\Column(length: 255)]
     private ?string $filename = null;
 
-    /**
-     * @var Collection<int, Animal>
-     */
-    #[ORM\OneToMany(targetEntity: Animal::class, mappedBy: 'pictures')]
-    private Collection $animal;
+    #[ORM\ManyToOne(inversedBy: 'pictures')]
+    private ?Animal $animal = null;
+
 
     public function __construct()
     {
-        $this->animal = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -46,32 +43,14 @@ class Photo
         return $this;
     }
 
-    /**
-     * @return Collection<int, Animal>
-     */
-    public function getAnimal(): Collection
+    public function getAnimal(): ?Animal
     {
         return $this->animal;
     }
 
-    public function addAnimal(Animal $animal): static
+    public function setAnimal(?Animal $animal): static
     {
-        if (!$this->animal->contains($animal)) {
-            $this->animal->add($animal);
-            $animal->setPictures($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAnimal(Animal $animal): static
-    {
-        if ($this->animal->removeElement($animal)) {
-            // set the owning side to null (unless already changed)
-            if ($animal->getPictures() === $this) {
-                $animal->setPictures(null);
-            }
-        }
+        $this->animal = $animal;
 
         return $this;
     }

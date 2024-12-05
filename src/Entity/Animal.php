@@ -36,6 +36,17 @@ class Animal
     #[ORM\JoinColumn(nullable: false)]
     private ?Breed $breed = null;
 
+    /**
+     * @var Collection<int, Photo>
+     */
+    #[ORM\OneToMany(targetEntity: Photo::class, mappedBy: 'animal')]
+    private Collection $pictures;
+
+    public function __construct()
+    {
+        $this->pictures = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -104,6 +115,36 @@ class Animal
     public function setBreed(?Breed $breed): static
     {
         $this->breed = $breed;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Photo>
+     */
+    public function getPictures(): Collection
+    {
+        return $this->pictures;
+    }
+
+    public function addPicture(Photo $picture): static
+    {
+        if (!$this->pictures->contains($picture)) {
+            $this->pictures->add($picture);
+            $picture->setAnimal($this);
+        }
+
+        return $this;
+    }
+
+    public function removePicture(Photo $picture): static
+    {
+        if ($this->pictures->removeElement($picture)) {
+            // set the owning side to null (unless already changed)
+            if ($picture->getAnimal() === $this) {
+                $picture->setAnimal(null);
+            }
+        }
+
         return $this;
     }
 }

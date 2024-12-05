@@ -30,12 +30,10 @@ class HomeController extends AbstractController
     public function animalsByType(int $id, AnimalRepository $animalRepository)
     {
         $animals = $animalRepository->findByTypeId($id);
-        dump($animals);
         $data = [];
         foreach ($animals as $animal) {
-            $data[] = ['id' => $animal->getId(), 'name' => $animal->getName()];
+            $data[] = ['id' => $animal->getId(), 'name' => $animal->getName(), 'breed' => $animal->getBreed()->getName(), 'description' => $animal->getDescription()];
         }
-
         return new JsonResponse($data);
     }
 }

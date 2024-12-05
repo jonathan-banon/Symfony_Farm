@@ -17,10 +17,12 @@
 
             </div>
             <div class="animals-container">
-                <div v-for="animal in animals" :key="animal.id" class="animal-item">
-                    <div class="animal-picture"></div>
+                <div v-for="animal in animals" :key="animal.id" class="animal-item rounded-3xl h-1/3 flex">
+                    <div class="animal-picture w-1/4 bg-primary rounded-3xl"></div>
                     <div class="animal-content">
                         <p>{{ animal.name }}</p>
+                        <p>{{ animal.breed }}</p>
+                        <p>{{ animal.description }}</p>
                     </div>
                 </div>
                 <p v-if="animals.length === 0">Aucun animal trouvé pour ce type.</p>
@@ -54,6 +56,7 @@ export default {
                 const response = await fetch(`/types/animals/${typeId}`);
                 const data = await response.json();
                 this.animals = data;
+                console.log(this.animals)
             } catch (error) {
                 console.error('Erreur lors de la récupération des animaux:', error);
             }
