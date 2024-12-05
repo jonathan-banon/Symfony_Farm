@@ -11,7 +11,14 @@ Encore
     .setOutputPath('public/build/')
     // public path used by the web server to access the output path
     .setPublicPath('/build')
-    .enablePostCssLoader()
+    .enablePostCssLoader((options) => {
+        options.postcssOptions = {
+            plugins: [
+                require('tailwindcss'),
+                require('autoprefixer'),
+            ],
+        };
+    })
     // only needed for CDN's or subdirectory deploy
     //.setManifestKeyPrefix('build/')
 

@@ -3,6 +3,5 @@
 {% block body %}
   <div id="app" data-types="{{ types|json_encode }}" data-user-logged-in="{{ app.user ? 'true' : 'false' }}">
   </div>
-
   {{ encore_entry_script_tags('app') }}
 {% endblock %}

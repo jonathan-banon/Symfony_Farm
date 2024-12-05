@@ -15,8 +15,14 @@ class HomeController extends AbstractController
     public function index(TypeRepository $typeRepository): Response
     {
         $types = $typeRepository->findAll();
+        $data = []; 
+        
+        foreach ($types as $type) {
+            $data[] = ['id' => $type->getId(), 'name' => $type->getName()];
+        }
+
         return $this->render('home/index.html.twig', [
-            'types' => $types,
+            'types' => $data, 
         ]);
     }
 
