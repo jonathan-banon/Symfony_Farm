@@ -1,4 +1,8 @@
 <template>
+    <div class=" flex justify-center items-center min-h-screen w-full h-full z-40 fixed bg-black"
+        v-if="isLoginPopupVisible">
+        <LoginModal :isVisible="isLoginPopupVisible" @close="closeLoginPopup" />
+    </div>
     <div>
         <div class="bg-secondary min-h-52 flex justify-around items-center">
             <img :src="urlLogo" alt="Logo">
@@ -8,14 +12,13 @@
                     {{ type.name }}
                 </button>
             </div>
-            <a :href="isUserLoggedIn ? '/logout' : '/login'" class="btn bg-primary text-white py-2 px-4 rounded-full">
+            <button class="btn bg-primary text-white py-2 px-4 rounded-full" @click="toggleLoginPopup">
                 {{ isUserLoggedIn ? 'Déconnexion' : 'Connexion' }}
-            </a>
+            </button>
         </div>
-        <div class="home-container flex justify-around">
-            <div class="filter-container">
 
-            </div>
+        <div class="home-container flex justify-around">
+            <div class="filter-container"></div>
             <div class="animals-container">
                 <div v-for="animal in animals" :key="animal.id" class="animal-item rounded-3xl h-1/3 flex">
                     <div class="animal-picture w-1/4 bg-primary rounded-3xl"></div>
@@ -28,18 +31,25 @@
                 <p v-if="animals.length === 0">Aucun animal trouvé pour ce type.</p>
             </div>
         </div>
+
     </div>
 </template>
 
 <script>
 import logoUrl from '../../images/logo.svg';
+import LoginModal from './login/App.vue';
+
 export default {
+    components: {
+        LoginModal,
+    },
     data() {
         return {
             types: [],
             animals: [],
             isUserLoggedIn: false,
-            urlLogo: logoUrl
+            urlLogo: logoUrl,
+            isLoginPopupVisible: false,
         };
     },
     mounted() {
@@ -55,11 +65,23 @@ export default {
             try {
                 const response = await fetch(`/types/animals/${typeId}`);
                 const data = await response.json();
-                this.animals = data;
-                console.log(this.animals)
+                this.animals = data.map(animal => ({
+                    ...animal,
+                    breed: animal.breed ? animal.breed.name : 'Inconnu',
+                }));
             } catch (error) {
                 console.error('Erreur lors de la récupération des animaux:', error);
             }
+        },
+        toggleLoginPopup() {
+            if (!this.isUserLoggedIn) {
+                this.isLoginPopupVisible = true;
+            } else {
+                window.location.href = '/logout';
+            }
+        },
+        closeLoginPopup() {
+            this.isLoginPopupVisible = false;
         },
     },
 };
@@ -70,6 +92,7 @@ export default {
     width: 28vw;
     height: 70vh;
 }
+
 .animals-container {
     width: 70vw;
 }

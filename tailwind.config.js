@@ -10,7 +10,8 @@ module.exports = {
     colors: {
       primary: 'rgb(var(--color-primary))',
       secondary: 'rgb(var(--color-secondary))',
-      black: 'rgb(var(--black))'
+      black: 'rgba(var(--black))',
+      red: 'rgb(var(--red))'
     }
   },
   plugins: [],

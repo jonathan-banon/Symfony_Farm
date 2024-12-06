@@ -2,32 +2,39 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
+use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Routing\Annotation\Route;
 
 class SecurityController extends AbstractController
 {
-    #[Route(path: '/login', name: 'app_login')]
-    public function login(AuthenticationUtils $authenticationUtils): Response
+    #[Route('/login', name: 'app_login', methods: ['POST'])]
+    public function login(Request $request, UserRepository $userRepository, UserPasswordHasherInterface $passwordHasher): Response
     {
-        
-        // get the login error if there is one
-        $error = $authenticationUtils->getLastAuthenticationError();
+        $data = json_decode($request->getContent(), true);
 
-        // last username entered by the user
-        $lastUsername = $authenticationUtils->getLastUsername();
+        if (!isset($data['_username']) || !isset($data['_password'])) {
+            return new Response('Paramètres manquants', 400);
+        }
 
-        return $this->render('security/login.html.twig', [
-            'last_username' => $lastUsername,
-            'error' => $error,
-        ]);
-    }
+        $username = $data['_username'];
+        $password = $data['_password'];
 
-    #[Route(path: '/logout', name: 'app_logout')]
-    public function logout(): void
-    {
-        throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
+        $user = $userRepository->findOneBy(['email' => $username]);
+
+        if ($user && $passwordHasher->isPasswordValid($user, $password)) {
+            return $this->json([
+                'message' => 'Connexion réussie!',
+                'redirect' => $this->generateUrl('app_home')  
+            ], 200);
+        }
+
+        return $this->json([
+            'message' => 'Email ou mot de passe incorrect'
+        ], 401);
     }
 }
