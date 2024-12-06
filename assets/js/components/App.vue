@@ -1,12 +1,14 @@
 <template>
-    <div class="flex justify-center items-center min-h-screen w-full h-full z-40 fixed bg-black" v-if="isLoginPopupVisible">
+    <div class="flex justify-center items-center min-h-screen w-full h-full z-40 fixed bg-black"
+        v-if="isLoginPopupVisible">
         <LoginModal :isVisible="isLoginPopupVisible" :isLoggedIn="isUserLoggedIn" @close="closeLoginPopup" />
     </div>
     <div>
         <div class="bg-secondary min-h-52 flex justify-around items-center">
             <img :src="urlLogo" alt="Logo">
             <div class="nav-container">
-                <button v-for="type in types" :key="type.id" class="btn bg-primary text-white py-2 px-4 rounded-full" @click="fetchAnimals(type.id)">
+                <button v-for="type in types" :key="type.id" class="btn bg-primary text-white py-2 px-4 rounded-full"
+                    @click="fetchAnimals(type.id)">
                     {{ type.name }}
                 </button>
             </div>
@@ -15,7 +17,7 @@
             </button>
         </div>
 
-        <div class="home-container flex justify-around">
+        <div class="home-container flex justify-around" v-if="!isUserLoggedIn">
             <div class="filter-container"></div>
             <div class="animals-container">
                 <div v-for="animal in animals" :key="animal.id" class="animal-item rounded-3xl h-1/3 flex">
@@ -49,15 +51,26 @@ export default {
             isLoginPopupVisible: false,
         };
     },
+    created() {
+        this.checkSession();
+    },
     mounted() {
         const appElement = document.getElementById('app');
         const typesData = appElement.getAttribute('data-types');
-        const userLoggedIn = appElement.getAttribute('data-user-logged-in');
-
         this.types = JSON.parse(typesData);
-        this.isUserLoggedIn = userLoggedIn;
     },
     methods: {
+        async checkSession() {
+            try {
+                const response = await fetch('/check-session');
+                const data = await response.json();
+                console.log(data)
+                this.isUserLoggedIn = data.isLoggedIn;
+            } catch (error) {
+                console.error('Erreur lors de la vérification de la session:', error);
+                this.isUserLoggedIn = false;
+            }
+        },
         async fetchAnimals(typeId) {
             try {
                 const response = await fetch(`/types/animals/${typeId}`);
@@ -74,7 +87,7 @@ export default {
             if (!this.isUserLoggedIn) {
                 this.isLoginPopupVisible = true;
             } else {
-                this.handleLogout(); 
+                this.handleLogout();
             }
         },
         closeLoginPopup(isLoggedIn) {
@@ -84,7 +97,7 @@ export default {
 
         async handleLogout() {
             try {
-                const response = await fetch('http://127.0.0.1:8000/logout', {
+                const response = await fetch('http://127.0.0.1:8000/disconnect', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

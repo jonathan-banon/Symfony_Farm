@@ -15,23 +15,30 @@ class HomeController extends AbstractController
     #[Route('/', name: 'app_home')]
     public function index(TypeRepository $typeRepository, Request $request): Response
     {
-        $session = $request->getSession();
-        $user = $session->get('user');
         $types = $typeRepository->findAll();
         $data = [];
 
         foreach ($types as $type) {
             $data[] = ['id' => $type->getId(), 'name' => $type->getName()];
         }
-
         return $this->render('home/index.html.twig', [
             'types' => $data,
-            'userLoggedIn' => $user ? true : false,
+        ]);
+    }
+
+    #[Route('/check-session', name: 'app_check_session', methods: ['GET'])]
+    public function checkSession(Request $request): Response
+    {
+        $session = $request->getSession();
+        $user = $session->get('user');
+        dump($user);
+        return $this->json([
+            'isLoggedIn' => $user ? true : false,
         ]);
     }
 
     #[Route('/types/animals/{id}', name: 'ajax_animals_by_type', methods: ['GET'])]
-    public function animalsByType(int $id, AnimalRepository $animalRepository)
+    public function animalsByType(int $id, AnimalRepository $animalRepository): Response
     {
         $animals = $animalRepository->findByTypeId($id);
         $data = [];

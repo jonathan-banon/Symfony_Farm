@@ -29,7 +29,6 @@ class SecurityController extends AbstractController
         if ($user && $passwordHasher->isPasswordValid($user, $password)) {
             $session = $request->getSession();
             $session->set('user', $user);
-            dump($session);
             return $this->json([
                 'message' => 'Connexion réussie!',
                 'redirect' => $this->generateUrl('app_home')
@@ -41,11 +40,12 @@ class SecurityController extends AbstractController
         ], 401);
     }
 
-    #[Route('/logout', name: 'app_logout', methods: ['POST'])]
+    #[Route('/disconnect', name: 'app_logout', methods: ['POST'])]
     public function logout(Request $request): Response
     {
         $session = $request->getSession();
         $session->remove('user');
+        dump($session);
 
         return $this->json([
             'message' => 'Déconnexion réussie!',
