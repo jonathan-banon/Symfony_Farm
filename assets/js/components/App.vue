@@ -1,14 +1,12 @@
 <template>
-    <div class=" flex justify-center items-center min-h-screen w-full h-full z-40 fixed bg-black"
-        v-if="isLoginPopupVisible">
-        <LoginModal :isVisible="isLoginPopupVisible" @close="closeLoginPopup" />
+    <div class="flex justify-center items-center min-h-screen w-full h-full z-40 fixed bg-black" v-if="isLoginPopupVisible">
+        <LoginModal :isVisible="isLoginPopupVisible" :isLoggedIn="isUserLoggedIn" @close="closeLoginPopup" />
     </div>
     <div>
         <div class="bg-secondary min-h-52 flex justify-around items-center">
             <img :src="urlLogo" alt="Logo">
             <div class="nav-container">
-                <button v-for="type in types" :key="type.id" class="btn bg-primary text-white py-2 px-4 rounded-full"
-                    @click="fetchAnimals(type.id)">
+                <button v-for="type in types" :key="type.id" class="btn bg-primary text-white py-2 px-4 rounded-full" @click="fetchAnimals(type.id)">
                     {{ type.name }}
                 </button>
             </div>
@@ -31,7 +29,6 @@
                 <p v-if="animals.length === 0">Aucun animal trouvé pour ce type.</p>
             </div>
         </div>
-
     </div>
 </template>
 
@@ -58,7 +55,7 @@ export default {
         const userLoggedIn = appElement.getAttribute('data-user-logged-in');
 
         this.types = JSON.parse(typesData);
-        this.isUserLoggedIn = userLoggedIn === 'true';
+        this.isUserLoggedIn = userLoggedIn;
     },
     methods: {
         async fetchAnimals(typeId) {
@@ -77,12 +74,33 @@ export default {
             if (!this.isUserLoggedIn) {
                 this.isLoginPopupVisible = true;
             } else {
-                window.location.href = '/logout';
+                this.handleLogout(); 
             }
         },
-        closeLoginPopup() {
+        closeLoginPopup(isLoggedIn) {
             this.isLoginPopupVisible = false;
+            this.isUserLoggedIn = isLoggedIn;
         },
+
+        async handleLogout() {
+            try {
+                const response = await fetch('http://127.0.0.1:8000/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (response.ok) {
+                    this.isUserLoggedIn = false;
+                    this.$router.push('/');
+                } else {
+                    console.error('Erreur lors de la déconnexion');
+                }
+            } catch (error) {
+                console.error('Erreur de déconnexion:', error);
+            }
+        }
     },
 };
 </script>

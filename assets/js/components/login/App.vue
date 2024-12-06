@@ -1,5 +1,5 @@
 <template>
-    <div class="w-full max-w-md bg-secondary p-8 rounded-lg shadow-lg">
+    <div v-if="isVisible" class="w-full max-w-md bg-secondary p-8 rounded-lg shadow-lg">
         <h2 class="text-2xl font-semibold text-center text-gray-700 mb-6">Connexion</h2>
         <form @submit.prevent="handleLogin" method="POST">
             <div class="mb-4">
@@ -31,7 +31,7 @@
 
 <script>
 export default {
-    props: ['isVisible'],
+    props: ['isVisible', "isUserLoggedIn"],
     data() {
         return {
             email: '',
@@ -70,7 +70,7 @@ export default {
                 const data = await response.json();
 
                 if (response.ok) {
-                    this.$emit('close');
+                    this.$emit('close', true);
                     this.$router.push(data.redirect);
                 } else {
                     if (data.message) {

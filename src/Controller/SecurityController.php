@@ -27,9 +27,12 @@ class SecurityController extends AbstractController
         $user = $userRepository->findOneBy(['email' => $username]);
 
         if ($user && $passwordHasher->isPasswordValid($user, $password)) {
+            $session = $request->getSession();
+            $session->set('user', $user);
+            dump($session);
             return $this->json([
                 'message' => 'Connexion réussie!',
-                'redirect' => $this->generateUrl('app_home')  
+                'redirect' => $this->generateUrl('app_home')
             ], 200);
         }
 
@@ -37,4 +40,17 @@ class SecurityController extends AbstractController
             'message' => 'Email ou mot de passe incorrect'
         ], 401);
     }
+
+    #[Route('/logout', name: 'app_logout', methods: ['POST'])]
+    public function logout(Request $request): Response
+    {
+        $session = $request->getSession();
+        $session->remove('user');
+
+        return $this->json([
+            'message' => 'Déconnexion réussie!',
+            'redirect' => $this->generateUrl('app_home')
+        ], 200);
+    }
+   
 }

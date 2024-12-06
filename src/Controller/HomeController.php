@@ -6,23 +6,27 @@ use App\Repository\AnimalRepository;
 use App\Repository\TypeRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 class HomeController extends AbstractController
 {
     #[Route('/', name: 'app_home')]
-    public function index(TypeRepository $typeRepository): Response
+    public function index(TypeRepository $typeRepository, Request $request): Response
     {
+        $session = $request->getSession();
+        $user = $session->get('user');
         $types = $typeRepository->findAll();
-        $data = []; 
-        
+        $data = [];
+
         foreach ($types as $type) {
             $data[] = ['id' => $type->getId(), 'name' => $type->getName()];
         }
 
         return $this->render('home/index.html.twig', [
-            'types' => $data, 
+            'types' => $data,
+            'userLoggedIn' => $user ? true : false,
         ]);
     }
 
