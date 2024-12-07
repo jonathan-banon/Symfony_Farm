@@ -18,12 +18,12 @@ class Breed
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
+    #[ORM\OneToMany(mappedBy: 'breed', targetEntity: Animal::class)]
+    private Collection $animals;
+
     #[ORM\ManyToOne(inversedBy: 'breeds')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Type $type = null;
-
-    #[ORM\OneToMany(mappedBy: 'breed', targetEntity: Animal::class)]
-    private Collection $animals;
 
     public function __construct()
     {
@@ -46,6 +46,11 @@ class Breed
         return $this;
     }
 
+    public function getAnimals(): Collection
+    {
+        return $this->animals;
+    }
+
     public function getType(): ?Type
     {
         return $this->type;
@@ -54,11 +59,7 @@ class Breed
     public function setType(?Type $type): static
     {
         $this->type = $type;
-        return $this;
-    }
 
-    public function getAnimals(): Collection
-    {
-        return $this->animals;
+        return $this;
     }
 }
