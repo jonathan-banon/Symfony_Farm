@@ -37,7 +37,7 @@ class HomeController extends AbstractController
         ]);
     }
 
-    #[Route('/types/animals/{id}', name: 'ajax_animals_by_type', methods: ['GET'])]
+    #[Route('/type/{id}/animals/', name: 'ajax_animals_by_type', methods: ['GET'])]
     public function animalsByType(int $id, AnimalRepository $animalRepository): Response
     {
         $animals = $animalRepository->findByTypeId($id);

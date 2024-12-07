@@ -226,7 +226,7 @@ export default {
         },
         async fetchAnimals(typeId) {
             try {
-                const response = await fetch(`/types/animals/${typeId}`);
+                const response = await fetch(`/type/${typeId}/animals`);
                 const data = await response.json();
                 this.animals = data.map(animal => ({
                     ...animal,
