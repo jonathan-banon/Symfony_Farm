@@ -20,10 +20,11 @@
         <div class="home-container flex justify-around">
             <div class="filter-container"></div>
             <div class="animals-container">
-                <div v-for="animal in animals" :key="animal.id" class="animal-item rounded-3xl h-1/3 flex">
+                <div v-for="animal in animals" :key="animal.id" class="animal-item rounded-3xl h-1/2 flex">
                     <div class="animal-picture w-1/4 bg-primary rounded-3xl"></div>
 
-                    <form class="flex justify-between w-full" v-if="isUserLoggedIn" @submit.prevent="handleFormSubmit(animal)">
+                    <form class="flex justify-between w-full" v-if="isUserLoggedIn"
+                        @submit.prevent="handleFormSubmit(animal)">
                         <div>
                             <div class="animal-details">
                                 <label for="name">Nom</label>
@@ -50,8 +51,12 @@
                             </div>
                         </div>
                         <div class="flex flex-col justify-between items-end">
-                            <img :src="trashUrl" alt="trash-logo" class="w-10">
-                            <button type="submit" class=" p-4 bg-primary  font-semibold rounded-md  focus:outline-none">Enregistrer les modifications</button>
+                            <a @click.prevent="delAnimal(animal)">
+                                <img :src="trashUrl" alt="trash-logo" class="w-10">
+                            </a>
+                            <button type="submit"
+                                class=" p-4 bg-primary  font-semibold rounded-md  focus:outline-none">Enregistrer les
+                                modifications</button>
                         </div>
 
                     </form>
@@ -150,12 +155,53 @@ export default {
                 console.error('Erreur de déconnexion:', error);
             }
         },
-        handleFormSubmit(animal) {
-            console.log("Soumission du formulaire pour l'animal:", animal);
-          
+        async handleFormSubmit(animal) {
+            try {
+                const response = await fetch(`/animal/${animal.id}/edit`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: animal.name,
+                        breed: animal.breed,
+                        description: animal.description,
+                        price: animal.price,
+                    }),
+                });
+
+                if (response.ok) {
+                    console.log('Animal modifié avec succès');
+                } else {
+                    console.error('Erreur lors de la modification de l\'animal');
+                }
+            } catch (error) {
+                console.error('Erreur lors de l\'envoi du formulaire:', error);
+            }
+        },
+        async delAnimal(animal) {
+            try {
+                const response = await fetch(`/animal/${animal.id}/del`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        id: animal.id
+                    })
+                })
+                if (response.ok) {
+                    this.animals = this.animals.filter(a => a.id !== animal.id);
+                    console.log('Animal supprimé avec succès');
+                } else {
+                    console.error('Erreur lors de la suppression de l\'animal');
+                }
+            } catch {
+                console.error('Erreur lors de l\'envoi du formulaire:', error);
+            }
         }
-    },
-};
+    }
+}
 </script>
 
 <style scoped>
@@ -200,5 +246,10 @@ export default {
 
 .animal-details p {
     margin: 5px 0;
+}
+
+.home-container {
+    overflow: scroll;
+    height: 78vh;
 }
 </style>
