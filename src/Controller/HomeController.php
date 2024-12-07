@@ -31,7 +31,6 @@ class HomeController extends AbstractController
     {
         $session = $request->getSession();
         $user = $session->get('user');
-        dump($user);
         return $this->json([
             'isLoggedIn' => $user ? true : false,
             'user' => $user
@@ -42,9 +41,16 @@ class HomeController extends AbstractController
     public function animalsByType(int $id, AnimalRepository $animalRepository): Response
     {
         $animals = $animalRepository->findByTypeId($id);
+        dump($animals);
         $data = [];
         foreach ($animals as $animal) {
-            $data[] = ['id' => $animal->getId(), 'name' => $animal->getName(), 'breed' => $animal->getBreed()->getName(), 'description' => $animal->getDescription()];
+            $data[] = [
+                'id' => $animal->getId(),
+                'name' => $animal->getName(),
+                'breed' => $animal->getBreed()->getName(),
+                'description' => $animal->getDescription(),
+                'price' => $animal->getPrice()
+            ];
         }
         return new JsonResponse($data);
     }

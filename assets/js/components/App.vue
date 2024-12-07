@@ -17,17 +17,54 @@
             </button>
         </div>
 
-        <div class="home-container flex justify-around" v-if="!isUserLoggedIn">
+        <div class="home-container flex justify-around">
             <div class="filter-container"></div>
             <div class="animals-container">
                 <div v-for="animal in animals" :key="animal.id" class="animal-item rounded-3xl h-1/3 flex">
                     <div class="animal-picture w-1/4 bg-primary rounded-3xl"></div>
-                    <div class="animal-content">
-                        <p>{{ animal.name }}</p>
-                        <p>{{ animal.breed }}</p>
-                        <p>{{ animal.description }}</p>
+
+                    <form class="flex justify-between w-full" v-if="isUserLoggedIn" @submit.prevent="handleFormSubmit(animal)">
+                        <div>
+                            <div class="animal-details">
+                                <label for="name">Nom</label>
+                                <input v-model="animal.name" type="text" id="name" :disabled="!isUserLoggedIn"
+                                    class="animal-input" />
+                            </div>
+
+                            <div class="animal-details">
+                                <label for="breed">Race</label>
+                                <input v-model="animal.breed" type="text" id="breed" :disabled="!isUserLoggedIn"
+                                    class="animal-input" />
+                            </div>
+
+                            <div class="animal-details">
+                                <label for="description">Description</label>
+                                <textarea v-model="animal.description" id="description" :disabled="!isUserLoggedIn"
+                                    class="animal-input"></textarea>
+                            </div>
+
+                            <div class="animal-details">
+                                <label for="price">Prix</label>
+                                <input v-model="animal.price" type="number" id="price" :disabled="!isUserLoggedIn"
+                                    class="animal-input" />
+                            </div>
+                        </div>
+                        <div class="flex flex-col justify-between items-end">
+                            <img :src="trashUrl" alt="trash-logo" class="w-10">
+                            <button type="submit" class=" p-4 bg-primary  font-semibold rounded-md  focus:outline-none">Enregistrer les modifications</button>
+                        </div>
+
+                    </form>
+
+
+                    <div v-else class="animal-details">
+                        <p><strong>Nom :</strong> {{ animal.name }}</p>
+                        <p><strong>Race :</strong> {{ animal.breed }}</p>
+                        <p><strong>Description :</strong> {{ animal.description }}</p>
+                        <p><strong>Prix :</strong> {{ animal.price }} €</p>
                     </div>
                 </div>
+
                 <p v-if="animals.length === 0">Aucun animal trouvé pour ce type.</p>
             </div>
         </div>
@@ -36,11 +73,12 @@
 
 <script>
 import logoUrl from '../../images/logo.svg';
+import trashUrl from '../../images/trash.svg';
 import LoginModal from './login/App.vue';
 
 export default {
     components: {
-        LoginModal,
+        LoginModal
     },
     data() {
         return {
@@ -49,6 +87,7 @@ export default {
             isUserLoggedIn: false,
             urlLogo: logoUrl,
             isLoginPopupVisible: false,
+            trashUrl: trashUrl
         };
     },
     created() {
@@ -64,7 +103,6 @@ export default {
             try {
                 const response = await fetch('/check-session');
                 const data = await response.json();
-                console.log(data)
                 this.isUserLoggedIn = data.isLoggedIn;
             } catch (error) {
                 console.error('Erreur lors de la vérification de la session:', error);
@@ -77,7 +115,7 @@ export default {
                 const data = await response.json();
                 this.animals = data.map(animal => ({
                     ...animal,
-                    breed: animal.breed ? animal.breed.name : 'Inconnu',
+                    breed: animal.breed ? animal.breed : 'Inconnu',
                 }));
             } catch (error) {
                 console.error('Erreur lors de la récupération des animaux:', error);
@@ -103,7 +141,6 @@ export default {
                     },
                 });
 
-        
                 if (response.ok) {
                     this.isUserLoggedIn = false;
                 } else {
@@ -112,7 +149,10 @@ export default {
             } catch (error) {
                 console.error('Erreur de déconnexion:', error);
             }
-
+        },
+        handleFormSubmit(animal) {
+            console.log("Soumission du formulaire pour l'animal:", animal);
+          
         }
     },
 };
@@ -144,9 +184,21 @@ export default {
 }
 
 .animal-item {
-    padding: 5px;
+    padding: 10px;
     margin: 5px 0;
     background-color: #f1f1f1;
     border-radius: 5px;
+}
+
+.animal-input {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.animal-details p {
+    margin: 5px 0;
 }
 </style>
