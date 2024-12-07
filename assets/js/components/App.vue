@@ -94,7 +94,6 @@ export default {
             this.isLoginPopupVisible = false;
             this.isUserLoggedIn = isLoggedIn;
         },
-
         async handleLogout() {
             try {
                 const response = await fetch('http://127.0.0.1:8000/disconnect', {
@@ -104,15 +103,16 @@ export default {
                     },
                 });
 
+        
                 if (response.ok) {
                     this.isUserLoggedIn = false;
-                    this.$router.push('/');
                 } else {
                     console.error('Erreur lors de la déconnexion');
                 }
             } catch (error) {
                 console.error('Erreur de déconnexion:', error);
             }
+
         }
     },
 };

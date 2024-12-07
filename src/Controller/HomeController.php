@@ -34,6 +34,7 @@ class HomeController extends AbstractController
         dump($user);
         return $this->json([
             'isLoggedIn' => $user ? true : false,
+            'user' => $user
         ]);
     }
 

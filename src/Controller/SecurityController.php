@@ -40,16 +40,15 @@ class SecurityController extends AbstractController
         ], 401);
     }
 
-    #[Route('/disconnect', name: 'app_logout', methods: ['POST'])]
+    #[Route('/disconnect', name: 'disconnect', methods: ['POST'])]
     public function logout(Request $request): Response
     {
         $session = $request->getSession();
         $session->remove('user');
-        dump($session);
 
         return $this->json([
             'message' => 'Déconnexion réussie!',
-            'redirect' => $this->generateUrl('app_home')
+            'session' => $session
         ], 200);
     }
    

@@ -19,9 +19,11 @@
                 <p v-if="passwordError" class="text-red-500 text-sm">{{ passwordError }}</p>
             </div>
 
-            <div>
-                <button type="submit"
-                    class="w-full py-3 bg-primary  font-semibold rounded-md  focus:outline-none ">
+            <div class="flex justify-between">
+                <button @click="closePopUp" class="w-1/3 py-3 bg-primary  font-semibold rounded-md  focus:outline-none ">
+                    Retour
+                </button>
+                <button type="submit" class="w-1/2 py-3 bg-primary  font-semibold rounded-md  focus:outline-none ">
                     Se connecter
                 </button>
             </div>
@@ -41,6 +43,9 @@ export default {
         };
     },
     methods: {
+        closePopUp() {
+            this.$emit('close', false);
+        },
         async handleLogin() {
             this.emailError = '';
             this.passwordError = '';
