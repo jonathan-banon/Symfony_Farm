@@ -24,7 +24,7 @@
                         <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none"
                             @click="showAddForm">Ajouter un animal</button>
                     </div>
-                    <div v-else>
+                    <div v-else-if="isCreated">
                         <form class="flex justify-between w-full" @submit.prevent="addAnimal">
                             <div>
                                 <div class="animal-details">
@@ -229,11 +229,8 @@ export default {
                 });
 
                 if (response.ok) {
-                    const addedAnimal = await response.json();
-                    this.animals.push(addedAnimal);
-                    console.log('Animal ajouté avec succès');
+                    this.fetchAnimals(this.actualTypeId)
                     this.isCreated = false;
-                    console.log("isCreated => ", this.isCreated)
                 } else {
                     console.error('Erreur lors de l\'ajout de l\'animal');
                 }
