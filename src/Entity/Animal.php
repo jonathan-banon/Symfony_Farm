@@ -42,6 +42,9 @@ class Animal
     #[ORM\OneToMany(targetEntity: Photo::class, mappedBy: 'animal')]
     private Collection $pictures;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $isOnSale = null;
+
     public function __construct()
     {
         $this->pictures = new ArrayCollection();
@@ -144,6 +147,18 @@ class Animal
                 $picture->setAnimal(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isOnSale(): ?bool
+    {
+        return $this->isOnSale;
+    }
+
+    public function setOnSale(?bool $isOnSale): static
+    {
+        $this->isOnSale = $isOnSale;
 
         return $this;
     }
