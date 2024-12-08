@@ -40,7 +40,7 @@ class AppFixtures extends Fixture
             'Cheval' => ['Frison', 'Pottok', 'Irish Cob']
         ];
 
-        $breedObjects = [];
+        $breedObjectsByType = [];
 
         foreach ($breeds as $typeName => $breedNames) {
             $type = $typeObjects[$typeName];
@@ -50,24 +50,28 @@ class AppFixtures extends Fixture
                 $breed->setName($breedName);
                 $breed->setType($type);
                 $manager->persist($breed);
-                $breedObjects[] = $breed;
+
+                $breedObjectsByType[$typeName][] = $breed;
             }
         }
 
-        for ($i = 0; $i < 9; $i++) {
-            $animal = new Animal();
-            $animal->setName($faker->firstName);
-            $animal->setPrice($faker->randomFloat(2, 10, 500));
-            $animal->setAge($faker->numberBetween(1, 15));
-            $animal->setDescription($faker->text(100));
+        $animalCountPerType = 3;
+        foreach ($types as $typeName) {
+            for ($i = 0; $i < $animalCountPerType; $i++) {
+                $animal = new Animal();
+                $animal->setName($faker->firstName);
+                $animal->setPrice($faker->randomFloat(2, 10, 500));
+                $animal->setAge($faker->numberBetween(1, 15));
+                $animal->setDescription($faker->text(100));
 
-            $type = $typeObjects[array_rand($typeObjects)];
-            $animal->setType($type);
+                $type = $typeObjects[$typeName];
+                $animal->setType($type);
 
-            $breed = $breedObjects[array_rand($breedObjects)];
-            $animal->setBreed($breed);
+                $breed = $faker->randomElement($breedObjectsByType[$typeName]);
+                $animal->setBreed($breed);
 
-            $manager->persist($animal);
+                $manager->persist($animal);
+            }
         }
 
         $user = new User();

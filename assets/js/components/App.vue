@@ -19,61 +19,66 @@
         <div class="home-container flex justify-around">
             <div class="filter-container"></div>
             <div class="animals-container">
-                <div v-if="!isCreated">
-                    <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none"
-                        @click="showAddForm">Ajouter un animal</button>
-                </div>
-                <div v-else>
-                    <form class="flex justify-between w-full" @submit.prevent="addAnimal">
-                        <div>
-                            <div class="animal-details">
-                                <label for="name">Nom</label>
-                                <input v-model="newAnimal.name" type="text" id="name" class="animal-input" />
-                            </div>
+                <template v-if="isUserLoggedIn">
+                    <div v-if="!isCreated">
+                        <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none"
+                            @click="showAddForm">Ajouter un animal</button>
+                    </div>
+                    <div v-else>
+                        <form class="flex justify-between w-full" @submit.prevent="addAnimal">
+                            <div>
+                                <div class="animal-details">
+                                    <label for="name">Nom</label>
+                                    <input v-model="newAnimal.name" type="text" id="name" class="animal-input" />
+                                </div>
 
-                            <label for="type">Type</label>
-                            <select v-model="newAnimal.type" id="type" class="animal-input"
-                                @change="fetchBreeds(newAnimal.type)">
-                                <option value="" disabled>Sélectionnez un type</option>
-                                <option v-for="type in types" :key="type.id" :value="type.id">
-                                    {{ type.name }}
-                                </option>
-                            </select>
-                        
-                            <div class="animal-details">
-                                <label for="breed">Race</label>
-                                <select v-model="newAnimal.breed" id="breed" class="animal-input">
-                                    <option value="" disabled>Sélectionnez une race</option>
-                                    <option v-for="breed in breeds" :key="breed.id" :value="breed.id">
-                                        {{ breed.name }}
+                                <label for="type">Type</label>
+                                <select v-model="newAnimal.type" id="type" class="animal-input"
+                                    @change="fetchBreeds(newAnimal.type)">
+                                    <option value="" disabled>Sélectionnez un type</option>
+                                    <option v-for="type in types" :key="type.id" :value="type.id">
+                                        {{ type.name }}
                                     </option>
                                 </select>
+
+                                <div class="animal-details" v-if="isTypeSelected">
+                                    <label for="breed">Race</label>
+                                    <select v-model="newAnimal.breed" id="breed" class="animal-input">
+                                        <option value="" disabled>Sélectionnez une race</option>
+                                        <option v-for="breed in breeds" :key="breed.id" :value="breed.id">
+                                            {{ breed.name }}
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div class="animal-details">
+                                    <label for="age">Âge</label>
+                                    <input v-model="newAnimal.age" type="number" min="1" id="age"
+                                        class="animal-input" />
+                                </div>
+
+                                <div class="animal-details">
+                                    <label for="description">Description</label>
+                                    <textarea v-model="newAnimal.description" id="description"
+                                        class="animal-input"></textarea>
+                                </div>
+
+                                <div class="animal-details">
+                                    <label for="price">Prix</label>
+                                    <input v-model="newAnimal.price" type="number" min="0" id="price"
+                                        class="animal-input" />
+                                </div>
                             </div>
 
-                            <div class="animal-details">
-                                <label for="age">Âge</label>
-                                <input v-model="newAnimal.age" type="number" id="age" class="animal-input" />
+                            <div class="flex flex-col justify-between items-end">
+                                <button type="submit"
+                                    class="p-4 bg-primary font-semibold rounded-md focus:outline-none">
+                                    Ajouter l'animal
+                                </button>
                             </div>
-
-                            <div class="animal-details">
-                                <label for="description">Description</label>
-                                <textarea v-model="newAnimal.description" id="description"
-                                    class="animal-input"></textarea>
-                            </div>
-
-                            <div class="animal-details">
-                                <label for="price">Prix</label>
-                                <input v-model="newAnimal.price" type="number" id="price" class="animal-input" />
-                            </div>
-                        </div>
-
-                        <div class="flex flex-col justify-between items-end">
-                            <button type="submit" class="p-4 bg-primary font-semibold rounded-md focus:outline-none">
-                                Ajouter l'animal
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                        </form>
+                    </div>
+                </template>
                 <div v-for="animal in animals" :key="animal.id" class="animal-item rounded-3xl h-1/2 flex">
                     <div class="animal-picture w-1/4 bg-primary rounded-3xl"></div>
 
@@ -141,6 +146,7 @@ export default {
     },
     data() {
         return {
+            actualTypeId: 1,
             types: [],
             breeds: [],
             animals: [],
@@ -149,6 +155,7 @@ export default {
             isLoginPopupVisible: false,
             trashUrl: trashUrl,
             isCreated: false,
+            isTypeSelected: false,
             newAnimal: {
                 type: '',
                 name: '',
@@ -166,10 +173,13 @@ export default {
         const appElement = document.getElementById('app');
         const typesData = appElement.getAttribute('data-types');
         this.types = JSON.parse(typesData);
+        const savedTypeId = localStorage.getItem('actualTypeId');
+        this.actualTypeId = savedTypeId ? parseInt(savedTypeId, 10) : 1;
+        this.fetchAnimals(this.actualTypeId);
     },
     methods: {
         async fetchBreeds(typeId) {
-            console.log(typeId)
+            this.isTypeSelected = true;
             try {
                 const response = await fetch(`/type/${typeId}/breeds`);
                 if (response.ok) {
@@ -225,6 +235,8 @@ export default {
             }
         },
         async fetchAnimals(typeId) {
+            this.actualTypeId = typeId;
+            localStorage.setItem('actualTypeId', typeId);
             try {
                 const response = await fetch(`/type/${typeId}/animals`);
                 const data = await response.json();
@@ -362,4 +374,6 @@ export default {
     overflow: scroll;
     height: 78vh;
 }
+
+
 </style>
