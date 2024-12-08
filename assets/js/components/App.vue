@@ -91,11 +91,13 @@
                                     class="animal-input" />
                             </div>
 
-                            <div class="animal-details">
-                                <label for="breed">Race</label>
-                                <input v-model="animal.breed" type="text" id="breed" :disabled="!isUserLoggedIn"
-                                    class="animal-input" />
-                            </div>
+                            <label for="type">Race</label>
+                            <select v-model="animal.breed" id="breed" class="animal-input">
+                                <option value="" disabled>Sélectionnez un type</option>
+                                <option v-for="breed in breeds" :key="breed.id" :value="breed.id">
+                                    {{ breed.name }}
+                                </option>
+                            </select>
 
                             <div class="animal-details">
                                 <label for="description">Description</label>
@@ -129,7 +131,7 @@
                     </div>
                 </div>
 
-                <p v-if="animals.length === 0">Aucun animal trouvé pour ce type.</p>
+                <p v-if="animals.length === 0">Chargement des animaux</p>
             </div>
         </div>
     </div>
@@ -236,6 +238,7 @@ export default {
         },
         async fetchAnimals(typeId) {
             this.actualTypeId = typeId;
+            this.fetchBreeds(this.actualTypeId);
             localStorage.setItem('actualTypeId', typeId);
             try {
                 const response = await fetch(`/type/${typeId}/animals`);
@@ -374,6 +377,4 @@ export default {
     overflow: scroll;
     height: 78vh;
 }
-
-
 </style>
