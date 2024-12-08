@@ -49,7 +49,8 @@ class HomeController extends AbstractController
                 'name' => $animal->getName(),
                 'breed' => $animal->getBreed()->getName(),
                 'description' => $animal->getDescription(),
-                'price' => $animal->getPrice()
+                'price' => $animal->getPrice(),
+                'isOnSale' => $animal->isOnSale() ? 'true' : 'false'
             ];
         }
         return new JsonResponse($data);

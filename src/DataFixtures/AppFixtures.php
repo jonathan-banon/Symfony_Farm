@@ -69,6 +69,7 @@ class AppFixtures extends Fixture
 
                 $breed = $faker->randomElement($breedObjectsByType[$typeName]);
                 $animal->setBreed($breed);
+                $animal->setOnSale(true);
 
                 $manager->persist($animal);
             }

@@ -29,6 +29,7 @@ final class AnimalController extends AbstractController
             $animal->setAge($data['age']);
             $animal->setDescription($data['description']);
             $animal->setPrice($data['price']);
+            $animal->setOnSale(true);
 
             $entityManager->persist($animal);
             $entityManager->flush();

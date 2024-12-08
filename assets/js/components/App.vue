@@ -91,9 +91,11 @@
                                     class="animal-input" />
                             </div>
 
-                            <label for="type">Race</label>
+                            <label for="breed">Race</label>
                             <select v-model="animal.breed" id="breed" class="animal-input">
-                                <option value="" disabled>Sélectionnez un type</option>
+                                <option :value="animal.breed" disabled>
+                                    {{ animal.breed }}
+                                </option>
                                 <option v-for="breed in breeds" :key="breed.id" :value="breed.id">
                                     {{ breed.name }}
                                 </option>
@@ -109,6 +111,19 @@
                                 <label for="price">Prix</label>
                                 <input v-model="animal.price" type="number" id="price" :disabled="!isUserLoggedIn"
                                     class="animal-input" />
+                            </div>
+                        </div>
+                        <div class="animal-details">
+                            <label for="isOnSale">Status</label>
+                            <div>
+                                <div>
+                                    <input type="radio" v-model="animal.isOnSale" :value="true" />
+                                    <span class="ml-2">En vente</span>
+                                </div>
+                                <div>
+                                    <input type="radio" v-model="animal.isOnSale" :value="false" />
+                                    <span class="ml-2">Vendu</span>
+                                </div>
                             </div>
                         </div>
                         <div class="flex flex-col justify-between items-end">
@@ -164,7 +179,7 @@ export default {
                 breed: '',
                 age: '',
                 description: '',
-                price: ''
+                price: '',
             }
         };
     },
