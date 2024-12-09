@@ -20,11 +20,15 @@
             <div class="filter-container"></div>
             <div class="animals-container">
                 <template v-if="isUserLoggedIn">
-                    <div v-if="!isCreated">
+                    <div v-if="!showAddForm && !showTypeForm && !showBreedForm" class="flex justify-around">
                         <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none"
-                            @click="showAddForm">Ajouter un animal</button>
+                            @click="toggleAddForm">Ajouter un animal</button>
+                        <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none"
+                            @click="toggleTypeForm">Ajouter un Type d'animal</button>
+                        <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none"
+                            @click="toggleBreedForm">Ajouter une race d'animal</button>
                     </div>
-                    <div v-else-if="isCreated">
+                    <div v-if="showAddForm">
                         <form class="flex justify-between w-full" @submit.prevent="addAnimal">
                             <div>
                                 <div class="animal-details">
@@ -71,9 +75,52 @@
                             </div>
 
                             <div class="flex flex-col justify-between items-end">
+                                <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none"
+                                    @click="toggleAddForm">Retour</button>
                                 <button type="submit"
                                     class="p-4 bg-primary font-semibold rounded-md focus:outline-none">
                                     Ajouter l'animal
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <div v-if="showTypeForm">
+                        <form class="flex justify-between w-full" @submit.prevent="addType">
+                            <div>
+                                <div class="animal-details">
+                                    <label for="name">Nom</label>
+                                    <input v-model="newType.name" type="text" id="name" class="animal-input" required />
+                                </div>
+                                <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none"
+                                    @click="toggleTypeForm">Retour</button>
+                                <button type="submit"
+                                    class="p-4 bg-primary font-semibold rounded-md focus:outline-none">
+                                    Ajouter le type d'animal
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <div v-if="showBreedForm">
+                        <form class="flex justify-between w-full" @submit.prevent="addBreed(newBreed.typeId)">
+                            <div>
+                                <label for="type">Type</label>
+                                <select v-model="newBreed.typeId" id="type" class="animal-input">
+                                    <option value="" disabled>Sélectionnez un type</option>
+                                    <option v-for="type in types" :key="type.id" :value="type.id">
+                                        {{ type.name }}
+                                    </option>
+                                </select>
+
+                                <div class="animal-details">
+                                    <label for="name">Nom</label>
+                                    <input v-model="newBreed.name" type="text" id="name" class="animal-input"
+                                        required />
+                                </div>
+                                <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none"
+                                    @click="toggleBreedForm">Retour</button>
+                                <button type="submit"
+                                    class="p-4 bg-primary font-semibold rounded-md focus:outline-none">
+                                    Ajouter une race d'animal
                                 </button>
                             </div>
                         </form>
@@ -171,7 +218,9 @@ export default {
             urlLogo: logoUrl,
             isLoginPopupVisible: false,
             trashUrl: trashUrl,
-            isCreated: false,
+            showAddForm: false,
+            showTypeForm: false,
+            showBreedForm: false,
             isTypeSelected: false,
             newAnimal: {
                 type: '',
@@ -180,6 +229,13 @@ export default {
                 age: '',
                 description: '',
                 price: '',
+            },
+            newType: {
+                name: '',
+            },
+            newBreed: {
+                name: '',
+                typeId: 1,
             }
         };
     },
@@ -195,6 +251,17 @@ export default {
         this.fetchAnimals(this.actualTypeId);
     },
     methods: {
+        async fetchTypes() {
+            try {
+                const response = await fetch(`/type/all`);
+                if (response.ok) {
+                    this.types = await response.json();
+                }
+            } catch (error) {
+
+            }
+
+        },
         async fetchBreeds(typeId) {
             this.isTypeSelected = true;
             try {
@@ -207,9 +274,6 @@ export default {
             } catch (error) {
                 console.error('Erreur lors de la récupération des races:', error);
             }
-        },
-        showAddForm() {
-            this.isCreated = true;
         },
         async addAnimal() {
             try {
@@ -230,9 +294,69 @@ export default {
 
                 if (response.ok) {
                     this.fetchAnimals(this.actualTypeId)
-                    this.isCreated = false;
+                    this.showAddForm = false;
                 } else {
                     console.error('Erreur lors de l\'ajout de l\'animal');
+                }
+            } catch (error) {
+                console.error('Erreur lors de l\'envoi du formulaire:', error);
+            }
+        },
+        async addType() {
+            try {
+                const response = await fetch('/type/new', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: this.newType.name,
+                    })
+                });
+
+                if (response.ok) {
+                    this.fetchAnimals(this.actualTypeId)
+                    this.fetchTypes();
+                    this.showTypeForm = false;
+                } else {
+                    console.error('Erreur lors de l\'ajout du type');
+                }
+            } catch (error) {
+                console.error('Erreur lors de l\'envoi du formulaire:', error);
+            }
+        },
+        async fetchAnimals(typeId) {
+            this.actualTypeId = typeId;
+            this.fetchBreeds(this.actualTypeId);
+            localStorage.setItem('actualTypeId', typeId);
+            try {
+                const response = await fetch(`/type/${typeId}/animals`);
+                const data = await response.json();
+                this.animals = data.map(animal => ({
+                    ...animal,
+                    breed: animal.breed ? animal.breed : 'Inconnu',
+                }));
+            } catch (error) {
+                console.error('Erreur lors de la récupération des animaux:', error);
+            }
+        },
+        async addBreed(typeId) {
+            try {
+                const response = await fetch((`/breed/${typeId}/add`), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: this.newBreed.name,
+                    })
+                });
+
+                if (response.ok) {
+                    this.fetchAnimals(this.actualTypeId)
+                    this.showBreedForm = false;
+                } else {
+                    console.error('Erreur lors de l\'ajout');
                 }
             } catch (error) {
                 console.error('Erreur lors de l\'envoi du formulaire:', error);
@@ -269,6 +393,15 @@ export default {
             } else {
                 this.handleLogout();
             }
+        },
+        toggleAddForm() {
+            this.showAddForm = !this.showAddForm
+        },
+        toggleTypeForm() {
+            this.showTypeForm = !this.showTypeForm
+        },
+        toggleBreedForm() {
+            this.showBreedForm = !this.showBreedForm
         },
         closeLoginPopup(isLoggedIn) {
             this.isLoginPopupVisible = false;

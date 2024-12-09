@@ -41,7 +41,6 @@ class HomeController extends AbstractController
     public function animalsByType(int $id, AnimalRepository $animalRepository): Response
     {
         $animals = $animalRepository->findByTypeId($id);
-        dump($animals);
         $data = [];
         foreach ($animals as $animal) {
             $data[] = [
