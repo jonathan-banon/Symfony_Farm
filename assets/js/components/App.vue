@@ -130,7 +130,7 @@
                     <div class="animal-picture w-1/4 bg-primary rounded-3xl"></div>
 
                     <form class="flex justify-between w-full" v-if="isUserLoggedIn"
-                        @submit.prevent="handleFormSubmit(animal)">
+                        @submit.prevent="editAnimal(animal)">
                         <div>
                             <div class="animal-details">
                                 <label for="name">Nom</label>
@@ -425,7 +425,7 @@ export default {
                 console.error('Erreur de déconnexion:', error);
             }
         },
-        async handleFormSubmit(animal) {
+        async editAnimal(animal) {
             try {
                 const response = await fetch(`/animal/${animal.id}/edit`, {
                     method: 'POST',
@@ -437,6 +437,8 @@ export default {
                         breed: animal.breed,
                         description: animal.description,
                         price: animal.price,
+                        status: animal.isOnSale
+
                     }),
                 });
 
