@@ -16,10 +16,9 @@
                 {{ isUserLoggedIn ? 'Déconnexion' : 'Connexion' }}
             </button>
         </div>
-        <div class="home-container flex justify-around">
-            <div class="filter-container"></div>
-            <div class="animals-container">
-                <template v-if="isUserLoggedIn">
+        <template v-if="isUserLoggedIn">
+            <div class="home-container flex justify-around">
+                <div class="filter-container">
                     <div v-if="!showAddForm && !showTypeForm && !showBreedForm" class="flex justify-around">
                         <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none"
                             @click="toggleAddForm">Ajouter un animal</button>
@@ -28,6 +27,8 @@
                         <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none"
                             @click="toggleBreedForm">Ajouter une race d'animal</button>
                     </div>
+                </div>
+                <div class="animals-container">
                     <div v-if="showAddForm">
                         <form class="flex justify-between w-full" @submit.prevent="addAnimal">
                             <div>
@@ -125,77 +126,79 @@
                             </div>
                         </form>
                     </div>
-                </template>
-                <div v-for="animal in animals" :key="animal.id" class="animal-item rounded-3xl h-1/2 flex">
-                    <div class="animal-picture w-1/4 bg-primary rounded-3xl"></div>
-
-                    <form class="flex justify-between w-full" v-if="isUserLoggedIn"
-                        @submit.prevent="editAnimal(animal)">
-                        <div>
-                            <div class="animal-details">
-                                <label for="name">Nom</label>
-                                <input v-model="animal.name" type="text" id="name" :disabled="!isUserLoggedIn"
-                                    class="animal-input" />
-                            </div>
-
-                            <label for="breed">Race</label>
-                            <select v-model="animal.breed" id="breed" class="animal-input">
-                                <option :value="animal.breed" disabled>
-                                    {{ animal.breed }}
-                                </option>
-                                <option v-for="breed in breeds" :key="breed.id" :value="breed.id">
-                                    {{ breed.name }}
-                                </option>
-                            </select>
-
-                            <div class="animal-details">
-                                <label for="description">Description</label>
-                                <textarea v-model="animal.description" id="description" :disabled="!isUserLoggedIn"
-                                    class="animal-input"></textarea>
-                            </div>
-
-                            <div class="animal-details">
-                                <label for="price">Prix</label>
-                                <input v-model="animal.price" type="number" id="price" :disabled="!isUserLoggedIn"
-                                    class="animal-input" />
-                            </div>
-                        </div>
-                        <div class="animal-details">
-                            <label for="isOnSale">Status</label>
+                    <div v-for="animal in animals" :key="animal.id" class="animal-item rounded-3xl h-1/2 flex">
+                        <div class="animal-picture w-1/4 bg-primary rounded-3xl"></div>
+                        <form class="flex justify-between w-full" @submit.prevent="editAnimal(animal)">
                             <div>
-                                <div>
-                                    <input type="radio" v-model="animal.isOnSale" :value="true" />
-                                    <span class="ml-2">En vente</span>
+                                <div class="animal-details">
+                                    <label for="name">Nom</label>
+                                    <input v-model="animal.name" type="text" id="name" class="animal-input" />
                                 </div>
-                                <div>
-                                    <input type="radio" v-model="animal.isOnSale" :value="false" />
-                                    <span class="ml-2">Vendu</span>
+
+                                <label for="breed">Race</label>
+                                <select v-model="animal.breed" id="breed" class="animal-input">
+                                    <option :value="animal.breed" disabled>
+                                        {{ animal.breed }}
+                                    </option>
+                                    <option v-for="breed in breeds" :key="breed.id" :value="breed.id">
+                                        {{ breed.name }}
+                                    </option>
+                                </select>
+
+                                <div class="animal-details">
+                                    <label for="description">Description</label>
+                                    <textarea v-model="animal.description" id="description"
+                                        class="animal-input"></textarea>
+                                </div>
+
+                                <div class="animal-details">
+                                    <label for="price">Prix</label>
+                                    <input v-model="animal.price" type="number" id="price" class="animal-input" />
                                 </div>
                             </div>
-                        </div>
-                        <div class="flex flex-col justify-between items-end">
-                            <a @click.prevent="delAnimal(animal)">
-                                <img :src="trashUrl" alt="trash-logo" class="w-10">
-                            </a>
-                            <button type="submit"
-                                class=" p-4 bg-primary  font-semibold rounded-md  focus:outline-none">Enregistrer les
-                                modifications</button>
-                        </div>
-
-                    </form>
-
-
-                    <div v-else class="animal-details">
-                        <p><strong>Nom :</strong> {{ animal.name }}</p>
-                        <p><strong>Race :</strong> {{ animal.breed }}</p>
-                        <p><strong>Description :</strong> {{ animal.description }}</p>
-                        <p><strong>Prix :</strong> {{ animal.price }} €</p>
+                            <div class="animal-details">
+                                <label for="isOnSale">Status</label>
+                                <div>
+                                    <div>
+                                        <input type="radio" v-model="animal.isOnSale" :value="true" />
+                                        <span class="ml-2">En vente</span>
+                                    </div>
+                                    <div>
+                                        <input type="radio" v-model="animal.isOnSale" :value="false" />
+                                        <span class="ml-2">Vendu</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex flex-col justify-between items-end">
+                                <a @click.prevent="delAnimal(animal)">
+                                    <img :src="trashUrl" alt="trash-logo" class="w-10">
+                                </a>
+                                <button type="submit"
+                                    class=" p-4 bg-primary  font-semibold rounded-md  focus:outline-none">Enregistrer
+                                    les
+                                    modifications</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
-
-                <p v-if="animals.length === 0">Chargement des animaux</p>
             </div>
-        </div>
+        </template>
+        <template v-else>
+            <div class="home-container flex justify-around">
+                <div class="filter-container"></div>
+                <div class="animals-container">
+                    <div v-for="animal in animals" :key="animal.id" class="animal-item rounded-3xl h-1/2 flex">
+                        <div class="animal-picture w-1/4 bg-primary rounded-3xl"></div>
+                        <div class="animal-details">
+                            <p><strong>Nom :</strong> {{ animal.name }}</p>
+                            <p><strong>Race :</strong> {{ animal.breed }}</p>
+                            <p><strong>Description :</strong> {{ animal.description }}</p>
+                            <p><strong>Prix :</strong> {{ animal.price }} €</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
     </div>
 </template>
 
@@ -329,6 +332,7 @@ export default {
             this.actualTypeId = typeId;
             this.fetchBreeds(this.actualTypeId);
             localStorage.setItem('actualTypeId', typeId);
+            console.log(this.animals)
             try {
                 const response = await fetch(`/type/${typeId}/animals`);
                 const data = await response.json();
