@@ -3,203 +3,196 @@
         v-if="isLoginPopupVisible">
         <LoginModal :isVisible="isLoginPopupVisible" :isLoggedIn="isUserLoggedIn" @close="closeLoginPopup" />
     </div>
-    <div>
-        <div class="bg-secondary min-h-52 flex justify-around items-center">
-            <img :src="urlLogo" alt="Logo">
-            <div class="nav-container">
-                <button v-for="type in types" :key="type.id" class="btn bg-primary text-white py-2 px-4 rounded-full"
-                    @click="fetchAnimals(type.id)">
-                    {{ type.name }}
-                </button>
-            </div>
-            <button class="btn bg-primary text-white py-2 px-4 rounded-full" @click="toggleLoginPopup">
-                {{ isUserLoggedIn ? 'Déconnexion' : 'Connexion' }}
+    <div class="bg-secondary min-h-52 flex justify-around items-center">
+        <p class="alert-success bg-primary" v-if="isAlertVisible">{{alertMessage}}</p>
+        <img :src="urlLogo" alt="Logo">
+        <div class="nav-container">
+            <button v-for="type in types" :key="type.id" class="btn bg-primary text-white py-2 px-4 rounded-full"
+                @click="fetchAnimals(type.id)">
+                {{ type.name }}
             </button>
         </div>
-        <template v-if="isUserLoggedIn">
-            <div class="home-container flex justify-around">
-                <div class="filter-container">
-                    <div v-if="!showAddForm && !showTypeForm && !showBreedForm" class="flex justify-around">
-                        <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none"
-                            @click="toggleAddForm">Ajouter un animal</button>
-                        <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none"
-                            @click="toggleTypeForm">Ajouter un Type d'animal</button>
-                        <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none"
-                            @click="toggleBreedForm">Ajouter une race d'animal</button>
-                    </div>
+        <button class="btn bg-primary text-white py-2 px-4 rounded-full" @click="toggleLoginPopup">
+            {{ isUserLoggedIn ? 'Déconnexion' : 'Connexion' }}
+        </button>
+    </div>
+    <template v-if="isUserLoggedIn">
+        <div class="home-container flex justify-around">
+            <div class="filter-container">
+                <div v-if="!showAddForm && !showTypeForm && !showBreedForm" class="flex justify-around">
+                    <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none"
+                        @click="toggleAddForm">Ajouter un animal</button>
+                    <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none"
+                        @click="toggleTypeForm">Ajouter un Type d'animal</button>
+                    <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none"
+                        @click="toggleBreedForm">Ajouter une race d'animal</button>
                 </div>
-                <div class="animals-container">
-                    <div v-if="showAddForm">
-                        <form class="flex justify-between w-full" @submit.prevent="addAnimal">
-                            <div>
-                                <div class="animal-details">
-                                    <label for="name">Nom</label>
-                                    <input v-model="newAnimal.name" type="text" id="name" class="animal-input" />
-                                </div>
-
-                                <label for="type">Type</label>
-                                <select v-model="newAnimal.type" id="type" class="animal-input"
-                                    @change="fetchBreeds(newAnimal.type)">
-                                    <option value="" disabled>Sélectionnez un type</option>
-                                    <option v-for="type in types" :key="type.id" :value="type.id">
-                                        {{ type.name }}
-                                    </option>
-                                </select>
-
-                                <div class="animal-details" v-if="isTypeSelected">
-                                    <label for="breed">Race</label>
-                                    <select v-model="newAnimal.breed" id="breed" class="animal-input">
-                                        <option value="" disabled>Sélectionnez une race</option>
-                                        <option v-for="breed in breeds" :key="breed.id" :value="breed.id">
-                                            {{ breed.name }}
-                                        </option>
-                                    </select>
-                                </div>
-
-                                <div class="animal-details">
-                                    <label for="age">Âge</label>
-                                    <input v-model="newAnimal.age" type="number" min="1" id="age"
-                                        class="animal-input" />
-                                </div>
-
-                                <div class="animal-details">
-                                    <label for="description">Description</label>
-                                    <textarea v-model="newAnimal.description" id="description"
-                                        class="animal-input"></textarea>
-                                </div>
-
-                                <div class="animal-details">
-                                    <label for="price">Prix</label>
-                                    <input v-model="newAnimal.price" type="number" min="0" id="price"
-                                        class="animal-input" />
-                                </div>
+            </div>
+            <div class="animals-container">
+                <div v-if="showAddForm">
+                    <form class="flex justify-between w-full" @submit.prevent="addAnimal">
+                        <div>
+                            <div class="animal-details">
+                                <label for="name">Nom</label>
+                                <input v-model="newAnimal.name" type="text" id="name" class="animal-input" />
                             </div>
 
-                            <div class="flex flex-col justify-between items-end">
-                                <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none"
-                                    @click="toggleAddForm">Retour</button>
-                                <button type="submit"
-                                    class="p-4 bg-primary font-semibold rounded-md focus:outline-none">
-                                    Ajouter l'animal
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                    <div v-if="showTypeForm">
-                        <form class="flex justify-between w-full" @submit.prevent="addType">
-                            <div>
-                                <div class="animal-details">
-                                    <label for="name">Nom</label>
-                                    <input v-model="newType.name" type="text" id="name" class="animal-input" required />
-                                </div>
-                                <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none"
-                                    @click="toggleTypeForm">Retour</button>
-                                <button type="submit"
-                                    class="p-4 bg-primary font-semibold rounded-md focus:outline-none">
-                                    Ajouter le type d'animal
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                    <div v-if="showBreedForm">
-                        <form class="flex justify-between w-full" @submit.prevent="addBreed(newBreed.typeId)">
-                            <div>
-                                <label for="type">Type</label>
-                                <select v-model="newBreed.typeId" id="type" class="animal-input">
-                                    <option value="" disabled>Sélectionnez un type</option>
-                                    <option v-for="type in types" :key="type.id" :value="type.id">
-                                        {{ type.name }}
-                                    </option>
-                                </select>
+                            <label for="type">Type</label>
+                            <select v-model="newAnimal.type" id="type" class="animal-input"
+                                @change="fetchBreeds(newAnimal.type)">
+                                <option value="" disabled>Sélectionnez un type</option>
+                                <option v-for="type in types" :key="type.id" :value="type.id">
+                                    {{ type.name }}
+                                </option>
+                            </select>
 
-                                <div class="animal-details">
-                                    <label for="name">Nom</label>
-                                    <input v-model="newBreed.name" type="text" id="name" class="animal-input"
-                                        required />
-                                </div>
-                                <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none"
-                                    @click="toggleBreedForm">Retour</button>
-                                <button type="submit"
-                                    class="p-4 bg-primary font-semibold rounded-md focus:outline-none">
-                                    Ajouter une race d'animal
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                    <div v-for="animal in animals" :key="animal.id" class="animal-item rounded-3xl h-1/2 flex">
-                        <div class="animal-picture w-1/4 bg-primary rounded-3xl"></div>
-                        <form class="flex justify-between w-full" @submit.prevent="editAnimal(animal)">
-                            <div>
-                                <div class="animal-details">
-                                    <label for="name">Nom</label>
-                                    <input v-model="animal.name" type="text" id="name" class="animal-input" />
-                                </div>
-
+                            <div class="animal-details" v-if="isTypeSelected">
                                 <label for="breed">Race</label>
-                                <select v-model="animal.breed" id="breed" class="animal-input">
-                                    <option :value="animal.breed" disabled>
-                                        {{ animal.breed }}
-                                    </option>
+                                <select v-model="newAnimal.breed" id="breed" class="animal-input">
+                                    <option value="" disabled>Sélectionnez une race</option>
                                     <option v-for="breed in breeds" :key="breed.id" :value="breed.id">
                                         {{ breed.name }}
                                     </option>
                                 </select>
-
-                                <div class="animal-details">
-                                    <label for="description">Description</label>
-                                    <textarea v-model="animal.description" id="description"
-                                        class="animal-input"></textarea>
-                                </div>
-
-                                <div class="animal-details">
-                                    <label for="price">Prix</label>
-                                    <input v-model="animal.price" type="number" id="price" class="animal-input" />
-                                </div>
                             </div>
+
                             <div class="animal-details">
-                                <label for="isOnSale">Status</label>
+                                <label for="age">Âge</label>
+                                <input v-model="newAnimal.age" type="number" min="1" id="age" class="animal-input" />
+                            </div>
+
+                            <div class="animal-details">
+                                <label for="description">Description</label>
+                                <textarea v-model="newAnimal.description" id="description"
+                                    class="animal-input"></textarea>
+                            </div>
+
+                            <div class="animal-details">
+                                <label for="price">Prix</label>
+                                <input v-model="newAnimal.price" type="number" min="0" id="price"
+                                    class="animal-input" />
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col justify-between items-end">
+                            <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none"
+                                @click="toggleAddForm">Retour</button>
+                            <button type="submit" class="p-4 bg-primary font-semibold rounded-md focus:outline-none">
+                                Ajouter l'animal
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div v-if="showTypeForm">
+                    <form class="flex justify-between w-full" @submit.prevent="addType">
+                        <div>
+                            <div class="animal-details">
+                                <label for="name">Nom</label>
+                                <input v-model="newType.name" type="text" id="name" class="animal-input" required />
+                            </div>
+                            <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none"
+                                @click="toggleTypeForm">Retour</button>
+                            <button type="submit" class="p-4 bg-primary font-semibold rounded-md focus:outline-none">
+                                Ajouter le type d'animal
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div v-if="showBreedForm">
+                    <form class="flex justify-between w-full" @submit.prevent="addBreed(newBreed.typeId)">
+                        <div>
+                            <label for="type">Type</label>
+                            <select v-model="newBreed.typeId" id="type" class="animal-input">
+                                <option value="" disabled>Sélectionnez un type</option>
+                                <option v-for="type in types" :key="type.id" :value="type.id">
+                                    {{ type.name }}
+                                </option>
+                            </select>
+
+                            <div class="animal-details">
+                                <label for="name">Nom</label>
+                                <input v-model="newBreed.name" type="text" id="name" class="animal-input" required />
+                            </div>
+                            <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none"
+                                @click="toggleBreedForm">Retour</button>
+                            <button type="submit" class="p-4 bg-primary font-semibold rounded-md focus:outline-none">
+                                Ajouter une race d'animal
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div v-for="animal in animals" :key="animal.id" class="animal-item rounded-3xl h-1/2 flex">
+                    <div class="animal-picture w-1/4 bg-primary rounded-3xl"></div>
+                    <form class="flex justify-between w-full" @submit.prevent="editAnimal(animal)">
+                        <div>
+                            <div class="animal-details">
+                                <label for="name">Nom</label>
+                                <input v-model="animal.name" type="text" id="name" class="animal-input" />
+                            </div>
+
+                            <label for="breed">Race</label>
+                            <select v-model="animal.breed" id="breed" class="animal-input">
+                                <option :value="animal.breed" disabled>
+                                    {{ animal.breed }}
+                                </option>
+                                <option v-for="breed in breeds" :key="breed.id" :value="breed.id">
+                                    {{ breed.name }}
+                                </option>
+                            </select>
+
+                            <div class="animal-details">
+                                <label for="description">Description</label>
+                                <textarea v-model="animal.description" id="description" class="animal-input"></textarea>
+                            </div>
+
+                            <div class="animal-details">
+                                <label for="price">Prix</label>
+                                <input v-model="animal.price" type="number" id="price" class="animal-input" />
+                            </div>
+                        </div>
+                        <div class="animal-details">
+                            <label for="isOnSale">Status</label>
+                            <div>
                                 <div>
-                                    <div>
-                                        <input type="radio" v-model="animal.isOnSale" :value="true" />
-                                        <span class="ml-2">En vente</span>
-                                    </div>
-                                    <div>
-                                        <input type="radio" v-model="animal.isOnSale" :value="false" />
-                                        <span class="ml-2">Vendu</span>
-                                    </div>
+                                    <input type="radio" v-model="animal.isOnSale" :value="true" />
+                                    <span class="ml-2">En vente</span>
+                                </div>
+                                <div>
+                                    <input type="radio" v-model="animal.isOnSale" :value="false" />
+                                    <span class="ml-2">Vendu</span>
                                 </div>
                             </div>
-                            <div class="flex flex-col justify-between items-end">
-                                <a @click.prevent="delAnimal(animal)">
-                                    <img :src="trashUrl" alt="trash-logo" class="w-10">
-                                </a>
-                                <button type="submit"
-                                    class=" p-4 bg-primary  font-semibold rounded-md  focus:outline-none">Enregistrer
-                                    les
-                                    modifications</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </template>
-        <template v-else>
-            <div class="home-container flex justify-around">
-                <div class="filter-container"></div>
-                <div class="animals-container">
-                    <div v-for="animal in animals" :key="animal.id" class="animal-item rounded-3xl h-1/2 flex">
-                        <div class="animal-picture w-1/4 bg-primary rounded-3xl"></div>
-                        <div class="animal-details">
-                            <p><strong>Nom :</strong> {{ animal.name }}</p>
-                            <p><strong>Race :</strong> {{ animal.breed }}</p>
-                            <p><strong>Description :</strong> {{ animal.description }}</p>
-                            <p><strong>Prix :</strong> {{ animal.price }} €</p>
                         </div>
+                        <div class="flex flex-col justify-between items-end">
+                            <a @click.prevent="delAnimal(animal)">
+                                <img :src="trashUrl" alt="trash-logo" class="w-10">
+                            </a>
+                            <button type="submit"
+                                class=" p-4 bg-primary  font-semibold rounded-md  focus:outline-none">Enregistrer
+                                les
+                                modifications</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </template>
+    <template v-else>
+        <div class="home-container flex justify-around">
+            <div class="filter-container"></div>
+            <div class="animals-container">
+                <div v-for="animal in animals" :key="animal.id" class="animal-item rounded-3xl h-1/2 flex">
+                    <div class="animal-picture w-1/4 bg-primary rounded-3xl"></div>
+                    <div class="animal-details">
+                        <p><strong>Nom :</strong> {{ animal.name }}</p>
+                        <p><strong>Race :</strong> {{ animal.breed }}</p>
+                        <p><strong>Description :</strong> {{ animal.description }}</p>
+                        <p><strong>Prix :</strong> {{ animal.price }} €</p>
                     </div>
                 </div>
             </div>
-        </template>
-    </div>
+        </div>
+    </template>
 </template>
 
 <script>
@@ -220,11 +213,13 @@ export default {
             isUserLoggedIn: false,
             urlLogo: logoUrl,
             isLoginPopupVisible: false,
+            isAlertVisible: false,
             trashUrl: trashUrl,
             showAddForm: false,
             showTypeForm: false,
             showBreedForm: false,
             isTypeSelected: false,
+            alertMessage: "",
             newAnimal: {
                 type: '',
                 name: '',
@@ -298,6 +293,11 @@ export default {
                 if (response.ok) {
                     this.fetchAnimals(this.actualTypeId)
                     this.showAddForm = false;
+                    this.isAlertVisible = true;
+                    this.alertMessage = "Animal ajouté avec succès";
+                    setTimeout(() => {
+                        this.isAlertVisible = false;
+                    }, 3000)
                 } else {
                     console.error('Erreur lors de l\'ajout de l\'animal');
                 }
@@ -321,6 +321,11 @@ export default {
                     this.fetchAnimals(this.actualTypeId)
                     this.fetchTypes();
                     this.showTypeForm = false;
+                    this.isAlertVisible = true;
+                    this.alertMessage = "Type d'animal ajouté avec succès"
+                    setTimeout(() => {
+                        this.isAlertVisible = false
+                    }, 3000)
                 } else {
                     console.error('Erreur lors de l\'ajout du type');
                 }
@@ -359,6 +364,8 @@ export default {
                 if (response.ok) {
                     this.fetchAnimals(this.actualTypeId)
                     this.showBreedForm = false;
+                    this.isAlertVisible = true;
+                    this.alertMessage = "Race d\'animal ajoutée avec succès"
                 } else {
                     console.error('Erreur lors de l\'ajout');
                 }
@@ -447,7 +454,14 @@ export default {
                 });
 
                 if (response.ok) {
-                    console.log('Animal modifié avec succès');
+                    this.isAlertVisible = true
+                    console.log(this.isAlertVisible)
+                    this.alertMessage = "Animal modifié avec succès"
+                    setTimeout(() => {
+                        this.isAlertVisible = false
+                    }, 3000)
+                    console.log(this.isAlertVisible)
+
                 } else {
                     console.error('Erreur lors de la modification de l\'animal');
                 }
@@ -467,8 +481,13 @@ export default {
                     })
                 })
                 if (response.ok) {
+                    this.isAlertVisible = true;
+                    this.alertMessage = "Annonce de l'animal supprimé avec succès"
                     this.animals = this.animals.filter(a => a.id !== animal.id);
-                    console.log('Animal supprimé avec succès');
+                    setTimeout(() => {
+                        this.isAlertVisible = false;
+                    }, 3000)
+
                 } else {
                     console.error('Erreur lors de la suppression de l\'animal');
                 }
@@ -527,5 +546,14 @@ export default {
 .home-container {
     overflow: scroll;
     height: 78vh;
+}
+
+.alert-success {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    width: 274px;
+    border-radius: 10px;
+    padding: 10px;
 }
 </style>
