@@ -366,6 +366,9 @@ export default {
                     this.showBreedForm = false;
                     this.isAlertVisible = true;
                     this.alertMessage = "Race d\'animal ajoutée avec succès"
+                    setTimeout(() => {
+                        this.isAlertVisible = false;
+                    }, 3000)
                 } else {
                     console.error('Erreur lors de l\'ajout');
                 }
