@@ -9,6 +9,8 @@ use App\Entity\Type;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -89,10 +91,23 @@ final class AnimalController extends AbstractController
             return $this->json(['error' => 'Aucun fichier fourni'], 400);
         }
 
-        $fileName = uniqid() . '.' . $file->guessExtension();
-        dump($fileName);
+        $uploadsDir = $this->getParameter('kernel.project_dir') . '/public/images/animal-' . $animal->getId();
+        $filesystem = new Filesystem();
 
-        $file->move($this->getParameter('uploads_dir'), $fileName);
+        if (!$filesystem->exists($uploadsDir)) {
+            $filesystem->mkdir($uploadsDir, 0755);
+        }
+
+        $filesInDir = glob($uploadsDir . '/img-*.{jpg,jpeg,png,gif}', GLOB_BRACE);
+        $nextImageIndex = count($filesInDir) + 1;
+        $fileName = 'img-' . $nextImageIndex . '.' . $file->guessExtension();
+
+        try {
+            $file->move($uploadsDir, $fileName);
+        } catch (FileException $e) {
+            return $this->json(['error' => 'Erreur lors du téléchargement : ' . $e->getMessage()], 500);
+        }
+
 
         $image = new Photo();
         $image->setFileName($fileName);
@@ -103,7 +118,7 @@ final class AnimalController extends AbstractController
 
         return $this->json([
             'message' => 'Image téléchargée avec succès',
-            'imagePath' => '/uploads/' . $fileName,
+            'imagePath' => '/images/animal-' . $animal->getId() . '/' . $fileName,
         ]);
     }
 }
