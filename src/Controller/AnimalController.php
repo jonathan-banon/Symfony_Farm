@@ -71,9 +71,16 @@ final class AnimalController extends AbstractController
     #[Route('/{id}/del', name: 'app_animal_delete', methods: ['POST'])]
     public function delete(Request $request, Animal $animal, EntityManagerInterface $entityManager): Response
     {
+        $filesystem = new Filesystem();
+        $uploadsDir = $this->getParameter('kernel.project_dir') . '/public/images/animal-' . $animal->getId();
+
         if ($request->isMethod('POST')) {
             $entityManager->remove($animal);
             $entityManager->flush();
+
+            if ($filesystem->exists($uploadsDir)) {
+                $filesystem->remove($uploadsDir);
+            }
 
             return new Response(null, Response::HTTP_OK);
         }

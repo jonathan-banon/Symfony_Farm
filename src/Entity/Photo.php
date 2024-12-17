@@ -19,6 +19,7 @@ class Photo
     private ?string $filename = null;
 
     #[ORM\ManyToOne(inversedBy: 'pictures')]
+    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private ?Animal $animal = null;
 
 
