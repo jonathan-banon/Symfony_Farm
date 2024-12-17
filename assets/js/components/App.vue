@@ -58,7 +58,8 @@
 
                             <div class="animal-details">
                                 <label for="age">Âge</label>
-                                <input required v-model="newAnimal.age" type="number" min="1" id="age" class="animal-input" />
+                                <input required v-model="newAnimal.age" type="number" min="1" id="age"
+                                    class="animal-input" />
                             </div>
 
                             <div class="animal-details">
@@ -88,7 +89,7 @@
                         <div>
                             <div class="animal-details">
                                 <label for="name">Nom</label>
-                                <input required v-model="newType.name" type="text" id="name" class="animal-input"/>
+                                <input required v-model="newType.name" type="text" id="name" class="animal-input" />
                             </div>
                             <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none"
                                 @click="toggleTypeForm">Retour</button>
@@ -111,7 +112,7 @@
 
                             <div class="animal-details">
                                 <label for="name">Nom</label>
-                                <input required v-model="newBreed.name" type="text" id="name" class="animal-input"/>
+                                <input required v-model="newBreed.name" type="text" id="name" class="animal-input" />
                             </div>
                             <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none"
                                 @click="toggleBreedForm">Retour</button>
@@ -122,11 +123,17 @@
                     </form>
                 </div>
                 <div v-for="animal in animals" :key="animal.id" class="animal-item rounded-3xl h-1/2 flex">
-                    <form class="flex justify-between w-full" @submit.prevent="editAnimal(animal)" enctype="multipart/form-data">
-                        <div class="animal-picture w-1/4 bg-primary rounded-3xl">
-                            <input type="file" @change="onFileChange($event, animal)">
-                            <button @click="uploadImage(animal)">Télécharger</button>
-                            <img v-if="animal.previewImage" :src="animal.previewImage" alt="Prévisualisation" />
+                    <form class="flex justify-between w-full" @submit.prevent="editAnimal(animal)"
+                        enctype="multipart/form-data">
+                        <div class="animal-picture w-1/4 bg-primary rounded-3xl"
+                            :style="{ backgroundImage: animal.previewImage ? 'url(' + animal.previewImage + ')' : '' }"
+                            style="background-size: cover; background-position: center;">
+                            <div class="overlay bg-opacity-50 p-2">
+                                <input type="file" @change="onFileChange($event, animal)">
+                                <button @click="uploadImage(animal)">Télécharger</button>
+                                <img v-if="animal.previewImage" :src="animal.previewImage" alt="Prévisualisation"
+                                    class="mt-2 w-full rounded-lg shadow" />
+                            </div>
                         </div>
                         <div>
                             <div class="animal-details">
@@ -274,7 +281,7 @@ export default {
                     method: "POST",
                     body: formData,
                 });
-                console.log("RESPONSE +> ",response)
+                console.log("RESPONSE +> ", response)
                 if (response.ok) {
                     const data = await response.json();
                     alert("Image téléchargée avec succès !");
@@ -597,5 +604,29 @@ export default {
     width: 274px;
     border-radius: 10px;
     padding: 10px;
+}
+
+.animal-picture {
+    position: relative;
+    height: 250px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    color: white;
+}
+
+.animal-picture .overlay {
+    background: rgba(0, 0, 0, 0.4);
+    padding: 10px;
+    border-radius: 0 0 12px 12px;
+}
+
+.animal-picture input {
+    margin-bottom: 8px;
+}
+
+.animal-picture img {
+    max-height: 100px;
+    object-fit: contain;
 }
 </style>
