@@ -4,7 +4,7 @@
         <LoginModal :isVisible="isLoginPopupVisible" :isLoggedIn="isUserLoggedIn" @close="closeLoginPopup" />
     </div>
     <div class="bg-secondary min-h-52 flex justify-around items-center">
-        <p class="alert-success bg-primary" v-if="isAlertVisible">{{alertMessage}}</p>
+        <p class="alert-success bg-primary" v-if="isAlertVisible">{{ alertMessage }}</p>
         <img :src="urlLogo" alt="Logo">
         <div class="nav-container">
             <button v-for="type in types" :key="type.id" class="btn bg-primary text-white py-2 px-4 rounded-full"
@@ -122,8 +122,12 @@
                     </form>
                 </div>
                 <div v-for="animal in animals" :key="animal.id" class="animal-item rounded-3xl h-1/2 flex">
-                    <div class="animal-picture w-1/4 bg-primary rounded-3xl"></div>
                     <form class="flex justify-between w-full" @submit.prevent="editAnimal(animal)">
+                        <div class="animal-picture w-1/4 bg-primary rounded-3xl">
+                            <input type="file" @change="onFileChange($event, animal)">
+                            <button @click="uploadImage(animal)">Télécharger</button>
+                            <img v-if="animal.previewImage" :src="animal.previewImage" alt="Prévisualisation" />
+                        </div>
                         <div>
                             <div class="animal-details">
                                 <label for="name">Nom</label>
@@ -249,6 +253,41 @@ export default {
         this.fetchAnimals(this.actualTypeId);
     },
     methods: {
+        onFileChange(e, animal) {
+            if (e.target.files[0]) {
+                animal.file = e.target.files[0];
+                animal.previewImage = URL.createObjectURL(e.target.files[0])
+            }
+
+        },
+        async uploadImage(animal) {
+            if (!animal.file) {
+                alert("Veuillez sélectionner un fichier.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("image", animal.file);
+
+            try {
+                const response = await fetch(`/animal/${animal.id}/upload-image`, {
+                    method: "POST",
+                    body: formData,
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    alert("Image téléchargée avec succès !");
+                    animal.previewImage = data.imagePath;
+                } else {
+                    throw new Error("Échec de l'upload de l'image.");
+                }
+
+            } catch (error) {
+                console.error("Erreur :", error);
+                alert(error.message);
+            }
+        },
         async fetchTypes() {
             try {
                 const response = await fetch(`/type/all`);
