@@ -122,7 +122,7 @@
                     </form>
                 </div>
                 <div v-for="animal in animals" :key="animal.id" class="animal-item rounded-3xl h-1/2 flex">
-                    <form class="flex justify-between w-full" @submit.prevent="editAnimal(animal)">
+                    <form class="flex justify-between w-full" @submit.prevent="editAnimal(animal)" enctype="multipart/form-data">
                         <div class="animal-picture w-1/4 bg-primary rounded-3xl">
                             <input type="file" @change="onFileChange($event, animal)">
                             <button @click="uploadImage(animal)">Télécharger</button>
@@ -274,13 +274,13 @@ export default {
                     method: "POST",
                     body: formData,
                 });
-
+                console.log("RESPONSE +> ",response)
                 if (response.ok) {
                     const data = await response.json();
                     alert("Image téléchargée avec succès !");
                     animal.previewImage = data.imagePath;
                 } else {
-                    throw new Error("Échec de l'upload de l'image.");
+                    //throw new Error("Échec de l'upload de l'image.");
                 }
 
             } catch (error) {

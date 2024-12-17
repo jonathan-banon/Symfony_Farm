@@ -4,9 +4,12 @@ namespace App\Controller;
 
 use App\Entity\Animal;
 use App\Entity\Breed;
+use App\Entity\Photo;
 use App\Entity\Type;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -33,7 +36,7 @@ final class AnimalController extends AbstractController
 
             $entityManager->persist($animal);
             $entityManager->flush();
-            
+
             return new Response(null, Response::HTTP_OK);
         }
         return new Response('Données invalides', Response::HTTP_BAD_REQUEST);
@@ -74,5 +77,33 @@ final class AnimalController extends AbstractController
         }
 
         return new Response('Données invalides', Response::HTTP_BAD_REQUEST);
+    }
+
+
+    #[Route('/{id}/upload-image', name: 'animal_upload_image', methods: ['POST'])]
+    public function uploadImage(Request $request, Animal $animal, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $file = $request->files->get('image');
+        dump($file);
+        if (!$file) {
+            return $this->json(['error' => 'Aucun fichier fourni'], 400);
+        }
+
+        $fileName = uniqid() . '.' . $file->guessExtension();
+        dump($fileName);
+
+        $file->move($this->getParameter('uploads_dir'), $fileName);
+
+        $image = new Photo();
+        $image->setFileName($fileName);
+        $animal->addPicture($image);
+
+        $entityManager->persist($image);
+        $entityManager->flush();
+
+        return $this->json([
+            'message' => 'Image téléchargée avec succès',
+            'imagePath' => '/uploads/' . $fileName,
+        ]);
     }
 }
