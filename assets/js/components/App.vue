@@ -34,11 +34,11 @@
                         <div>
                             <div class="animal-details">
                                 <label for="name">Nom</label>
-                                <input v-model="newAnimal.name" type="text" id="name" class="animal-input" />
+                                <input required v-model="newAnimal.name" type="text" id="name" class="animal-input" />
                             </div>
 
                             <label for="type">Type</label>
-                            <select v-model="newAnimal.type" id="type" class="animal-input"
+                            <select required v-model="newAnimal.type" id="type" class="animal-input"
                                 @change="fetchBreeds(newAnimal.type)">
                                 <option value="" disabled>Sélectionnez un type</option>
                                 <option v-for="type in types" :key="type.id" :value="type.id">
@@ -48,7 +48,7 @@
 
                             <div class="animal-details" v-if="isTypeSelected">
                                 <label for="breed">Race</label>
-                                <select v-model="newAnimal.breed" id="breed" class="animal-input">
+                                <select required v-model="newAnimal.breed" id="breed" class="animal-input">
                                     <option value="" disabled>Sélectionnez une race</option>
                                     <option v-for="breed in breeds" :key="breed.id" :value="breed.id">
                                         {{ breed.name }}
@@ -58,18 +58,18 @@
 
                             <div class="animal-details">
                                 <label for="age">Âge</label>
-                                <input v-model="newAnimal.age" type="number" min="1" id="age" class="animal-input" />
+                                <input required v-model="newAnimal.age" type="number" min="1" id="age" class="animal-input" />
                             </div>
 
                             <div class="animal-details">
                                 <label for="description">Description</label>
-                                <textarea v-model="newAnimal.description" id="description"
+                                <textarea required v-model="newAnimal.description" id="description"
                                     class="animal-input"></textarea>
                             </div>
 
                             <div class="animal-details">
                                 <label for="price">Prix</label>
-                                <input v-model="newAnimal.price" type="number" min="0" id="price"
+                                <input required v-model="newAnimal.price" type="number" min="0" id="price"
                                     class="animal-input" />
                             </div>
                         </div>
@@ -88,7 +88,7 @@
                         <div>
                             <div class="animal-details">
                                 <label for="name">Nom</label>
-                                <input v-model="newType.name" type="text" id="name" class="animal-input" required />
+                                <input required v-model="newType.name" type="text" id="name" class="animal-input"/>
                             </div>
                             <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none"
                                 @click="toggleTypeForm">Retour</button>
@@ -102,7 +102,7 @@
                     <form class="flex justify-between w-full" @submit.prevent="addBreed(newBreed.typeId)">
                         <div>
                             <label for="type">Type</label>
-                            <select v-model="newBreed.typeId" id="type" class="animal-input">
+                            <select required v-model="newBreed.typeId" id="type" class="animal-input">
                                 <option value="" disabled>Sélectionnez un type</option>
                                 <option v-for="type in types" :key="type.id" :value="type.id">
                                     {{ type.name }}
@@ -111,7 +111,7 @@
 
                             <div class="animal-details">
                                 <label for="name">Nom</label>
-                                <input v-model="newBreed.name" type="text" id="name" class="animal-input" required />
+                                <input required v-model="newBreed.name" type="text" id="name" class="animal-input"/>
                             </div>
                             <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none"
                                 @click="toggleBreedForm">Retour</button>
