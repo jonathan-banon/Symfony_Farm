@@ -293,7 +293,6 @@ export default {
                     method: "POST",
                     body: formData,
                 });
-                console.log("RESPONSE +> ", response)
                 if (response.ok) {
                     const data = await response.json();
                     alert("Image téléchargée avec succès !");
@@ -515,12 +514,10 @@ export default {
 
                 if (response.ok) {
                     this.isAlertVisible = true
-                    console.log(this.isAlertVisible)
                     this.alertMessage = "Animal modifié avec succès"
                     setTimeout(() => {
                         this.isAlertVisible = false
                     }, 3000)
-                    console.log(this.isAlertVisible)
 
                 } else {
                     console.error('Erreur lors de la modification de l\'animal');
@@ -556,7 +553,6 @@ export default {
             }
         },
         prevImage(animal) {
-            console.log('prev')
             if (animal.currentImageIndex > 0) {
                 animal.currentImageIndex--;
             } else {
@@ -571,7 +567,6 @@ export default {
             }
         },
         async delImage(animal) {
-            console.log("del")
             try {
                 const response = await fetch(`/animal/${animal.id}/delete-image/${animal.currentImageIndex}`, {
                     method: 'POST',
