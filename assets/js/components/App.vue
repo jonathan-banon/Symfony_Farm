@@ -130,6 +130,9 @@
                             backgroundSize: 'cover',
                             backgroundPosition: 'center'
                         }">
+                            <a @click.prevent="delImage(animal)">
+                                <img :src="trashUrl" alt="trash-logo" class="w-10">
+                            </a>
                             <div class="carousel-container" v-if="animal.images.length > 1">
                                 <img class="carousel-btn left" @click="prevImage(animal)">
                                 </img>
@@ -272,8 +275,8 @@ export default {
             if (e.target.files[0]) {
                 animal.file = e.target.files[0];
                 const imageUrl = URL.createObjectURL(e.target.files[0]);
-                animal.images.push(imageUrl); 
-                animal.currentImageIndex = animal.images.length - 1; 
+                animal.images.push(imageUrl);
+                animal.currentImageIndex = animal.images.length - 1;
             }
         },
         async uploadImage(animal) {
@@ -561,13 +564,35 @@ export default {
             }
         },
         nextImage(animal) {
-            console.log('next')
             if (animal.currentImageIndex < animal.images.length - 1) {
                 animal.currentImageIndex++;
             } else {
                 animal.currentImageIndex = 0;
             }
         },
+        async delImage(animal) {
+            console.log("del")
+            try {
+                const response = await fetch(`/animal/${animal.id}/delete-image/${animal.currentImageIndex}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        id: animal.id,
+                        currentImageIndex: animal.currentImageIndex
+                    })
+
+                })
+                if (response.ok) {
+                    this.fetchAnimals(this.actualTypeId)
+                    this.isAlertVisible = true;
+                    this.alertMessage = "Image de l'animal supprimé avec succès"
+                }
+            } catch {
+
+            }
+        }
     }
 }
 </script>
