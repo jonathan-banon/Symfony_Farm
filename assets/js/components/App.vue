@@ -130,7 +130,7 @@
                             backgroundSize: 'cover',
                             backgroundPosition: 'center'
                         }">
-                            <div class="carousel-container">
+                            <div class="carousel-container" v-if="animal.images.length > 1">
                                 <img class="carousel-btn left" @click="prevImage(animal)">
                                 </img>
                                 <img class="carousel-btn right" @click="nextImage(animal)">
