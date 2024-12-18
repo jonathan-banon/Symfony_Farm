@@ -125,14 +125,21 @@
                 <div v-for="animal in animals" :key="animal.id" class="animal-item rounded-3xl h-1/2 flex">
                     <form class="flex justify-between w-full" @submit.prevent="editAnimal(animal)"
                         enctype="multipart/form-data">
-                        <div class="animal-picture w-1/4 bg-primary rounded-3xl"
-                            :style="{ backgroundImage: animal.previewImage ? 'url(' + animal.previewImage + ')' : '' }"
-                            style="background-size: cover; background-position: center;">
+                        <div class="animal-picture w-1/4 bg-primary rounded-3xl" :style="{
+                            backgroundImage: 'url(' + animal.images[animal.currentImageIndex] + ')',
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center'
+                        }">
+                            <div class="carousel-container">
+                                <img class="carousel-btn left" @click="prevImage(animal)">
+                                </img>
+                                <img class="carousel-btn right" @click="nextImage(animal)">
+                                </img>
+                            </div>
+
                             <div class="overlay bg-opacity-50 p-2">
                                 <input type="file" @change="onFileChange($event, animal)">
                                 <button @click="uploadImage(animal)">Télécharger</button>
-                                <img v-if="animal.previewImage" :src="animal.previewImage" alt="Prévisualisation"
-                                    class="mt-2 w-full rounded-lg shadow" />
                             </div>
                         </div>
                         <div>
@@ -258,14 +265,16 @@ export default {
         const savedTypeId = localStorage.getItem('actualTypeId');
         this.actualTypeId = savedTypeId ? parseInt(savedTypeId, 10) : 1;
         this.fetchAnimals(this.actualTypeId);
+
     },
     methods: {
         onFileChange(e, animal) {
             if (e.target.files[0]) {
                 animal.file = e.target.files[0];
-                animal.previewImage = URL.createObjectURL(e.target.files[0])
+                const imageUrl = URL.createObjectURL(e.target.files[0]);
+                animal.images.push(imageUrl); 
+                animal.currentImageIndex = animal.images.length - 1; 
             }
-
         },
         async uploadImage(animal) {
             if (!animal.file) {
@@ -383,7 +392,6 @@ export default {
             this.actualTypeId = typeId;
             this.fetchBreeds(this.actualTypeId);
             localStorage.setItem('actualTypeId', typeId);
-            console.log(this.animals)
             try {
                 const response = await fetch(`/type/${typeId}/animals`);
                 const data = await response.json();
@@ -543,7 +551,23 @@ export default {
             } catch {
                 console.error('Erreur lors de l\'envoi du formulaire:', error);
             }
-        }
+        },
+        prevImage(animal) {
+            console.log('prev')
+            if (animal.currentImageIndex > 0) {
+                animal.currentImageIndex--;
+            } else {
+                animal.currentImageIndex = animal.images.length - 1;
+            }
+        },
+        nextImage(animal) {
+            console.log('next')
+            if (animal.currentImageIndex < animal.images.length - 1) {
+                animal.currentImageIndex++;
+            } else {
+                animal.currentImageIndex = 0;
+            }
+        },
     }
 }
 </script>
@@ -606,27 +630,63 @@ export default {
     padding: 10px;
 }
 
+.animal-container {
+    display: flex;
+    margin-bottom: 20px;
+}
+
 .animal-picture {
     position: relative;
-    height: 250px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
+    height: 300px;
+    overflow: hidden;
+}
+
+.carousel-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.carousel-image {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    border-radius: 15px;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
     color: white;
-}
-
-.animal-picture .overlay {
-    background: rgba(0, 0, 0, 0.4);
+    border: none;
     padding: 10px;
-    border-radius: 0 0 12px 12px;
+    cursor: pointer;
+    z-index: 10;
+    border-radius: 50%;
 }
 
-.animal-picture input {
-    margin-bottom: 8px;
+.carousel-btn.left {
+    left: 10px;
 }
 
-.animal-picture img {
-    max-height: 100px;
-    object-fit: contain;
+.carousel-btn.right {
+    right: 10px;
+}
+
+.overlay {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    width: 90%;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 10px;
+    padding: 10px;
+    color: white;
 }
 </style>

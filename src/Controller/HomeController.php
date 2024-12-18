@@ -42,7 +42,12 @@ class HomeController extends AbstractController
     {
         $animals = $animalRepository->findByTypeId($id);
         $data = [];
+        
         foreach ($animals as $animal) {
+            $images = [];
+            foreach ($animal->getPictures() as $picture) {
+                $images[] = '/images/animal-' . $animal->getId() . '/' . $picture->getFilename();
+            }
             $firstImage = $animal->getPictures()->first();
             $imagePath = $firstImage ? '/images/animal-' . $animal->getId() . '/' . $firstImage->getFilename() : null;
 
@@ -53,7 +58,8 @@ class HomeController extends AbstractController
                 'description' => $animal->getDescription(),
                 'price' => $animal->getPrice(),
                 'isOnSale' => $animal->isOnSale() ? 'true' : 'false',
-                'previewImage' => $imagePath,
+                'currentImageIndex' => 0,
+                'images' => $images
             ];
         }
         return new JsonResponse($data);
