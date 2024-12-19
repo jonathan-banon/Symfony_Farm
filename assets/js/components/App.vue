@@ -203,7 +203,18 @@
             <div class="filter-container"></div>
             <div class="animals-container">
                 <div v-for="animal in animals" :key="animal.id" class="animal-item rounded-3xl h-1/2 flex">
-                    <div class="animal-picture w-1/4 bg-primary rounded-3xl"></div>
+                    <div class="animal-picture w-1/4 bg-primary rounded-3xl" :style="{
+                        backgroundImage: 'url(' + animal.images[animal.currentImageIndex] + ')',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center'
+                    }">
+                        <div class="carousel-container" v-if="animal.images.length > 1">
+                            <img class="carousel-btn left" @click="prevImage(animal)">
+                            </img>
+                            <img class="carousel-btn right" @click="nextImage(animal)">
+                            </img>
+                        </div>
+                    </div>
                     <div class="animal-details">
                         <p><strong>Nom :</strong> {{ animal.name }}</p>
                         <p><strong>Race :</strong> {{ animal.breed }}</p>
