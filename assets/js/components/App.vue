@@ -3,14 +3,18 @@
         v-if="isLoginPopupVisible">
         <LoginModal :isVisible="isLoginPopupVisible" :isLoggedIn="isUserLoggedIn" @close="closeLoginPopup" />
     </div>
-    <div class="bg-secondary min-h-52 flex justify-around items-center">
+    <div class="bg-secondary min-h-60 flex justify-around items-center">
         <p class="alert-success bg-primary" v-if="isAlertVisible">{{ alertMessage }}</p>
         <img :src="urlLogo" alt="Logo">
         <div class="nav-container">
-            <button v-for="type in types" :key="type.id" class="btn bg-primary text-white py-2 px-4 rounded-full"
-                @click="fetchAnimals(type.id)">
-                {{ type.name }}
-            </button>
+            <div v-for="type in types" :key="type.id" class="type-container flex">
+                <button class="btn bg-primary text-white py-2 px-4 rounded-full" @click="fetchAnimals(type.id)">
+                    {{ type.name }}
+                </button>
+                <a @click.prevent="delType(type.id)" class="delete-type-icon">
+                    <img :src="trashUrl" alt="trash-logo" class="w-6">
+                </a>
+            </div>
         </div>
         <button class="btn bg-primary text-white py-2 px-4 rounded-full" @click="toggleLoginPopup">
             {{ isUserLoggedIn ? 'Déconnexion' : 'Connexion' }}
@@ -563,6 +567,34 @@ export default {
                 console.error('Erreur lors de l\'envoi du formulaire:', error);
             }
         },
+        async delType(id) {
+            try {
+                const response = await fetch(`/type/${id}/del`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                if (response.ok) {
+                    this.isAlertVisible = true;
+                    this.alertMessage = "Type d'animal supprimé avec succès";
+                    const data = await response.json();
+                    if (data.newTypeId) {
+                        this.actualTypeId = data.newTypeId;
+                        this.fetchAnimals(this.actualTypeId);
+                    }
+                    this.types = this.types.filter(type => type.id !== id);
+                    setTimeout(() => {
+                        this.isAlertVisible = false;
+                    }, 3000)
+
+                } else {
+                    console.error('Erreur lors de la suppression du type d\'animal');
+                }
+            } catch {
+                console.error('Erreur lors de l\'envoi du formulaire:', error);
+            }
+        },
         prevImage(animal) {
             if (animal.currentImageIndex > 0) {
                 animal.currentImageIndex--;
@@ -656,9 +688,11 @@ export default {
     position: fixed;
     top: 15px;
     right: 15px;
-    width: 274px;
+    width: 20%;
     border-radius: 10px;
     padding: 10px;
+    text-align: center;
+    font-weight: bold;
 }
 
 .animal-container {

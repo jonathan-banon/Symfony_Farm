@@ -2,11 +2,12 @@
 
 namespace App\Controller;
 
-use App\Entity\Breed;
+use App\Entity\Animal;
 use App\Entity\Type;
 use App\Repository\TypeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -48,7 +49,7 @@ final class TypeController extends AbstractController
         return new JsonResponse($data);
     }
 
-  
+
 
     #[Route('/new', name: 'app_type_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
@@ -64,5 +65,39 @@ final class TypeController extends AbstractController
             return new Response(null, Response::HTTP_OK);
         }
         return new Response('Données invalides', Response::HTTP_BAD_REQUEST);
+    }
+
+    #[Route('/{id}/del', name: 'app_type_delete', methods: ['POST'])]
+    public function delete(Type $type, EntityManagerInterface $entityManager, TypeRepository $typeRepository): Response
+    {
+        $filesystem = new Filesystem();
+        foreach ($type->getAnimals() as $animal) {
+            $animalId = $animal->getId();
+            $uploadDir = __DIR__ . '/../../public/images/animal-' . $animalId;
+
+            if ($filesystem->exists($uploadDir)) {
+                try {
+                    $filesystem->remove($uploadDir);
+                } catch (\Exception $e) {
+                    return new JsonResponse([
+                        'error' => 'Erreur lors de la suppression des fichiers de l\'animal ' . $animalId . ': ' . $e->getMessage()
+                    ], Response::HTTP_INTERNAL_SERVER_ERROR);
+                }
+            }
+        }
+
+        try {
+            $entityManager->remove($type);
+            $entityManager->flush();
+            $newType = $entityManager->getRepository(Type::class)->findOneBy([], ['id' => 'ASC']);
+            return new JsonResponse([
+                'message' => 'Type supprimé avec succès !',
+                'newTypeId' => $newType ? $newType->getId() : null
+            ], Response::HTTP_OK);
+        } catch (\Exception $e) {
+            return new JsonResponse([
+                'error' => 'Erreur lors de la suppression du type : ' . $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 }

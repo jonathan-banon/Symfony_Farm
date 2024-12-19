@@ -39,7 +39,7 @@ class Animal
     /**
      * @var Collection<int, Photo>
      */
-    #[ORM\OneToMany(targetEntity: Photo::class, mappedBy: 'animal')]
+    #[ORM\OneToMany(targetEntity: Photo::class, mappedBy: 'animal', cascade: ['remove'], orphanRemoval: true)]
     private Collection $pictures;
 
     #[ORM\Column(nullable: true)]

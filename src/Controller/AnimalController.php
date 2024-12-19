@@ -7,7 +7,6 @@ use App\Entity\Breed;
 use App\Entity\Photo;
 use App\Entity\Type;
 use App\Repository\AnimalRepository;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
@@ -134,7 +133,6 @@ final class AnimalController extends AbstractController
     public function uploadImage(Request $request, Animal $animal, EntityManagerInterface $entityManager): JsonResponse
     {
         $file = $request->files->get('image');
-        dump($file);
         if (!$file) {
             return $this->json(['error' => 'Aucun fichier fourni'], 400);
         }

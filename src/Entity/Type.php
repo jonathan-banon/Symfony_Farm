@@ -18,7 +18,7 @@ class Type
     /**
      * @var Collection<int, Animal>
      */
-    #[ORM\OneToMany(targetEntity: Animal::class, mappedBy: 'type')]
+    #[ORM\OneToMany(targetEntity: Animal::class, mappedBy: 'type',  cascade: ['remove'], orphanRemoval: true)]
     private Collection $animals;
 
     #[ORM\Column(length: 255)]
@@ -27,7 +27,7 @@ class Type
     /**
      * @var Collection<int, Breed>
      */
-    #[ORM\OneToMany(targetEntity: Breed::class, mappedBy: 'type')]
+    #[ORM\OneToMany(targetEntity: Breed::class, mappedBy: 'type',  cascade: ['remove'], orphanRemoval: true)]
     private Collection $breeds;
 
 
