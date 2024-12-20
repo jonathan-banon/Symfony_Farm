@@ -13,7 +13,8 @@
                     <div>
                         <input type="text" v-model="type.name" class="border rounded px-2 py-1 w-full" />
                         <div class="flex justify-between mt-2.5">
-                            <button @click="saveEditType(type)" class="bg-primary  px-3 py-1 rounded">Enregistrer</button>
+                            <button @click="saveEditType(type)"
+                                class="bg-primary  px-3 py-1 rounded">Enregistrer</button>
                             <button @click="cancelEditType" class="bg-primary  px-3 py-1 rounded">Retour</button>
                         </div>
                     </div>
@@ -588,6 +589,37 @@ export default {
                 console.error('Erreur lors de l\'envoi du formulaire:', error);
             }
         },
+        async editAnimal(animal) {
+            try {
+                const response = await fetch(`/animal/${animal.id}/edit`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: animal.name,
+                        breed: animal.breed,
+                        description: animal.description,
+                        price: animal.price,
+                        status: animal.isOnSale
+
+                    }),
+                });
+
+                if (response.ok) {
+                    this.isAlertVisible = true
+                    this.alertMessage = "Animal modifié avec succès"
+                    setTimeout(() => {
+                        this.isAlertVisible = false
+                    }, 3000)
+
+                } else {
+                    console.error('Erreur lors de la modification de l\'animal');
+                }
+            } catch (error) {
+                console.error('Erreur lors de l\'envoi du formulaire:', error);
+            }
+        },
         async delType(id) {
             try {
                 const response = await fetch(`/type/${id}/del`, {
@@ -619,12 +651,35 @@ export default {
         editType(id) {
             this.editingTypeId = id;
         },
-        saveEditType(type) {
-            console.log("Saving changes for:", type);
-            this.editingTypeId = null; 
+        async saveEditType(type) {
+            this.editingTypeId = null;
+            try {
+                const response = await fetch(`/type/${type.id}/edit`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: type.name,
+                    }),
+                });
+
+                if (response.ok) {
+                    this.isAlertVisible = true
+                    this.alertMessage = "Type d\'animal modifié avec succès"
+                    setTimeout(() => {
+                        this.isAlertVisible = false
+                    }, 3000)
+
+                } else {
+                    console.error('Erreur lors de la modification du Type d\'animal');
+                }
+            } catch (error) {
+                console.error('Erreur lors de l\'envoi du formulaire:', error);
+            }
         },
         cancelEditType() {
-            this.editingTypeId = null; 
+            this.editingTypeId = null;
         },
         prevImage(animal) {
             if (animal.currentImageIndex > 0) {
