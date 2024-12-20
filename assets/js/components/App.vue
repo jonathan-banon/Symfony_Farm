@@ -7,16 +7,34 @@
         <p class="alert-success bg-primary" v-if="isAlertVisible">{{ alertMessage }}</p>
         <img :src="urlLogo" alt="Logo">
         <div class="nav-container">
-            <div v-for="type in types" :key="type.id" class="type-container flex">
-                <button class="btn bg-primary text-white py-2 px-4 rounded-full" @click="fetchAnimals(type.id)">
-                    {{ type.name }}
-                </button>
-                <a @click.prevent="delType(type.id)" class="delete-type-icon">
-                    <img :src="trashUrl" alt="trash-logo" class="w-6">
-                </a>
+            <div v-for="type in types" :key="type.id" class="flex">
+
+                <template v-if="editingTypeId === type.id">
+                    <div>
+                        <input type="text" v-model="type.name" class="border rounded px-2 py-1 w-full" />
+                        <div class="flex justify-between mt-2.5">
+                            <button @click="saveEditType(type)" class="bg-primary  px-3 py-1 rounded">Enregistrer</button>
+                            <button @click="cancelEditType" class="bg-primary  px-3 py-1 rounded">Retour</button>
+                        </div>
+                    </div>
+                </template>
+                <template v-else>
+                    <button class="btn bg-primary text-white py-2 px-4 rounded-full" @click="fetchAnimals(type.id)">
+                        {{ type.name }}
+                    </button>
+                </template>
+
+                <template v-if="isUserLoggedIn && editingTypeId != type.id">
+                    <a @click.prevent="delType(type.id)" class="delete-type-icon">
+                        <img :src="trashUrl" alt="trash-logo" class="w-6">
+                    </a>
+                    <a @click.prevent="editType(type.id)" class="delete-type-icon">
+                        <img :src="penUrl" alt="pen-logo" class="w-6">
+                    </a>
+                </template>
             </div>
         </div>
-        <button class="btn bg-primary text-white py-2 px-4 rounded-full" @click="toggleLoginPopup">
+        <button class="btn bg-primary py-2 px-4 rounded-full" @click="toggleLoginPopup">
             {{ isUserLoggedIn ? 'Déconnexion' : 'Connexion' }}
         </button>
     </div>
@@ -234,6 +252,7 @@
 <script>
 import logoUrl from '../../images/logo.svg';
 import trashUrl from '../../images/trash.svg';
+import penUrl from '../../images/pen.svg';
 import LoginModal from './login/App.vue';
 
 export default {
@@ -251,11 +270,13 @@ export default {
             isLoginPopupVisible: false,
             isAlertVisible: false,
             trashUrl: trashUrl,
+            penUrl: penUrl,
             showAddForm: false,
             showTypeForm: false,
             showBreedForm: false,
             isTypeSelected: false,
             alertMessage: "",
+            editingTypeId: null,
             newAnimal: {
                 type: '',
                 name: '',
@@ -594,6 +615,16 @@ export default {
             } catch {
                 console.error('Erreur lors de l\'envoi du formulaire:', error);
             }
+        },
+        editType(id) {
+            this.editingTypeId = id;
+        },
+        saveEditType(type) {
+            console.log("Saving changes for:", type);
+            this.editingTypeId = null; 
+        },
+        cancelEditType() {
+            this.editingTypeId = null; 
         },
         prevImage(animal) {
             if (animal.currentImageIndex > 0) {
