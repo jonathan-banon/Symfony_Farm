@@ -133,13 +133,13 @@
                         </div>
                     </form>
                 </template>
-                <template v-if="showBreedForm">
+                <div v-if="showBreedForm" class="flex">
                     <form class="flex justify-around w-full" @submit.prevent="addBreed(newBreed.typeId)">
                         <div>
                             <label for="type">Type</label>
                             <select required v-model="newBreed.typeId" id="type" class="animal-input"
                                 @change="fetchBreeds($event.target.value)">
-                                <option value="" disabled>Sélectionnez un type</option>
+                                <option value="" disabled selected>Sélectionnez un type</option>
                                 <option v-for="type in types" :key="type.id" :value="type.id">
                                     {{ type.name }}
                                 </option>
@@ -154,11 +154,13 @@
                                 Ajouter une race d'animal
                             </button>
                         </div>
-                        <div class="w-1/2 flex flex-col justify-around">
-                            <template v-for="breed in breeds">
-                                <div class="flex justify-between items-center">
+                    </form>
+                    <div class="w-1/2 flex flex-col justify-around">
+                        <template v-for="breed in breeds">
+                            <div class="flex justify-between items-center">
+                                <template v-if="editingBreedId != breed.id">
                                     <p>{{ breed.name }}</p>
-                                    <div v-if="editingBreedId != breed.id">
+                                    <div>
                                         <a @click.prevent="delBreed(breed.id)" class="delete-type-icon">
                                             <img :src="trashUrl" alt="trash-logo" class="w-6">
                                         </a>
@@ -166,11 +168,20 @@
                                             <img :src="penUrl" alt="pen-logo" class="w-6">
                                         </a>
                                     </div>
+                                </template>
+                                <div v-if="editingBreedId === breed.id">
+                                    <input type="text" v-model="breed.name" class="border rounded px-2 py-1 w-full" />
+                                    <div class="flex justify-between mt-2.5">
+                                        <button @click="saveEditBreed(breed)"
+                                            class="bg-primary  px-3 py-1 rounded">Enregistrer</button>
+                                        <button @click="cancelEditBreed"
+                                            class="bg-primary  px-3 py-1 rounded">Retour</button>
+                                    </div>
                                 </div>
-                            </template>
-                        </div>
-                    </form>
-                </template>
+                            </div>
+                        </template>
+                    </div>
+                </div>
                 <div v-for="animal in animals" :key="animal.id" class="animal-item rounded-3xl h-1/2 flex">
                     <form class="flex justify-between w-full" @submit.prevent="editAnimal(animal)"
                         enctype="multipart/form-data">
@@ -304,6 +315,7 @@ export default {
             isTypeSelected: false,
             alertMessage: "",
             editingTypeId: null,
+            editingBreedId: null,
             newAnimal: {
                 type: '',
                 name: '',
@@ -719,32 +731,6 @@ export default {
         editType(id) {
             this.editingTypeId = id;
         },
-        async delBreed(id) {
-            try {
-                const response = await fetch(`/breed/${id}/del`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                })
-                if (response.ok) {
-                    this.isAlertVisible = true;
-                    this.alertMessage = "Race d'animal supprimé avec succès"; 
-                    this.fetchAnimals(this.actualTypeId);                  
-                    setTimeout(() => {
-                        this.isAlertVisible = false;
-                    }, 3000)
-
-                } else {
-                    console.error('Erreur lors de la suppression du type d\'animal');
-                }
-            } catch {
-                console.error('Erreur lors de l\'envoi du formulaire:', error);
-            }
-        },
-        editType(id) {
-            this.editingTypeId = id;
-        },
         async saveEditType(type) {
             this.editingTypeId = null;
             try {
@@ -774,6 +760,62 @@ export default {
         },
         cancelEditType() {
             this.editingTypeId = null;
+        },
+        editBreed(id) {
+            this.editingBreedId = id;
+        },
+        async delBreed(id) {
+            try {
+                const response = await fetch(`/breed/${id}/del`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                if (response.ok) {
+                    this.isAlertVisible = true;
+                    this.alertMessage = "Race d'animal supprimé avec succès";
+                    this.fetchAnimals(this.actualTypeId);
+                    setTimeout(() => {
+                        this.isAlertVisible = false;
+                    }, 3000)
+
+                } else {
+                    console.error('Erreur lors de la suppression du type d\'animal');
+                }
+            } catch {
+                console.error('Erreur lors de l\'envoi du formulaire:', error);
+            }
+        },
+        async saveEditBreed(breed) {
+            try {
+                const response = await fetch(`/breed/${breed.id}/edit`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: breed.name,
+                    }),
+                });
+
+                if (response.ok) {
+                    this.editingBreedId = null
+                    this.isAlertVisible = true
+                    this.alertMessage = "Race d\'animal modifié avec succès"
+                    setTimeout(() => {
+                        this.isAlertVisible = false
+                    }, 3000)
+
+                } else {
+                    console.error('Erreur lors de la modification d\'une race d\'animal');
+                }
+            } catch (error) {
+                console.error('Erreur lors de l\'envoi du formulaire:', error);
+            }
+        },
+        cancelEditBreed() {
+            this.editingBreedId = null;
         },
         prevImage(animal) {
             if (animal.currentImageIndex > 0) {

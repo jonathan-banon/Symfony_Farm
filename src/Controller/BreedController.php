@@ -68,4 +68,19 @@ final class BreedController extends AbstractController
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+    #[Route('/{id}/edit', name: 'app_breed_edit', methods: ['POST'])]
+    public function edit(Request $request, Breed $breed, EntityManagerInterface $entityManager): Response
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+
+            $breed->setName($data['name']);
+            $entityManager->flush();
+
+            return new Response(null, Response::HTTP_OK);
+        }
+        return new Response('Données invalides', Response::HTTP_BAD_REQUEST);
+    }
+
 }
