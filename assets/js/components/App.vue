@@ -54,47 +54,58 @@
             <div class="animals-container">
                 <div v-if="showAddForm">
                     <form class="flex justify-between w-full" @submit.prevent="addAnimal">
-                        <div>
-                            <div class="animal-details">
-                                <label for="name">Nom</label>
-                                <input required v-model="newAnimal.name" type="text" id="name" class="animal-input" />
+                        <div class="flex justify-between w-3/5">
+                            <div class="animal-picture w-2/5 bg-primary rounded-3xl" :style="{
+                                backgroundImage: 'url(' + newAnimal.images[0] + ')',
+                                backgroundSize: 'cover',
+                                backgroundPosition: 'center'
+                            }">
+                                <div class="overlay bg-opacity-50 p-2">
+                                    <input type="file" @change="newOnFileChange($event)">
+                                </div>
                             </div>
-
-                            <label for="type">Type</label>
-                            <select required v-model="newAnimal.type" id="type" class="animal-input"
-                                @change="fetchBreeds(newAnimal.type)">
-                                <option value="" disabled>Sélectionnez un type</option>
-                                <option v-for="type in types" :key="type.id" :value="type.id">
-                                    {{ type.name }}
-                                </option>
-                            </select>
-
-                            <div class="animal-details" v-if="isTypeSelected">
-                                <label for="breed">Race</label>
-                                <select required v-model="newAnimal.breed" id="breed" class="animal-input">
-                                    <option value="" disabled>Sélectionnez une race</option>
-                                    <option v-for="breed in breeds" :key="breed.id" :value="breed.id">
-                                        {{ breed.name }}
+                            <div>
+                                <div class="animal-details">
+                                    <label for="name">Nom</label>
+                                    <input required v-model="newAnimal.name" type="text" id="name"
+                                        class="animal-input" />
+                                </div>
+                                <label for="type">Type</label>
+                                <select required v-model="newAnimal.type" id="type" class="animal-input"
+                                    @change="fetchBreeds(newAnimal.type)">
+                                    <option value="" disabled>Sélectionnez un type</option>
+                                    <option v-for="type in types" :key="type.id" :value="type.id">
+                                        {{ type.name }}
                                     </option>
                                 </select>
-                            </div>
 
-                            <div class="animal-details">
-                                <label for="age">Âge</label>
-                                <input required v-model="newAnimal.age" type="number" min="1" id="age"
-                                    class="animal-input" />
-                            </div>
+                                <div class="animal-details" v-if="isTypeSelected">
+                                    <label for="breed">Race</label>
+                                    <select required v-model="newAnimal.breed" id="breed" class="animal-input">
+                                        <option value="" disabled>Sélectionnez une race</option>
+                                        <option v-for="breed in breeds" :key="breed.id" :value="breed.id">
+                                            {{ breed.name }}
+                                        </option>
+                                    </select>
+                                </div>
 
-                            <div class="animal-details">
-                                <label for="description">Description</label>
-                                <textarea required v-model="newAnimal.description" id="description"
-                                    class="animal-input"></textarea>
-                            </div>
+                                <div class="animal-details">
+                                    <label for="age">Âge</label>
+                                    <input required v-model="newAnimal.age" type="number" min="1" id="age"
+                                        class="animal-input" />
+                                </div>
 
-                            <div class="animal-details">
-                                <label for="price">Prix</label>
-                                <input required v-model="newAnimal.price" type="number" min="0" id="price"
-                                    class="animal-input" />
+                                <div class="animal-details">
+                                    <label for="description">Description</label>
+                                    <textarea required v-model="newAnimal.description" id="description"
+                                        class="animal-input"></textarea>
+                                </div>
+
+                                <div class="animal-details">
+                                    <label for="price">Prix</label>
+                                    <input required v-model="newAnimal.price" type="number" min="0" id="price"
+                                        class="animal-input" />
+                                </div>
                             </div>
                         </div>
 
@@ -285,6 +296,8 @@ export default {
                 age: '',
                 description: '',
                 price: '',
+                file: null,
+                images: []
             },
             newType: {
                 name: '',
@@ -316,6 +329,13 @@ export default {
                 animal.currentImageIndex = animal.images.length - 1;
             }
         },
+        newOnFileChange(e) {
+            if (e.target.files[0]) {
+                this.newAnimal.file = e.target.files[0];
+                const imageUrl = URL.createObjectURL(e.target.files[0]);
+                this.newAnimal.images.push(imageUrl);
+            }
+        },
         async uploadImage(animal) {
             if (!animal.file) {
                 alert("Veuillez sélectionner un fichier.");
@@ -335,7 +355,7 @@ export default {
                     alert("Image téléchargée avec succès !");
                     animal.previewImage = data.imagePath;
                 } else {
-                    //throw new Error("Échec de l'upload de l'image.");
+                    throw new Error("Échec de l'upload de l'image.");
                 }
 
             } catch (error) {
@@ -368,7 +388,17 @@ export default {
             }
         },
         async addAnimal() {
-            try {
+            if (!this.newAnimal.file) {
+                alert("Veuillez sélectionner une image pour votre animal.");
+                return;
+            }
+
+            const file = this.newAnimal.file;
+            const reader = new FileReader();
+
+            reader.onloadend = async () => {
+                const base64File = reader.result.split(',')[1];  
+
                 const response = await fetch('/animal/new', {
                     method: 'POST',
                     headers: {
@@ -381,6 +411,7 @@ export default {
                         age: this.newAnimal.age,
                         description: this.newAnimal.description,
                         price: this.newAnimal.price,
+                        file: base64File, 
                     })
                 });
 
@@ -395,9 +426,8 @@ export default {
                 } else {
                     console.error('Erreur lors de l\'ajout de l\'animal');
                 }
-            } catch (error) {
-                console.error('Erreur lors de l\'envoi du formulaire:', error);
-            }
+            };
+            reader.readAsDataURL(file);
         },
         async addType() {
             try {
