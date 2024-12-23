@@ -48,11 +48,11 @@
                     <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none"
                         @click="toggleTypeForm">Ajouter un Type d'animal</button>
                     <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none"
-                        @click="toggleBreedForm">Ajouter une race d'animal</button>
+                        @click="toggleBreedForm">Gérer mes races d'animaux</button>
                 </div>
             </div>
             <div class="animals-container">
-                <div v-if="showAddForm">
+                <template v-if="showAddForm">
                     <form class="flex justify-between w-full" @submit.prevent="addAnimal">
                         <div class="flex justify-between w-3/5">
                             <div class="animal-picture w-2/5 bg-primary rounded-3xl" :style="{
@@ -117,8 +117,8 @@
                             </button>
                         </div>
                     </form>
-                </div>
-                <div v-if="showTypeForm">
+                </template>
+                <template v-if="showTypeForm">
                     <form class="flex justify-between w-full" @submit.prevent="addType">
                         <div>
                             <div class="animal-details">
@@ -132,18 +132,18 @@
                             </button>
                         </div>
                     </form>
-                </div>
-                <div v-if="showBreedForm">
-                    <form class="flex justify-between w-full" @submit.prevent="addBreed(newBreed.typeId)">
+                </template>
+                <template v-if="showBreedForm">
+                    <form class="flex justify-around w-full" @submit.prevent="addBreed(newBreed.typeId)">
                         <div>
                             <label for="type">Type</label>
-                            <select required v-model="newBreed.typeId" id="type" class="animal-input">
+                            <select required v-model="newBreed.typeId" id="type" class="animal-input"
+                                @change="fetchBreeds($event.target.value)">
                                 <option value="" disabled>Sélectionnez un type</option>
                                 <option v-for="type in types" :key="type.id" :value="type.id">
                                     {{ type.name }}
                                 </option>
                             </select>
-
                             <div class="animal-details">
                                 <label for="name">Nom</label>
                                 <input required v-model="newBreed.name" type="text" id="name" class="animal-input" />
@@ -154,8 +154,23 @@
                                 Ajouter une race d'animal
                             </button>
                         </div>
+                        <div class="w-1/2 flex flex-col justify-around">
+                            <template v-for="breed in breeds">
+                                <div class="flex justify-between items-center">
+                                    <p>{{ breed.name }}</p>
+                                    <div v-if="editingBreedId != breed.id">
+                                        <a @click.prevent="delBreed(breed.id)" class="delete-type-icon">
+                                            <img :src="trashUrl" alt="trash-logo" class="w-6">
+                                        </a>
+                                        <a @click.prevent="editBreed(breed.id)" class="delete-type-icon">
+                                            <img :src="penUrl" alt="pen-logo" class="w-6">
+                                        </a>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
                     </form>
-                </div>
+                </template>
                 <div v-for="animal in animals" :key="animal.id" class="animal-item rounded-3xl h-1/2 flex">
                     <form class="flex justify-between w-full" @submit.prevent="editAnimal(animal)"
                         enctype="multipart/form-data">
@@ -320,6 +335,9 @@ export default {
         this.fetchAnimals(this.actualTypeId);
     },
     methods: {
+        OnTypeSelected(e) {
+            console.log(e.target.value);
+        },
         onFileChange(e, animal) {
             const files = e.target.files;
             if (files && files.length > 0) {
@@ -687,6 +705,32 @@ export default {
                         this.fetchAnimals(this.actualTypeId);
                     }
                     this.types = this.types.filter(type => type.id !== id);
+                    setTimeout(() => {
+                        this.isAlertVisible = false;
+                    }, 3000)
+
+                } else {
+                    console.error('Erreur lors de la suppression du type d\'animal');
+                }
+            } catch {
+                console.error('Erreur lors de l\'envoi du formulaire:', error);
+            }
+        },
+        editType(id) {
+            this.editingTypeId = id;
+        },
+        async delBreed(id) {
+            try {
+                const response = await fetch(`/breed/${id}/del`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                if (response.ok) {
+                    this.isAlertVisible = true;
+                    this.alertMessage = "Race d'animal supprimé avec succès"; 
+                    this.fetchAnimals(this.actualTypeId);                  
                     setTimeout(() => {
                         this.isAlertVisible = false;
                     }, 3000)

@@ -29,7 +29,7 @@ class Animal
     private ?int $price = null;
 
     #[ORM\ManyToOne(inversedBy: 'animals')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Type $type = null;
 
     #[ORM\ManyToOne(inversedBy: 'animals')]

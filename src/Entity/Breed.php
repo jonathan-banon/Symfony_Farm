@@ -18,7 +18,7 @@ class Breed
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\OneToMany(mappedBy: 'breed', targetEntity: Animal::class)]
+    #[ORM\OneToMany(mappedBy: 'breed', targetEntity: Animal::class, cascade: ['remove'], orphanRemoval: true)]
     private Collection $animals;
 
     #[ORM\ManyToOne(inversedBy: 'breeds')]

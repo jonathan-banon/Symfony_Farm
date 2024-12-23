@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Animal;
 use App\Entity\Type;
 use App\Repository\TypeRepository;
 use Doctrine\ORM\EntityManagerInterface;
