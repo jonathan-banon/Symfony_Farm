@@ -61,7 +61,7 @@
                                 backgroundPosition: 'center'
                             }">
                                 <div class="overlay bg-opacity-50 p-2">
-                                    <input type="file" @change="newOnFileChange($event)">
+                                    <input type="file" @change="newOnFileChange($event)" multiple>
                                 </div>
                             </div>
                             <div>
@@ -175,7 +175,7 @@
                             </div>
 
                             <div class="overlay bg-opacity-50 p-2">
-                                <input type="file" @change="onFileChange($event, animal)">
+                                <input type="file" @change="onFileChange($event, animal)" multiple>
                                 <button @click="uploadImage(animal)">Télécharger</button>
                             </div>
                         </div>
@@ -296,7 +296,7 @@ export default {
                 age: '',
                 description: '',
                 price: '',
-                file: null,
+                files: [],
                 images: []
             },
             newType: {
@@ -318,33 +318,43 @@ export default {
         const savedTypeId = localStorage.getItem('actualTypeId');
         this.actualTypeId = savedTypeId ? parseInt(savedTypeId, 10) : 1;
         this.fetchAnimals(this.actualTypeId);
-
     },
     methods: {
         onFileChange(e, animal) {
-            if (e.target.files[0]) {
-                animal.file = e.target.files[0];
-                const imageUrl = URL.createObjectURL(e.target.files[0]);
-                animal.images.push(imageUrl);
+            const files = e.target.files;
+            if (files && files.length > 0) {
+                if (!animal.files) {
+                    animal.files = [];
+                }
+                for (let i = 0; i < files.length; i++) {
+                    animal.files.push(files[i]);
+                    const imageUrl = URL.createObjectURL(files[i]);
+                    animal.images.push(imageUrl);
+                }
                 animal.currentImageIndex = animal.images.length - 1;
             }
         },
         newOnFileChange(e) {
-            if (e.target.files[0]) {
-                this.newAnimal.file = e.target.files[0];
-                const imageUrl = URL.createObjectURL(e.target.files[0]);
-                this.newAnimal.images.push(imageUrl);
+            if (e.target.files && e.target.files.length > 0) {
+                const files = e.target.files;
+
+                for (let i = 0; i < files.length; i++) {
+                    this.newAnimal.files.push(files[i]);
+                    const imageUrl = URL.createObjectURL(files[i]);
+                    this.newAnimal.images.push(imageUrl);
+                }
             }
         },
         async uploadImage(animal) {
-            if (!animal.file) {
+            if (animal.files.length === 0) {
                 alert("Veuillez sélectionner un fichier.");
                 return;
             }
 
             const formData = new FormData();
-            formData.append("image", animal.file);
-
+            for (let i = 0; i < animal.files.length; i++) {
+                formData.append("images[]", animal.files[i]);
+            }
             try {
                 const response = await fetch(`/animal/${animal.id}/upload-image`, {
                     method: "POST",
@@ -388,46 +398,56 @@ export default {
             }
         },
         async addAnimal() {
-            if (!this.newAnimal.file) {
+            if (!this.newAnimal.files || this.newAnimal.files.length === 0) {
                 alert("Veuillez sélectionner une image pour votre animal.");
                 return;
             }
 
-            const file = this.newAnimal.file;
-            const reader = new FileReader();
+            const base64Files = [];
 
-            reader.onloadend = async () => {
-                const base64File = reader.result.split(',')[1];  
+            for (let i = 0; i < this.newAnimal.files.length; i++) {
+                const file = this.newAnimal.files[i];
+                const reader = new FileReader();
 
-                const response = await fetch('/animal/new', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        type: this.newAnimal.type,
-                        name: this.newAnimal.name,
-                        breed: this.newAnimal.breed,
-                        age: this.newAnimal.age,
-                        description: this.newAnimal.description,
-                        price: this.newAnimal.price,
-                        file: base64File, 
-                    })
+                const fileBase64 = await new Promise((resolve, reject) => {
+                    reader.onloadend = () => {
+                        const base64File = reader.result.split(',')[1];
+                        resolve(base64File);
+                    };
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
                 });
 
-                if (response.ok) {
-                    this.fetchAnimals(this.actualTypeId)
-                    this.showAddForm = false;
-                    this.isAlertVisible = true;
-                    this.alertMessage = "Animal ajouté avec succès";
-                    setTimeout(() => {
-                        this.isAlertVisible = false;
-                    }, 3000)
-                } else {
-                    console.error('Erreur lors de l\'ajout de l\'animal');
-                }
-            };
-            reader.readAsDataURL(file);
+                base64Files.push(fileBase64);
+            }
+
+            const response = await fetch('/animal/new', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    type: this.newAnimal.type,
+                    name: this.newAnimal.name,
+                    breed: this.newAnimal.breed,
+                    age: this.newAnimal.age,
+                    description: this.newAnimal.description,
+                    price: this.newAnimal.price,
+                    files: base64Files,
+                })
+            });
+
+            if (response.ok) {
+                this.fetchAnimals(this.actualTypeId)
+                this.showAddForm = false;
+                this.isAlertVisible = true;
+                this.alertMessage = "Animal ajouté avec succès";
+                setTimeout(() => {
+                    this.isAlertVisible = false;
+                }, 3000)
+            } else {
+                console.error('Erreur lors de l\'ajout de l\'animal');
+            }
         },
         async addType() {
             try {

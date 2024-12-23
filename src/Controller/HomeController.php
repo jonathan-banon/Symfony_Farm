@@ -48,9 +48,7 @@ class HomeController extends AbstractController
             foreach ($animal->getPictures() as $picture) {
                 $images[] = '/images/animal-' . $animal->getId() . '/' . $picture->getFilename();
             }
-            $firstImage = $animal->getPictures()->first();
-            $imagePath = $firstImage ? '/images/animal-' . $animal->getId() . '/' . $firstImage->getFilename() : null;
-
+       
             $data[] = [
                 'id' => $animal->getId(),
                 'name' => $animal->getName(),

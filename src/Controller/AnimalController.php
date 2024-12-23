@@ -33,7 +33,7 @@ final class AnimalController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        if (!isset($data['type'], $data['name'], $data['breed'], $data['age'], $data['description'], $data['price'], $data['file'])) {
+        if (!isset($data['type'], $data['name'], $data['breed'], $data['age'], $data['description'], $data['price'], $data['files'])) {
             return $this->json(['error' => 'Données manquantes'], 400);
         }
 
@@ -51,38 +51,46 @@ final class AnimalController extends AbstractController
         $entityManager->persist($animal);
         $entityManager->flush();
 
-        $fileData = $data['file'];
-        $fileName = 'animal_' . $animal->getId() . '.png';
-        $uploadsDir = $this->getParameter('kernel.project_dir') . '/public/images/animal-' . $animal->getId();
+        $uploadedImages = [];
+        $files = $data['files'];
 
-        $filesystem = new Filesystem();
-        if (!$filesystem->exists($uploadsDir)) {
-            $filesystem->mkdir($uploadsDir, 0755);
+        foreach ($files as $fileData) {
+            if (isset($fileData)) {
+                $fileName = 'animal_' . $animal->getId() . '_' . uniqid() . '.png';
+                $uploadsDir = $this->getParameter('kernel.project_dir') . '/public/images/animal-' . $animal->getId();
+
+                $filesystem = new Filesystem();
+                if (!$filesystem->exists($uploadsDir)) {
+                    $filesystem->mkdir($uploadsDir, 0755);
+                }
+
+                $fileContent = base64_decode($fileData);
+                $filePath = $uploadsDir . '/' . $fileName;
+                file_put_contents($filePath, $fileContent);
+
+                try {
+                    $imagePath = $imageUploaderService->uploadAnimalImage(new UploadedFile($filePath, $fileName, null, null, true), $animal->getId());
+                } catch (\Exception $e) {
+                    return $this->json(['error' => $e->getMessage()], 400);
+                }
+
+                $image = new Photo();
+                $image->setFileName(basename($imagePath));
+                $animal->addPicture($image);
+
+                $uploadedImages[] = $imagePath;
+            }
         }
 
-        $fileContent = base64_decode($fileData);
-        $filePath = $uploadsDir . '/' . $fileName;
-        file_put_contents($filePath, $fileContent);
-        $file = new UploadedFile($filePath, $fileName, null, null, true);
-        
-        try {
-            $imagePath = $imageUploaderService->uploadAnimalImage($file, $animal->getId());
-        } catch (\Exception $e) {
-            return $this->json(['error' => $e->getMessage()], 400);
-        }
-
-        $image = new Photo();
-        $image->setFileName(basename($imagePath));
-        $animal->addPicture($image);
-
-        $entityManager->persist($image);
+        $entityManager->persist($animal);
         $entityManager->flush();
 
         return $this->json([
             'message' => 'Animal ajouté avec succès',
-            'imagePath' => $imagePath,
+            'imagePaths' => $uploadedImages,
         ]);
     }
+
 
     #[Route('/{id}/edit', name: 'app_animal_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Animal $animal, EntityManagerInterface $entityManager): Response
@@ -172,30 +180,34 @@ final class AnimalController extends AbstractController
     #[Route('/{id}/upload-image', name: 'animal_upload_image', methods: ['POST'])]
     public function uploadImage(Request $request, Animal $animal, EntityManagerInterface $entityManager): JsonResponse
     {
-        $file = $request->files->get('image');
+        $files = $request->files->get('images');
 
-        if (!$file) {
+        if (!$files || count($files) === 0) {
             return $this->json(['error' => 'Aucun fichier fourni'], 400);
         }
 
-        try {
-            $imagePath = $this->imageUploaderService->uploadAnimalImage($file, $animal->getId());
-        } catch (\InvalidArgumentException $e) {
-            return $this->json(['error' => $e->getMessage()], 400);
-        } catch (\RuntimeException $e) {
-            return $this->json(['error' => $e->getMessage()], 500);
+        $uploadedImagePaths = [];
+        foreach ($files as $file) {
+            try {
+                $imagePath = $this->imageUploaderService->uploadAnimalImage($file, $animal->getId());
+                $uploadedImagePaths[] = $imagePath;
+
+                $image = new Photo();
+                $image->setFileName(basename($imagePath));
+                $animal->addPicture($image);
+                $entityManager->persist($image);
+            } catch (\InvalidArgumentException $e) {
+                return $this->json(['error' => $e->getMessage()], 400);
+            } catch (\RuntimeException $e) {
+                return $this->json(['error' => $e->getMessage()], 500);
+            }
         }
 
-        $image = new Photo();
-        $image->setFileName(basename($imagePath));
-        $animal->addPicture($image);
-
-        $entityManager->persist($image);
         $entityManager->flush();
 
         return $this->json([
-            'message' => 'Image téléchargée avec succès',
-            'imagePath' => $imagePath,
+            'message' => 'Images téléchargées avec succès',
+            'imagePaths' => $uploadedImagePaths,
         ]);
     }
 }
