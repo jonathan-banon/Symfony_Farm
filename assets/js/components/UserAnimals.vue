@@ -1,8 +1,15 @@
 <template>
     <div class="home-container flex justify-around">
-        <div class="filter-container"></div>
+        <div class="filter-container">
+            <input 
+                type="text" 
+                v-model="searchVal" 
+                placeholder="Rechercher un animal par son nom"
+                class="search-bar"
+            />
+        </div>
         <div class="animals-container">
-            <div v-for="animal in animals" :key="animal.id" class="animal-item rounded-3xl h-1/2 flex">
+            <div v-for="animal in filteredAnimals" :key="animal.id" class="animal-item rounded-3xl h-1/2 flex">
                 <div class="animal-picture w-1/4 bg-primary rounded-3xl" :style="{
                     backgroundImage: 'url(' + animal.images[animal.currentImageIndex] + ')',
                     backgroundSize: 'cover',
@@ -30,14 +37,35 @@ export default {
         animals: Array,
     },
     emits: ['prev-image', 'next-image'],
-    setup(props, { emit }) {
-        const prevImage = (animal) => emit('prev-image', animal);
-        const nextImage = (animal) => emit('next-image', animal);
-
+    data() {
         return {
-            prevImage,
-            nextImage,
+            searchVal: '',
         };
     },
+    computed: {
+        filteredAnimals() {
+            return this.animals.filter(animal =>
+                animal.name.toLowerCase().includes(this.searchVal.toLowerCase())
+            );
+        }
+    },
+    methods: {
+        prevImage(animal) {
+            this.$emit('prev-image', animal);
+        },
+        nextImage(animal) {
+            this.$emit('next-image', animal);
+        }
+    }
 };
 </script>
+
+<style scoped>
+.search-bar {
+    padding: 10px;
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-bottom: 20px;
+}
+</style>
