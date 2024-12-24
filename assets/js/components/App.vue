@@ -15,19 +15,7 @@
                         @fetchBreeds="fetchBreeds" />
                 </template>
                 <template v-if="showTypeForm">
-                    <form class="flex justify-between w-full" @submit.prevent="addType">
-                        <div>
-                            <div class="animal-details">
-                                <label for="name">Nom</label>
-                                <input required v-model="newType.name" type="text" id="name" class="animal-input" />
-                            </div>
-                            <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none"
-                                @click="toggleTypeForm">Retour</button>
-                            <button type="submit" class="p-4 bg-primary font-semibold rounded-md focus:outline-none">
-                                Ajouter le type d'animal
-                            </button>
-                        </div>
-                    </form>
+                    <AddTypeForm @close="toggleTypeForm" @addType="addType" />
                 </template>
                 <div v-if="showBreedForm" class="flex">
                     <form class="flex justify-around w-full" @submit.prevent="addBreed(newBreed.typeId)">
@@ -190,12 +178,14 @@ import penUrl from '../../images/pen.svg';
 import Navbar from './Navbar.vue';
 import AdminNav from './AdminNav.vue';
 import AddAnimalForm from './AddAnimalForm.vue';
+import AddTypeForm from './AddTypeForm.vue';
 
 export default {
     components: {
         Navbar,
         AdminNav,
         AddAnimalForm,
+        AddTypeForm,
     },
     data() {
         return {
@@ -216,9 +206,6 @@ export default {
             alertMessage: "",
             editingTypeId: null,
             editingBreedId: null,
-            newType: {
-                name: '',
-            },
             newBreed: {
                 name: '',
                 typeId: 1,
@@ -358,7 +345,7 @@ export default {
                 console.error('Erreur lors de l\'ajout de l\'animal');
             }
         },
-        async addType() {
+        async addType(newType) {
             try {
                 const response = await fetch('/type/new', {
                     method: 'POST',
@@ -366,7 +353,7 @@ export default {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        name: this.newType.name,
+                        name: newType.name,
                     })
                 });
 
@@ -384,21 +371,6 @@ export default {
                 }
             } catch (error) {
                 console.error('Erreur lors de l\'envoi du formulaire:', error);
-            }
-        },
-        async fetchAnimals(typeId) {
-            this.actualTypeId = typeId;
-            this.fetchBreeds(this.actualTypeId);
-            localStorage.setItem('actualTypeId', typeId);
-            try {
-                const response = await fetch(`/type/${typeId}/animals`);
-                const data = await response.json();
-                this.animals = data.map(animal => ({
-                    ...animal,
-                    breed: animal.breed ? animal.breed : 'Inconnu',
-                }));
-            } catch (error) {
-                console.error('Erreur lors de la récupération des animaux:', error);
             }
         },
         async addBreed(typeId) {
