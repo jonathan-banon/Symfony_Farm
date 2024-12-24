@@ -69,7 +69,6 @@
         </form>
     </div>
 </template>
-
 <script>
 export default {
     props: {
@@ -78,24 +77,28 @@ export default {
         trashUrl: String,
     },
     emits: ['edit-animal', 'del-image', 'prev-image', 'next-image', 'on-file-change', 'upload-image', 'del-animal'],
-    setup(props, { emit }) {
-        const editAnimal = (animal) => emit('edit-animal', animal);
-        const delImage = (animal) => emit('del-image', animal);
-        const prevImage = (animal) => emit('prev-image', animal);
-        const nextImage = (animal) => emit('next-image', animal);
-        const onFileChange = (event, animal) => emit('on-file-change', event, animal);
-        const uploadImage = (animal) => emit('upload-image', animal);
-        const delAnimal = (animal) => emit('del-animal', animal);
-
-        return {
-            editAnimal,
-            delImage,
-            prevImage,
-            nextImage,
-            onFileChange,
-            uploadImage,
-            delAnimal,
-        };
-    },
+    methods: {
+        editAnimal(animal) {
+            this.$emit('edit-animal', animal);
+        },
+        delImage(animal) {
+            this.$emit('del-image', animal);
+        },
+        prevImage(animal) {
+            this.$emit('prev-image', animal);
+        },
+        nextImage(animal) {
+            this.$emit('next-image', animal);
+        },
+        onFileChange(event, animal) {
+            this.$emit('on-file-change', event, animal);
+        },
+        uploadImage(animal) {
+            this.$emit('upload-image', animal);
+        },
+        delAnimal(animal) {
+            this.$emit('del-animal', animal);
+        }
+    }
 };
 </script>

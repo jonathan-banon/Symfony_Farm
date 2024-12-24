@@ -50,8 +50,6 @@
 </template>
 
 <script>
-import { ref } from 'vue';
-
 export default {
     props: {
         showBreedForm: Boolean,
@@ -60,39 +58,48 @@ export default {
         trashUrl: String,
         penUrl: String,
     },
-    emits: ['toggle-breed-form', 'add-breed', 'fetch-breeds', 'del-breed', 'edit-breed', 'save-edit-breed', 'cancel-edit-breed'],
-    setup(props, { emit }) {
-        const newBreed = ref({
-            name: '',
-            typeId: 1,
-        });
-        const editingBreedId = ref(null);
-
-        const toggleBreedForm = () => emit('toggle-breed-form');
-        const addBreed = (typeId) => emit('add-breed', { ...newBreed.value, typeId });
-        const fetchBreeds = (typeId) => emit('fetch-breeds', typeId);
-        const delBreed = (id) => emit('del-breed', id);
-        const editBreed = (id) => {
-            editingBreedId.value = id;
-            emit('edit-breed', id);
-        };
-        const saveEditBreed = (breed) => emit('save-edit-breed', breed);
-        const cancelEditBreed = () => {
-            editingBreedId.value = null;
-            emit('cancel-edit-breed');
-        };
-
+    emits: [
+        'toggle-breed-form',
+        'add-breed',
+        'fetch-breeds',
+        'del-breed',
+        'edit-breed',
+        'save-edit-breed',
+        'cancel-edit-breed'
+    ],
+    data() {
         return {
-            newBreed,
-            editingBreedId,
-            toggleBreedForm,
-            addBreed,
-            fetchBreeds,
-            delBreed,
-            editBreed,
-            saveEditBreed,
-            cancelEditBreed,
+            newBreed: {
+                name: '',
+                typeId: 1,
+            },
+            editingBreedId: null,
         };
     },
+    methods: {
+        toggleBreedForm() {
+            this.$emit('toggle-breed-form');
+        },
+        addBreed(typeId) {
+            this.$emit('add-breed', { ...this.newBreed, typeId });
+        },
+        fetchBreeds(typeId) {
+            this.$emit('fetch-breeds', typeId);
+        },
+        delBreed(id) {
+            this.$emit('del-breed', id);
+        },
+        editBreed(id) {
+            this.editingBreedId = id;
+            this.$emit('edit-breed', id);
+        },
+        saveEditBreed(breed) {
+            this.$emit('save-edit-breed', breed);
+        },
+        cancelEditBreed() {
+            this.editingBreedId = null;
+            this.$emit('cancel-edit-breed');
+        }
+    }
 };
 </script>

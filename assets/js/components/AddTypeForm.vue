@@ -14,17 +14,22 @@
     </form>
 </template>
 
-<script setup>
-import { ref, defineEmits } from 'vue';
-
-const emit = defineEmits(['close', 'addType']);
-
-const newType = ref({
-    name: '',
-});
-
-const addType = () => {
-    emit('addType', newType.value);
-    newType.value.name = ''; 
+<script>
+export default {
+    name: 'TypeForm',
+    emits: ['close', 'addType'],
+    data() {
+        return {
+            newType: {
+                name: '',
+            },
+        };
+    },
+    methods: {
+        addType() {
+            this.$emit('addType', this.newType);
+            this.newType.name = '';
+        }
+    }
 };
 </script>
