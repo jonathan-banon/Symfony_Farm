@@ -291,7 +291,7 @@
 import logoUrl from '../../images/logo.svg';
 import trashUrl from '../../images/trash.svg';
 import penUrl from '../../images/pen.svg';
-import LoginModal from './login/App.vue';
+import LoginModal from './LoginModal.vue';
 
 export default {
     components: {
@@ -857,123 +857,6 @@ export default {
 }
 </script>
 
-<style scoped>
-.filter-container {
-    width: 28vw;
-    height: 70vh;
-}
-
-.animals-container {
-    width: 70vw;
-}
-
-.btn {
-    font-size: 1.5rem;
-    padding: 15px;
-    border-radius: 20px;
-    width: fit-content;
-    height: fit-content;
-}
-
-.nav-container {
-    display: flex;
-    min-width: 50%;
-    justify-content: space-around;
-    align-items: end;
-}
-
-.animal-item {
-    padding: 10px;
-    margin: 5px 0;
-    background-color: #f1f1f1;
-    border-radius: 5px;
-}
-
-.animal-input {
-    width: 100%;
-    padding: 8px;
-    margin: 5px 0;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-}
-
-.animal-details p {
-    margin: 5px 0;
-}
-
-.home-container {
-    overflow: scroll;
-    height: 78vh;
-}
-
-.alert-success {
-    position: fixed;
-    top: 15px;
-    right: 15px;
-    width: 20%;
-    border-radius: 10px;
-    padding: 10px;
-    text-align: center;
-    font-weight: bold;
-}
-
-.animal-container {
-    display: flex;
-    margin-bottom: 20px;
-}
-
-.animal-picture {
-    position: relative;
-    height: 300px;
-    overflow: hidden;
-}
-
-.carousel-container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-}
-
-.carousel-image {
-    width: 100%;
-    height: 100%;
-    background-size: cover;
-    background-position: center;
-    border-radius: 15px;
-    transition: opacity 0.5s ease-in-out;
-}
-
-.carousel-btn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-    z-index: 10;
-    border-radius: 50%;
-}
-
-.carousel-btn.left {
-    left: 10px;
-}
-
-.carousel-btn.right {
-    right: 10px;
-}
-
-.overlay {
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    text-align: center;
-    width: 90%;
-    background-color: rgba(0, 0, 0, 0.6);
-    border-radius: 10px;
-    padding: 10px;
-    color: white;
-}
+<style>
+@import '../../../assets/styles/style.css';
 </style>
