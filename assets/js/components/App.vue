@@ -3,8 +3,7 @@
         <Navbar :types="types" :isAlertVisible="isAlertVisible" :alertMessage="alertMessage" :urlLogo="urlLogo"
             :trashUrl="trashUrl" :penUrl="penUrl" :isUserLoggedIn="isUserLoggedIn"
             :isLoginPopupVisible="isLoginPopupVisible" @toggleLogin="toggleLoginPopup" @fetchAnimals="fetchAnimals"
-            @saveEditType="saveEditType" @delType="delType" :isVisible="isLoginPopupVisible"
-            @close="closeLoginPopup" />
+            @saveEditType="saveEditType" @delType="delType" :isVisible="isLoginPopupVisible" @close="closeLoginPopup" />
     </div>
     <template v-if="isUserLoggedIn">
         <div class="home-container flex justify-around">
@@ -12,70 +11,8 @@
                 @toggleAddForm="toggleAddForm" @toggleTypeForm="toggleTypeForm" @toggleBreedForm="toggleBreedForm" />
             <div class="animals-container">
                 <template v-if="showAddForm">
-                    <form class="flex justify-between w-full" @submit.prevent="addAnimal">
-                        <div class="flex justify-between w-3/5">
-                            <div class="animal-picture w-2/5 bg-primary rounded-3xl" :style="{
-                                backgroundImage: 'url(' + newAnimal.images[0] + ')',
-                                backgroundSize: 'cover',
-                                backgroundPosition: 'center'
-                            }">
-                                <div class="overlay bg-opacity-50 p-2">
-                                    <input type="file" @change="newOnFileChange($event)" multiple>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="animal-details">
-                                    <label for="name">Nom</label>
-                                    <input required v-model="newAnimal.name" type="text" id="name"
-                                        class="animal-input" />
-                                </div>
-                                <label for="type">Type</label>
-                                <select required v-model="newAnimal.type" id="type" class="animal-input"
-                                    @change="fetchBreeds(newAnimal.type)">
-                                    <option value="" disabled>Sélectionnez un type</option>
-                                    <option v-for="type in types" :key="type.id" :value="type.id">
-                                        {{ type.name }}
-                                    </option>
-                                </select>
-
-                                <div class="animal-details" v-if="isTypeSelected">
-                                    <label for="breed">Race</label>
-                                    <select required v-model="newAnimal.breed" id="breed" class="animal-input">
-                                        <option value="" disabled>Sélectionnez une race</option>
-                                        <option v-for="breed in breeds" :key="breed.id" :value="breed.id">
-                                            {{ breed.name }}
-                                        </option>
-                                    </select>
-                                </div>
-
-                                <div class="animal-details">
-                                    <label for="age">Âge</label>
-                                    <input required v-model="newAnimal.age" type="number" min="1" id="age"
-                                        class="animal-input" />
-                                </div>
-
-                                <div class="animal-details">
-                                    <label for="description">Description</label>
-                                    <textarea required v-model="newAnimal.description" id="description"
-                                        class="animal-input"></textarea>
-                                </div>
-
-                                <div class="animal-details">
-                                    <label for="price">Prix</label>
-                                    <input required v-model="newAnimal.price" type="number" min="0" id="price"
-                                        class="animal-input" />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="flex flex-col justify-between items-end">
-                            <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none"
-                                @click="toggleAddForm">Retour</button>
-                            <button type="submit" class="p-4 bg-primary font-semibold rounded-md focus:outline-none">
-                                Ajouter l'animal
-                            </button>
-                        </div>
-                    </form>
+                    <AddAnimalForm :types="types" :breeds="breeds" @close="toggleAddForm" @addAnimal="addAnimal"
+                        @fetchBreeds="fetchBreeds" />
                 </template>
                 <template v-if="showTypeForm">
                     <form class="flex justify-between w-full" @submit.prevent="addType">
@@ -252,11 +189,13 @@ import trashUrl from '../../images/trash.svg';
 import penUrl from '../../images/pen.svg';
 import Navbar from './Navbar.vue';
 import AdminNav from './AdminNav.vue';
+import AddAnimalForm from './AddAnimalForm.vue';
 
 export default {
     components: {
         Navbar,
         AdminNav,
+        AddAnimalForm,
     },
     data() {
         return {
@@ -277,16 +216,6 @@ export default {
             alertMessage: "",
             editingTypeId: null,
             editingBreedId: null,
-            newAnimal: {
-                type: '',
-                name: '',
-                breed: '',
-                age: '',
-                description: '',
-                price: '',
-                files: [],
-                images: []
-            },
             newType: {
                 name: '',
             },
@@ -323,17 +252,6 @@ export default {
                     animal.images.push(imageUrl);
                 }
                 animal.currentImageIndex = animal.images.length - 1;
-            }
-        },
-        newOnFileChange(e) {
-            if (e.target.files && e.target.files.length > 0) {
-                const files = e.target.files;
-
-                for (let i = 0; i < files.length; i++) {
-                    this.newAnimal.files.push(files[i]);
-                    const imageUrl = URL.createObjectURL(files[i]);
-                    this.newAnimal.images.push(imageUrl);
-                }
             }
         },
         async uploadImage(animal) {
@@ -388,16 +306,16 @@ export default {
                 console.error('Erreur lors de la récupération des races:', error);
             }
         },
-        async addAnimal() {
-            if (!this.newAnimal.files || this.newAnimal.files.length === 0) {
+        async addAnimal(newAnimal) {
+            if (!newAnimal.files || newAnimal.files.length === 0) {
                 alert("Veuillez sélectionner une image pour votre animal.");
                 return;
             }
 
             const base64Files = [];
 
-            for (let i = 0; i < this.newAnimal.files.length; i++) {
-                const file = this.newAnimal.files[i];
+            for (let i = 0; i < newAnimal.files.length; i++) {
+                const file = newAnimal.files[i];
                 const reader = new FileReader();
 
                 const fileBase64 = await new Promise((resolve, reject) => {
@@ -418,12 +336,12 @@ export default {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    type: this.newAnimal.type,
-                    name: this.newAnimal.name,
-                    breed: this.newAnimal.breed,
-                    age: this.newAnimal.age,
-                    description: this.newAnimal.description,
-                    price: this.newAnimal.price,
+                    type: newAnimal.type,
+                    name: newAnimal.name,
+                    breed: newAnimal.breed,
+                    age: newAnimal.age,
+                    description: newAnimal.description,
+                    price: newAnimal.price,
                     files: base64Files,
                 })
             });
