@@ -84,8 +84,14 @@ export default {
         isUserLoggedIn: Boolean,
         isLoginPopupVisible: Boolean,
         isVisible: Boolean,
-        isUserLoggedIn: Boolean
     },
+    emits: [
+        'toggleLogin',
+        'fetchAnimals',
+        'saveEditType',
+        'delType',
+        'close'
+    ],
     data() {
         return {
             editingTypeId: null,

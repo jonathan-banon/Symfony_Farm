@@ -4,20 +4,12 @@
             :trashUrl="trashUrl" :penUrl="penUrl" :isUserLoggedIn="isUserLoggedIn"
             :isLoginPopupVisible="isLoginPopupVisible" @toggleLogin="toggleLoginPopup" @fetchAnimals="fetchAnimals"
             @saveEditType="saveEditType" @delType="delType" :isVisible="isLoginPopupVisible"
-            :isLoggedIn="isUserLoggedIn" @close="closeLoginPopup" />
+            @close="closeLoginPopup" />
     </div>
     <template v-if="isUserLoggedIn">
         <div class="home-container flex justify-around">
-            <div class="filter-container">
-                <div v-if="!showAddForm && !showTypeForm && !showBreedForm" class="flex justify-around">
-                    <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none"
-                        @click="toggleAddForm">Ajouter un animal</button>
-                    <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none"
-                        @click="toggleTypeForm">Ajouter un Type d'animal</button>
-                    <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none"
-                        @click="toggleBreedForm">Gérer mes races d'animaux</button>
-                </div>
-            </div>
+            <AdminNav :showAddForm="showAddForm" :showTypeForm="showTypeForm" :showBreedForm="showBreedForm"
+                @toggleAddForm="toggleAddForm" @toggleTypeForm="toggleTypeForm" @toggleBreedForm="toggleBreedForm" />
             <div class="animals-container">
                 <template v-if="showAddForm">
                     <form class="flex justify-between w-full" @submit.prevent="addAnimal">
@@ -259,10 +251,12 @@ import logoUrl from '../../images/logo.svg';
 import trashUrl from '../../images/trash.svg';
 import penUrl from '../../images/pen.svg';
 import Navbar from './Navbar.vue';
+import AdminNav from './AdminNav.vue';
 
 export default {
     components: {
-        Navbar
+        Navbar,
+        AdminNav,
     },
     data() {
         return {
