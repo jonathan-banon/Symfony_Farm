@@ -1,43 +1,10 @@
 <template>
-    <div class="flex justify-center items-center min-h-screen w-full h-full z-40 fixed bg-black"
-        v-if="isLoginPopupVisible">
-        <LoginModal :isVisible="isLoginPopupVisible" :isLoggedIn="isUserLoggedIn" @close="closeLoginPopup" />
-    </div>
-    <div class="bg-secondary min-h-60 flex justify-around items-center">
-        <p class="alert-success bg-primary" v-if="isAlertVisible">{{ alertMessage }}</p>
-        <img :src="urlLogo" alt="Logo">
-        <div class="nav-container">
-            <div v-for="type in types" :key="type.id" class="flex">
-
-                <template v-if="editingTypeId === type.id">
-                    <div>
-                        <input type="text" v-model="type.name" class="border rounded px-2 py-1 w-full" />
-                        <div class="flex justify-between mt-2.5">
-                            <button @click="saveEditType(type)"
-                                class="bg-primary  px-3 py-1 rounded">Enregistrer</button>
-                            <button @click="cancelEditType" class="bg-primary  px-3 py-1 rounded">Retour</button>
-                        </div>
-                    </div>
-                </template>
-                <template v-else>
-                    <button class="btn bg-primary text-white py-2 px-4 rounded-full" @click="fetchAnimals(type.id)">
-                        {{ type.name }}
-                    </button>
-                </template>
-
-                <template v-if="isUserLoggedIn && editingTypeId != type.id">
-                    <a @click.prevent="delType(type.id)" class="delete-type-icon">
-                        <img :src="trashUrl" alt="trash-logo" class="w-6">
-                    </a>
-                    <a @click.prevent="editType(type.id)" class="delete-type-icon">
-                        <img :src="penUrl" alt="pen-logo" class="w-6">
-                    </a>
-                </template>
-            </div>
-        </div>
-        <button class="btn bg-primary py-2 px-4 rounded-full" @click="toggleLoginPopup">
-            {{ isUserLoggedIn ? 'Déconnexion' : 'Connexion' }}
-        </button>
+    <div id="app">
+        <Navbar :types="types" :isAlertVisible="isAlertVisible" :alertMessage="alertMessage" :urlLogo="urlLogo"
+            :trashUrl="trashUrl" :penUrl="penUrl" :isUserLoggedIn="isUserLoggedIn"
+            :isLoginPopupVisible="isLoginPopupVisible" @toggleLogin="toggleLoginPopup" @fetchAnimals="fetchAnimals"
+            @saveEditType="saveEditType" @delType="delType" :isVisible="isLoginPopupVisible"
+            :isLoggedIn="isUserLoggedIn" @close="closeLoginPopup" />
     </div>
     <template v-if="isUserLoggedIn">
         <div class="home-container flex justify-around">
@@ -291,11 +258,11 @@
 import logoUrl from '../../images/logo.svg';
 import trashUrl from '../../images/trash.svg';
 import penUrl from '../../images/pen.svg';
-import LoginModal from './LoginModal.vue';
+import Navbar from './Navbar.vue';
 
 export default {
     components: {
-        LoginModal
+        Navbar
     },
     data() {
         return {
