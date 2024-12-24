@@ -17,157 +17,20 @@
                 <template v-if="showTypeForm">
                     <AddTypeForm @close="toggleTypeForm" @addType="addType" />
                 </template>
-                <div v-if="showBreedForm" class="flex">
-                    <form class="flex justify-around w-full" @submit.prevent="addBreed(newBreed.typeId)">
-                        <div>
-                            <label for="type">Type</label>
-                            <select required v-model="newBreed.typeId" id="type" class="animal-input"
-                                @change="fetchBreeds($event.target.value)">
-                                <option value="" disabled selected>Sélectionnez un type</option>
-                                <option v-for="type in types" :key="type.id" :value="type.id">
-                                    {{ type.name }}
-                                </option>
-                            </select>
-                            <div class="animal-details">
-                                <label for="name">Nom</label>
-                                <input required v-model="newBreed.name" type="text" id="name" class="animal-input" />
-                            </div>
-                            <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none"
-                                @click="toggleBreedForm">Retour</button>
-                            <button type="submit" class="p-4 bg-primary font-semibold rounded-md focus:outline-none">
-                                Ajouter une race d'animal
-                            </button>
-                        </div>
-                    </form>
-                    <div class="w-1/2 flex flex-col justify-around">
-                        <template v-for="breed in breeds">
-                            <div class="flex justify-between items-center">
-                                <template v-if="editingBreedId != breed.id">
-                                    <p>{{ breed.name }}</p>
-                                    <div>
-                                        <a @click.prevent="delBreed(breed.id)" class="delete-type-icon">
-                                            <img :src="trashUrl" alt="trash-logo" class="w-6">
-                                        </a>
-                                        <a @click.prevent="editBreed(breed.id)" class="delete-type-icon">
-                                            <img :src="penUrl" alt="pen-logo" class="w-6">
-                                        </a>
-                                    </div>
-                                </template>
-                                <div v-if="editingBreedId === breed.id">
-                                    <input type="text" v-model="breed.name" class="border rounded px-2 py-1 w-full" />
-                                    <div class="flex justify-between mt-2.5">
-                                        <button @click="saveEditBreed(breed)"
-                                            class="bg-primary  px-3 py-1 rounded">Enregistrer</button>
-                                        <button @click="cancelEditBreed"
-                                            class="bg-primary  px-3 py-1 rounded">Retour</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </template>
-                    </div>
-                </div>
-                <div v-for="animal in animals" :key="animal.id" class="animal-item rounded-3xl h-1/2 flex">
-                    <form class="flex justify-between w-full" @submit.prevent="editAnimal(animal)"
-                        enctype="multipart/form-data">
-                        <div class="animal-picture w-1/4 bg-primary rounded-3xl" :style="{
-                            backgroundImage: 'url(' + animal.images[animal.currentImageIndex] + ')',
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center'
-                        }">
-                            <a @click.prevent="delImage(animal)">
-                                <img :src="trashUrl" alt="trash-logo" class="w-10">
-                            </a>
-                            <div class="carousel-container" v-if="animal.images.length > 1">
-                                <img class="carousel-btn left" @click="prevImage(animal)">
-                                </img>
-                                <img class="carousel-btn right" @click="nextImage(animal)">
-                                </img>
-                            </div>
-
-                            <div class="overlay bg-opacity-50 p-2">
-                                <input type="file" @change="onFileChange($event, animal)" multiple>
-                                <button @click="uploadImage(animal)">Télécharger</button>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="animal-details">
-                                <label for="name">Nom</label>
-                                <input v-model="animal.name" type="text" id="name" class="animal-input" />
-                            </div>
-
-                            <label for="breed">Race</label>
-                            <select v-model="animal.breed" id="breed" class="animal-input">
-                                <option :value="animal.breed" disabled>
-                                    {{ animal.breed }}
-                                </option>
-                                <option v-for="breed in breeds" :key="breed.id" :value="breed.id">
-                                    {{ breed.name }}
-                                </option>
-                            </select>
-
-                            <div class="animal-details">
-                                <label for="description">Description</label>
-                                <textarea v-model="animal.description" id="description" class="animal-input"></textarea>
-                            </div>
-
-                            <div class="animal-details">
-                                <label for="price">Prix</label>
-                                <input v-model="animal.price" type="number" id="price" class="animal-input" />
-                            </div>
-                        </div>
-                        <div class="animal-details">
-                            <label for="isOnSale">Status</label>
-                            <div>
-                                <div>
-                                    <input type="radio" v-model="animal.isOnSale" :value="true" />
-                                    <span class="ml-2">En vente</span>
-                                </div>
-                                <div>
-                                    <input type="radio" v-model="animal.isOnSale" :value="false" />
-                                    <span class="ml-2">Vendu</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex flex-col justify-between items-end">
-                            <a @click.prevent="delAnimal(animal)">
-                                <img :src="trashUrl" alt="trash-logo" class="w-10">
-                            </a>
-                            <button type="submit"
-                                class=" p-4 bg-primary  font-semibold rounded-md  focus:outline-none">Enregistrer
-                                les
-                                modifications</button>
-                        </div>
-                    </form>
-                </div>
+                <template v-if="showBreedForm">
+                    <BreedForm :showBreedForm="showBreedForm" :types="types" :breeds="breeds" :trashUrl="trashUrl"
+                        :penUrl="penUrl" @toggle-breed-form="toggleBreedForm" @add-breed="addBreed"
+                        @fetch-breeds="fetchBreeds" @del-breed="delBreed" @edit-breed="editBreed"
+                        @save-edit-breed="saveEditBreed" @cancel-edit-breed="cancelEditBreed" />
+                </template>
+                <AdminAnimals :animals="animals" :breeds="breeds" :trashUrl="trashUrl" @edit-animal="editAnimal"
+                    @del-image="delImage" @prev-image="prevImage" @next-image="nextImage" @on-file-change="onFileChange"
+                    @upload-image="uploadImage" @del-animal="delAnimal" />
             </div>
         </div>
     </template>
     <template v-else>
-        <div class="home-container flex justify-around">
-            <div class="filter-container"></div>
-            <div class="animals-container">
-                <div v-for="animal in animals" :key="animal.id" class="animal-item rounded-3xl h-1/2 flex">
-                    <div class="animal-picture w-1/4 bg-primary rounded-3xl" :style="{
-                        backgroundImage: 'url(' + animal.images[animal.currentImageIndex] + ')',
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center'
-                    }">
-                        <div class="carousel-container" v-if="animal.images.length > 1">
-                            <img class="carousel-btn left" @click="prevImage(animal)">
-                            </img>
-                            <img class="carousel-btn right" @click="nextImage(animal)">
-                            </img>
-                        </div>
-                    </div>
-                    <div class="animal-details">
-                        <p><strong>Nom :</strong> {{ animal.name }}</p>
-                        <p><strong>Race :</strong> {{ animal.breed }}</p>
-                        <p><strong>Description :</strong> {{ animal.description }}</p>
-                        <p><strong>Prix :</strong> {{ animal.price }} €</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <UserAnimals :animals="animals" @prev-image="prevImage" @next-image="nextImage" />
     </template>
 </template>
 
@@ -179,6 +42,9 @@ import Navbar from './Navbar.vue';
 import AdminNav from './AdminNav.vue';
 import AddAnimalForm from './AddAnimalForm.vue';
 import AddTypeForm from './AddTypeForm.vue';
+import BreedForm from './BreedForm.vue';
+import AdminAnimals from './AdminAnimals.vue';
+import UserAnimals from './UserAnimals.vue';
 
 export default {
     components: {
@@ -186,6 +52,9 @@ export default {
         AdminNav,
         AddAnimalForm,
         AddTypeForm,
+        BreedForm,
+        AdminAnimals,
+        UserAnimals,
     },
     data() {
         return {
@@ -373,15 +242,15 @@ export default {
                 console.error('Erreur lors de l\'envoi du formulaire:', error);
             }
         },
-        async addBreed(typeId) {
+        async addBreed(breed) {
             try {
-                const response = await fetch((`/breed/${typeId}/add`), {
+                const response = await fetch((`/breed/${breed.typeId}/add`), {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        name: this.newBreed.name,
+                        name: breed.name,
                     })
                 });
 
