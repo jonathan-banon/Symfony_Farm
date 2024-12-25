@@ -37,7 +37,9 @@
                     <p><strong>Nom :</strong> {{ animal.name }}</p>
                     <p><strong>Race :</strong> {{ animal.breed }}</p>
                     <p><strong>Description :</strong> {{ animal.description }}</p>
+                    <p><strong>Âge :</strong> {{ animal.age }}</p>
                     <p><strong>Prix :</strong> {{ animal.price }} €</p>
+
                 </div>
             </div>
         </div>

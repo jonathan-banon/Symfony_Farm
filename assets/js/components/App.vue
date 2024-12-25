@@ -344,8 +344,8 @@ export default {
                         breed: animal.breed,
                         description: animal.description,
                         price: animal.price,
-                        status: animal.isOnSale
-
+                        status: animal.isOnSale,
+                        age: animal.age
                     }),
                 });
 

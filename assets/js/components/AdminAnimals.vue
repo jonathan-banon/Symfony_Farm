@@ -39,13 +39,17 @@
                     <label for="description">Description</label>
                     <textarea v-model="animal.description" id="description" class="animal-input"></textarea>
                 </div>
+            </div>
+            <div class="animal-details">
+                <div class="animal-details">
+                    <label for="age">Âge</label>
+                    <input v-model="animal.age" type="number" id="age" class="animal-input" />
+                </div>
 
                 <div class="animal-details">
                     <label for="price">Prix</label>
                     <input v-model="animal.price" type="number" id="price" class="animal-input" />
                 </div>
-            </div>
-            <div class="animal-details">
                 <label for="isOnSale">Status</label>
                 <div>
                     <div>

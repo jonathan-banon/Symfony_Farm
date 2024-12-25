@@ -57,7 +57,8 @@ class HomeController extends AbstractController
                 'price' => $animal->getPrice(),
                 'isOnSale' => $animal->isOnSale() ? 'true' : 'false',
                 'currentImageIndex' => 0,
-                'images' => $images
+                'images' => $images,
+                'age' => $animal->getAge(),
             ];
         }
         return new JsonResponse($data);
