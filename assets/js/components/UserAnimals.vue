@@ -8,6 +8,8 @@
                 <option value="price-desc">Prix Décroissant</option>
                 <option value="alpha-asc">Nom Alphabétique Croissant</option>
                 <option value="alpha-desc">Nom Alphabétique Décroissant</option>
+                <option value="age-asc">Âge Croissant</option>
+                <option value="age-desc">Âge Décroissant</option>
             </select>
 
             <div>
@@ -63,14 +65,13 @@ export default {
         return {
             searchVal: '',
             selectedBreed: null,
-            sortOrder: 'price-asc',
+            sortOrder: 'alpha-asc',
         };
     },
     computed: {
         displayedAnimals() {
             let filtered = this.animals;
 
-            // Filtrer par nom
             if (this.searchVal) {
                 const searchLower = this.searchVal.toLowerCase();
                 filtered = filtered.filter((animal) =>
@@ -78,14 +79,12 @@ export default {
                 );
             }
 
-            // Filtrer par race
             if (this.selectedBreed) {
                 filtered = filtered.filter(
                     (animal) => animal.breed === this.selectedBreed
                 );
             }
 
-            // Trier
             return filtered.slice().sort(this.getSortFunction());
         },
     },
@@ -100,6 +99,10 @@ export default {
                     return (a, b) => a.name.localeCompare(b.name);
                 case 'alpha-desc':
                     return (a, b) => b.name.localeCompare(a.name);
+                case 'age-asc':
+                    return (a, b) => a.age - b.age;
+                case 'age-desc':
+                    return (a, b) => b.age - a.age;
                 default:
                     return () => 0;
             }
@@ -110,6 +113,13 @@ export default {
         nextImage(animal) {
             this.$emit('next-image', animal);
         },
+    },
+    watch: {
+        animals() {
+            this.searchVal = '';
+            this.selectedBreed = null;
+            this.sortOrder = 'alpha-asc'; 
+        }
     },
 };
 </script>
