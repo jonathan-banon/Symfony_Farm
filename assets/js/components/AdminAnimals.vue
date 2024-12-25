@@ -6,12 +6,14 @@
                 backgroundSize: 'cover',
                 backgroundPosition: 'center'
             }">
-                <a @click.prevent="delImage(animal)">
-                    <img :src="trashUrl" alt="trash-logo" class="w-10">
-                </a>
+                <div class="flex justify-end p-3">
+                    <a @click.prevent="delImage(animal)">
+                        <img :src="trashUrl" alt="trash-logo" class="w-10">
+                    </a>
+                </div>
                 <div class="carousel-container" v-if="animal.images.length > 1">
-                    <img class="carousel-btn left" @click="prevImage(animal)">
-                    <img class="carousel-btn right" @click="nextImage(animal)">
+                    <img class="carousel-btn left-1" @click="prevImage(animal)">
+                    <img class="carousel-btn right-1" @click="nextImage(animal)">
                 </div>
 
                 <div class="overlay bg-opacity-50 p-2">
@@ -20,7 +22,7 @@
                 </div>
             </div>
             <div>
-                <div >
+                <div>
                     <label for="name">Nom</label>
                     <input v-model="animal.name" type="text" id="name" class="animal-input" />
                 </div>
@@ -35,18 +37,18 @@
                     </option>
                 </select>
 
-                <div >
+                <div>
                     <label for="description">Description</label>
                     <textarea v-model="animal.description" id="description" class="animal-input"></textarea>
                 </div>
             </div>
-            <div >
-                <div >
+            <div>
+                <div>
                     <label for="age">Âge</label>
                     <input v-model="animal.age" type="number" id="age" class="animal-input" />
                 </div>
 
-                <div >
+                <div>
                     <label for="price">Prix</label>
                     <input v-model="animal.price" type="number" id="price" class="animal-input" />
                 </div>

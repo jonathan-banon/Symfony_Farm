@@ -37,8 +37,8 @@
                     backgroundPosition: 'center'
                 }">
                     <div class="carousel-container" v-if="animal.images.length > 1">
-                        <img class="carousel-btn left" @click="prevImage(animal)" />
-                        <img class="carousel-btn right" @click="nextImage(animal)" />
+                        <img class="carousel-btn top-50 left-1" @click="prevImage(animal)" />
+                        <img class="carousel-btn top-50 right-1" @click="nextImage(animal)" />
                     </div>
                 </div>
                 <div class="flex p-3 justify-between w-9/12">
@@ -148,5 +148,9 @@ export default {
     width: 100%;
     border-radius: 5px;
     margin-bottom: 20px;
+}
+
+.top-50 {
+    top: 50%;
 }
 </style>

@@ -568,6 +568,9 @@ export default {
                     this.fetchAnimals(this.actualTypeId)
                     this.isAlertVisible = true;
                     this.alertMessage = "Image de l'animal supprimé avec succès"
+                    setTimeout(() => {
+                        this.isAlertVisible = false
+                    }, 3000)
                 }
             } catch {
 
