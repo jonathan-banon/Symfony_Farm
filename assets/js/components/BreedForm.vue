@@ -1,5 +1,5 @@
 <template>
-    <div v-if="showBreedForm" class="flex">
+    <div class="flex">
         <form class="flex justify-around w-full" @submit.prevent="addBreed(newBreed.typeId)">
             <div>
                 <label for="type">Type</label>
@@ -52,7 +52,6 @@
 <script>
 export default {
     props: {
-        showBreedForm: Boolean,
         types: Array,
         breeds: Array,
         trashUrl: String,

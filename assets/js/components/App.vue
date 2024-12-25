@@ -1,9 +1,9 @@
 <template>
     <div id="app">
         <Navbar :types="types" :isAlertVisible="isAlertVisible" :alertMessage="alertMessage" :urlLogo="urlLogo"
-            :trashUrl="trashUrl" :penUrl="penUrl" :isUserLoggedIn="isUserLoggedIn"
+            :trashUrl="trashUrl" :penUrl="penUrl" :isUserLoggedIn="isUserLoggedIn "
             :isLoginPopupVisible="isLoginPopupVisible" @toggleLogin="toggleLoginPopup" @fetchAnimals="fetchAnimals"
-            @saveEditType="saveEditType" @delType="delType" :isVisible="isLoginPopupVisible" @close="closeLoginPopup" />
+            @saveEditType="saveEditType" @delType="delType" @close="closeLoginPopup" :actualTypeId="actualTypeId"/>
     </div>
     <template v-if="isUserLoggedIn">
         <div class="home-container flex justify-around">
@@ -18,7 +18,7 @@
                     <AddTypeForm @close="toggleTypeForm" @addType="addType" />
                 </template>
                 <template v-if="showBreedForm">
-                    <BreedForm :showBreedForm="showBreedForm" :types="types" :breeds="breeds" :trashUrl="trashUrl"
+                    <BreedForm :types="types" :breeds="breeds" :trashUrl="trashUrl"
                         :penUrl="penUrl" @toggle-breed-form="toggleBreedForm" @add-breed="addBreed"
                         @fetch-breeds="fetchBreeds" @del-breed="delBreed" @edit-breed="editBreed"
                         @save-edit-breed="saveEditBreed" @cancel-edit-breed="cancelEditBreed" />
@@ -30,7 +30,7 @@
         </div>
     </template>
     <template v-else>
-        <UserAnimals :animals="animals" @prev-image="prevImage" @next-image="nextImage" />
+        <UserAnimals :animals="animals" :breeds="breeds" @prev-image="prevImage" @next-image="nextImage" />
     </template>
 </template>
 

@@ -1,7 +1,7 @@
 <template>
     <div class="flex justify-center items-center min-h-screen w-full h-full z-40 fixed bg-black"
         v-if="isLoginPopupVisible">
-        <div v-if="isVisible" class="w-full max-w-md bg-secondary p-8 rounded-lg shadow-lg">
+        <div class="w-full max-w-md bg-secondary p-8 rounded-lg shadow-lg">
             <h2 class="text-2xl font-semibold text-center text-gray-700 mb-6">Connexion</h2>
             <form @submit.prevent="handleLogin" method="POST">
                 <div class="mb-4">
@@ -50,7 +50,10 @@
                     </div>
                 </template>
                 <template v-else>
-                    <button class="btn bg-primary text-white py-2 px-4 rounded-full" @click="fetchAnimals(type.id)">
+                    <button class="btn text-white py-2 px-4 rounded-full" @click="fetchAnimals(type.id)" :class="{
+                        'bg-primary': actualTypeId === type.id,
+                        'bg-secondary': actualTypeId !== type.id
+                    }">
                         {{ type.name }}
                     </button>
                 </template>
@@ -83,7 +86,7 @@ export default {
         penUrl: String,
         isUserLoggedIn: Boolean,
         isLoginPopupVisible: Boolean,
-        isVisible: Boolean,
+        actualTypeId: Number
     },
     emits: [
         'toggleLogin',
