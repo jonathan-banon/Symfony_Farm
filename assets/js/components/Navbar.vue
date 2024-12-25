@@ -33,12 +33,11 @@
             </form>
         </div>
     </div>
-    <div class="bg-secondary min-h-60 flex justify-around items-center">
+    <div class="bg-secondary min-h-60 flex justify-between items-center p-6">
         <p class="alert-success bg-primary" v-if="isAlertVisible">{{ alertMessage }}</p>
-        <img :src="urlLogo" alt="Logo">
+        <img class="w-60" :src="urlLogo" alt="Logo">
         <div class="nav-container">
             <div v-for="type in types" :key="type.id" class="flex">
-
                 <template v-if="editingTypeId === type.id">
                     <div>
                         <input type="text" v-model="type.name" class="border rounded px-2 py-1 w-full" />
@@ -50,7 +49,7 @@
                     </div>
                 </template>
                 <template v-else>
-                    <button class="btn text-white py-2 px-4 rounded-full" @click="fetchAnimals(type.id)" :class="{
+                    <button class="type-container text-4xl" @click="fetchAnimals(type.id)" :class="{
                         'bg-primary': actualTypeId === type.id,
                         'bg-secondary': actualTypeId !== type.id
                     }">
@@ -58,19 +57,21 @@
                     </button>
                 </template>
 
-                <template v-if="isUserLoggedIn && editingTypeId != type.id">
+                <div class="flex flex-col justify-between p-1.5" v-if="isUserLoggedIn && editingTypeId != type.id">
                     <a @click.prevent="delType(type.id)" class="delete-type-icon">
                         <img :src="trashUrl" alt="trash-logo" class="w-6">
                     </a>
                     <a @click.prevent="editType(type.id)" class="delete-type-icon">
                         <img :src="penUrl" alt="pen-logo" class="w-6">
                     </a>
-                </template>
+                </div>
             </div>
         </div>
-        <button class="btn bg-primary py-2 px-4 rounded-full" @click="toggleLoginPopup">
-            {{ isUserLoggedIn ? 'Déconnexion' : 'Connexion' }}
-        </button>
+        <div class="h-44">
+            <button class="btn bg-primary py-2 px-4 rounded-full" @click="toggleLoginPopup">
+                {{ isUserLoggedIn ? 'Déconnexion' : 'Connexion' }}
+            </button>
+        </div>
     </div>
 </template>
 <script>
@@ -191,4 +192,11 @@ export default {
     text-align: center;
     font-weight: bold;
 }
+
+.type-container {
+    width: fit-content;
+    border-radius: 20px;
+    padding: 30px;
+}
+
 </style>
