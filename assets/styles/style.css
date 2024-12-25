@@ -73,3 +73,16 @@ body {
     padding: 10px;
     color: white;
 }
+
+.filter-container{
+    width: 20vw;
+    height: 65vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    padding: 20px;
+    background-color: #f1f1f1;
+    border-radius: 20px;
+    position: fixed;
+    left: 20px;
+}

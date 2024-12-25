@@ -6,10 +6,10 @@
             @saveEditType="saveEditType" @delType="delType" @close="closeLoginPopup" :actualTypeId="actualTypeId"/>
     </div>
     <template v-if="isUserLoggedIn">
-        <div class="home-container flex justify-around">
+        <div class="home-container flex justify-end p-5">
             <AdminNav :showAddForm="showAddForm" :showTypeForm="showTypeForm" :showBreedForm="showBreedForm"
                 @toggleAddForm="toggleAddForm" @toggleTypeForm="toggleTypeForm" @toggleBreedForm="toggleBreedForm" />
-            <div class="animals-container">
+            <div class="w-3/4">
                 <template v-if="showAddForm">
                     <AddAnimalForm :types="types" :breeds="breeds" @close="toggleAddForm" @addAnimal="addAnimal"
                         @fetchBreeds="fetchBreeds" />

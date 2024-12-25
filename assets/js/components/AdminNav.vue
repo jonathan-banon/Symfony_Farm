@@ -1,13 +1,11 @@
 <template>
     <div class="filter-container">
-        <div v-if="!showAddForm && !showTypeForm && !showBreedForm" class="flex justify-around">
-            <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none" @click="toggleAddForm">Ajouter un
-                animal</button>
-            <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none" @click="toggleTypeForm">Ajouter
-                un Type d'animal</button>
-            <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none" @click="toggleBreedForm">Gérer
-                mes races d'animaux</button>
-        </div>
+        <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none" @click="toggleAddForm">Ajouter un
+            animal</button>
+        <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none" @click="toggleTypeForm">Ajouter
+            un Type d'animal</button>
+        <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none" @click="toggleBreedForm">Gérer
+            mes races d'animaux</button>
     </div>
 </template>
 <script>

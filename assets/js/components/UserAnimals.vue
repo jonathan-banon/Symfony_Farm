@@ -1,6 +1,6 @@
 <template>
     <div class="home-container flex justify-end p-5">
-        <div class="filter-container-user">
+        <div class="filter-container">
             <input type="text" v-model="searchVal" placeholder="Rechercher un animal par son nom" class="search-bar" />
 
             <select v-model="sortOrder" class="sort-select">
@@ -148,18 +148,5 @@ export default {
     width: 100%;
     border-radius: 5px;
     margin-bottom: 20px;
-}
-
-.filter-container-user {
-    width: 20vw;
-    height: 65vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    padding: 20px;
-    background-color: #f1f1f1;
-    border-radius: 20px;
-    position: fixed;
-    left: 20px;
 }
 </style>
