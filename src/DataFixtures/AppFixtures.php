@@ -55,13 +55,18 @@ class AppFixtures extends Fixture
             }
         }
 
-        $animalCountPerType = 3;
+        // Doubler le nombre d'animaux générés par type
+        $animalCountPerType = 6; // On double le nombre d'animaux par type
+
         foreach ($types as $typeName) {
             for ($i = 0; $i < $animalCountPerType; $i++) {
                 $animal = new Animal();
                 $animal->setName($faker->firstName);
                 $animal->setPrice($faker->randomFloat(2, 10, 500));
-                $animal->setAge($faker->numberBetween(1, 15));
+                
+                // Modifier l'âge pour être entre 1 et 20 ans
+                $animal->setAge($faker->numberBetween(1, 20)); // Mise à jour de l'âge
+
                 $animal->setDescription($faker->text(100));
 
                 $type = $typeObjects[$typeName];
@@ -75,6 +80,7 @@ class AppFixtures extends Fixture
             }
         }
 
+        // Création d'un utilisateur
         $user = new User();
         $user->setEmail('test@test.com');
         $user->setRoles(['ROLE_USER']);
