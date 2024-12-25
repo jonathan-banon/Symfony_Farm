@@ -173,3 +173,22 @@ export default {
     }
 };
 </script>
+<style>
+.nav-container {
+    display: flex;
+    min-width: 50%;
+    justify-content: space-around;
+    align-items: end;
+}
+
+.alert-success {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    width: 20%;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+}
+</style>

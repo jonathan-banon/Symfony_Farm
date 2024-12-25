@@ -10,7 +10,7 @@
                         {{ type.name }}
                     </option>
                 </select>
-                <div class="animal-details">
+                <div>
                     <label for="name">Nom</label>
                     <input required v-model="newBreed.name" type="text" id="name" class="animal-input" />
                 </div>

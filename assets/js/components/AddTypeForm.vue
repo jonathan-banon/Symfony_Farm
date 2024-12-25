@@ -1,7 +1,7 @@
 <template>
     <form class="flex justify-between w-full" @submit.prevent="addType">
         <div>
-            <div class="animal-details">
+            <div>
                 <label for="name">Nom</label>
                 <input required v-model="newType.name" type="text" id="name" class="animal-input" />
             </div>

@@ -20,7 +20,7 @@
                 </div>
             </div>
             <div>
-                <div class="animal-details">
+                <div >
                     <label for="name">Nom</label>
                     <input v-model="animal.name" type="text" id="name" class="animal-input" />
                 </div>
@@ -35,18 +35,18 @@
                     </option>
                 </select>
 
-                <div class="animal-details">
+                <div >
                     <label for="description">Description</label>
                     <textarea v-model="animal.description" id="description" class="animal-input"></textarea>
                 </div>
             </div>
-            <div class="animal-details">
-                <div class="animal-details">
+            <div >
+                <div >
                     <label for="age">Âge</label>
                     <input v-model="animal.age" type="number" id="age" class="animal-input" />
                 </div>
 
-                <div class="animal-details">
+                <div >
                     <label for="price">Prix</label>
                     <input v-model="animal.price" type="number" id="price" class="animal-input" />
                 </div>

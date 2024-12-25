@@ -35,7 +35,7 @@
                         <img class="carousel-btn right" @click="nextImage(animal)" />
                     </div>
                 </div>
-                <div class="animal-details">
+                <div>
                     <p><strong>Nom :</strong> {{ animal.name }}</p>
                     <p><strong>Race :</strong> {{ animal.breed }}</p>
                     <p><strong>Description :</strong> {{ animal.description }}</p>
@@ -118,7 +118,7 @@ export default {
         animals() {
             this.searchVal = '';
             this.selectedBreed = null;
-            this.sortOrder = 'alpha-asc'; 
+            this.sortOrder = 'alpha-asc';
         }
     },
 };
