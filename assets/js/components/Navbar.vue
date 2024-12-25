@@ -51,7 +51,7 @@
                 <template v-else>
                     <button class="type-container text-4xl" @click="fetchAnimals(type.id)" :class="{
                         'bg-primary': actualTypeId === type.id,
-                        'bg-secondary': actualTypeId !== type.id
+                        'bg-secondary border-white': actualTypeId !== type.id
                     }">
                         {{ type.name }}
                     </button>
@@ -199,4 +199,7 @@ export default {
     padding: 30px;
 }
 
+.border-white {
+    border: 2px solid white;
+}
 </style>

@@ -1,14 +1,10 @@
 body {
-    font-family: Poppins,sans-serif;;
+    font-family: Poppins,sans-serif;
 }
 
 .filter-container {
     width: 28vw;
     height: 70vh;
-}
-
-.animals-container {
-    width: 70vw;
 }
 
 .btn {
@@ -22,9 +18,9 @@ body {
 
 .animal-item {
     padding: 10px;
-    margin: 5px 0;
+    margin-bottom: 10px;
     background-color: #f1f1f1;
-    border-radius: 5px;
+    border-radius: 15px;
 }
 
 .animal-input {
@@ -37,7 +33,7 @@ body {
 
 .home-container {
     overflow: scroll;
-    height: 78vh;
+    height: 74vh;
 }
 
 .animal-picture {
