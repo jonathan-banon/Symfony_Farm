@@ -6,6 +6,7 @@ use App\Entity\Animal;
 use App\Entity\Type;
 use App\Entity\Breed;
 use App\Entity\User;
+use App\Entity\Photo;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
@@ -55,18 +56,14 @@ class AppFixtures extends Fixture
             }
         }
 
-        // Doubler le nombre d'animaux générés par type
-        $animalCountPerType = 6; // On double le nombre d'animaux par type
+        $animalCountPerType = 6;
 
         foreach ($types as $typeName) {
             for ($i = 0; $i < $animalCountPerType; $i++) {
                 $animal = new Animal();
                 $animal->setName($faker->firstName);
                 $animal->setPrice($faker->randomFloat(2, 10, 500));
-                
-                // Modifier l'âge pour être entre 1 et 20 ans
-                $animal->setAge($faker->numberBetween(1, 20)); // Mise à jour de l'âge
-
+                $animal->setAge($faker->numberBetween(1, 20));
                 $animal->setDescription($faker->text(100));
 
                 $type = $typeObjects[$typeName];
@@ -76,11 +73,17 @@ class AppFixtures extends Fixture
                 $animal->setBreed($breed);
                 $animal->setOnSale(true);
 
+                for ($j = 1; $j <= 3; $j++) {
+                    $photo = new Photo();
+                    $photo->setFilename("photo-$j.jpg");
+                    $photo->setAnimal($animal);
+                    $manager->persist($photo);
+                }
+
                 $manager->persist($animal);
             }
         }
 
-        // Création d'un utilisateur
         $user = new User();
         $user->setEmail('test@test.com');
         $user->setRoles(['ROLE_USER']);
