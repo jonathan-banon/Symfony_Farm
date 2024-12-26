@@ -37,8 +37,8 @@ body {
 }
 
 .animal-picture {
-    position: relative;
     height: 300px;
+    position: relative;
     overflow: hidden;
 }
 

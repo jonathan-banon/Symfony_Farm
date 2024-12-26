@@ -1,32 +1,31 @@
 <template>
     <div id="app">
-        <template v-if="isPopupVisible">
-            <Popup :popup="popup" @close="closeLoginPopup"/>
-        </template>
+        <div v-if="isPopupVisible"
+            class="flex justify-center items-center min-h-screen w-full h-full z-40 fixed bg-black">
+            <LoginPopup :popup="popup" @close="closeLoginPopup" />
+            <template v-if="showAddForm">
+                <AddAnimalForm :types="types" :breeds="breeds" @close="toggleAddForm" @addAnimal="addAnimal"
+                    @fetchBreeds="fetchBreeds" />
+            </template>
+            <template v-if="showTypeForm">
+                <AddTypeForm @close="toggleTypeForm" @addType="addType" />
+            </template>
+            <template v-if="showBreedForm">
+                <BreedForm :types="types" :breeds="breeds" :trashUrl="trashUrl" :penUrl="penUrl"
+                    @toggle-breed-form="toggleBreedForm" @add-breed="addBreed" @fetch-breeds="fetchBreeds"
+                    @del-breed="delBreed" @edit-breed="editBreed" @save-edit-breed="saveEditBreed"
+                    @cancel-edit-breed="cancelEditBreed" />
+            </template>
+        </div>
         <Navbar :types="types" :isAlertVisible="isAlertVisible" :alertMessage="alertMessage" :urlLogo="urlLogo"
             :trashUrl="trashUrl" :penUrl="penUrl" :isUserLoggedIn="isUserLoggedIn" @toggleLogin="toggleLoginPopup"
-            @fetchAnimals="fetchAnimals" @saveEditType="saveEditType" @delType="delType"
-            :actualTypeId="actualTypeId" />
+            @fetchAnimals="fetchAnimals" @saveEditType="saveEditType" @delType="delType" :actualTypeId="actualTypeId" />
     </div>
     <template v-if="isUserLoggedIn">
         <div class="home-container flex justify-end p-5">
             <AdminNav :showAddForm="showAddForm" :showTypeForm="showTypeForm" :showBreedForm="showBreedForm"
                 @toggleAddForm="toggleAddForm" @toggleTypeForm="toggleTypeForm" @toggleBreedForm="toggleBreedForm" />
             <div class="w-3/4">
-                <template v-if="showAddForm">
-                    <AddAnimalForm :types="types" :breeds="breeds" @close="toggleAddForm" @addAnimal="addAnimal"
-                        @fetchBreeds="fetchBreeds" />
-                </template>
-                <div class="test"></div>
-                <template v-if="showTypeForm">
-                    <AddTypeForm @close="toggleTypeForm" @addType="addType" />
-                </template>
-                <template v-if="showBreedForm">
-                    <BreedForm :types="types" :breeds="breeds" :trashUrl="trashUrl" :penUrl="penUrl"
-                        @toggle-breed-form="toggleBreedForm" @add-breed="addBreed" @fetch-breeds="fetchBreeds"
-                        @del-breed="delBreed" @edit-breed="editBreed" @save-edit-breed="saveEditBreed"
-                        @cancel-edit-breed="cancelEditBreed" />
-                </template>
                 <AdminAnimals :animals="animals" :breeds="breeds" :trashUrl="trashUrl" @edit-animal="editAnimal"
                     @del-image="delImage" @prev-image="prevImage" @next-image="nextImage" @on-file-change="onFileChange"
                     @upload-image="uploadImage" @del-animal="delAnimal" />
@@ -49,7 +48,7 @@ import AddTypeForm from './AddTypeForm.vue';
 import BreedForm from './BreedForm.vue';
 import AdminAnimals from './AdminAnimals.vue';
 import UserAnimals from './UserAnimals.vue';
-import Popup from './Popup.vue';
+import LoginPopup from './LoginPopup.vue';
 
 export default {
     components: {
@@ -60,7 +59,7 @@ export default {
         BreedForm,
         AdminAnimals,
         UserAnimals,
-        Popup
+        LoginPopup
     },
     data() {
         return {
@@ -212,6 +211,7 @@ export default {
             if (response.ok) {
                 this.fetchAnimals(this.actualTypeId)
                 this.showAddForm = false;
+                this.isPopupVisible = false;
                 this.isAlertVisible = true;
                 this.alertMessage = "Animal ajouté avec succès";
                 setTimeout(() => {
@@ -311,6 +311,7 @@ export default {
         },
         toggleAddForm() {
             this.showAddForm = !this.showAddForm
+            this.isPopupVisible = !this.isPopupVisible
         },
         toggleTypeForm() {
             this.showTypeForm = !this.showTypeForm
