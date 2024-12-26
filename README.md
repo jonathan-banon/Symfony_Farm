@@ -48,18 +48,23 @@ Exercice Technique
    ```
    php bin/console doctrine:database:create
    ```
-   
-7. Créez la base de données (assurez-vous que MySQL est en cours d'exécution) :
+
+7. Générez les fichiers de migrations :
+   ```
+   php bin/console doctrine:make:migrattion
+   ```
+
+8. Exécutez les migrations en base de données :
    ```
    php bin/console doctrine:migrations:migrate
    ```
 
-8. Chargez les fixtures pour alimenter la base de données :
+9. Chargez les fixtures pour alimenter la base de données :
    ```
    php bin/console doctrine:fixtures:load
    ```
 
-8. Compilez les assets :
+10. Compilez les assets :
    ```
    npm run build
    # ou
