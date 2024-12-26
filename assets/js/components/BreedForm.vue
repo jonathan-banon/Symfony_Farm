@@ -1,50 +1,56 @@
 <template>
-    <div class="flex">
-        <form class="flex justify-around w-full" @submit.prevent="addBreed(newBreed.typeId)">
-            <div>
-                <label for="type">Type</label>
-                <select required v-model="newBreed.typeId" id="type" class="animal-input"
-                    @change="fetchBreeds($event.target.value)">
-                    <option value="" disabled selected>Sélectionnez un type</option>
-                    <option v-for="type in types" :key="type.id" :value="type.id">
-                        {{ type.name }}
-                    </option>
-                </select>
+    <div class="bg-secondary p-8 rounded-lg shadow-lg w-7/12">
+        <h2 class="text-2xl font-semibold text-center mb-6">Gestion des races d'animaux</h2>
+        <div class="flex justify-between">
+            <form class="flex flex-col w-2/5" @submit.prevent="addBreed(newBreed.typeId)">
+                <div>
+                    <label for="type">Type</label>
+                    <select required v-model="newBreed.typeId" id="type" class="animal-input"
+                        @change="fetchBreeds($event.target.value)">
+                        <option value="" disabled selected>Sélectionnez un type</option>
+                        <option v-for="type in types" :key="type.id" :value="type.id">
+                            {{ type.name }}
+                        </option>
+                    </select>
+                </div>
                 <div>
                     <label for="name">Nom</label>
                     <input required v-model="newBreed.name" type="text" id="name" class="animal-input" />
                 </div>
-                <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none"
-                    @click="toggleBreedForm">Retour</button>
-                <button type="submit" class="p-4 bg-primary font-semibold rounded-md focus:outline-none">
-                    Ajouter une race d'animal
-                </button>
-            </div>
-        </form>
-        <div class="w-1/2 flex flex-col justify-around">
-            <template v-for="breed in breeds">
-                <div class="flex justify-between items-center">
-                    <template v-if="editingBreedId != breed.id">
-                        <p>{{ breed.name }}</p>
-                        <div>
-                            <a @click.prevent="delBreed(breed.id)" class="delete-type-icon">
-                                <img :src="trashUrl" alt="trash-logo" class="w-6">
-                            </a>
-                            <a @click.prevent="editBreed(breed.id)" class="delete-type-icon">
-                                <img :src="penUrl" alt="pen-logo" class="w-6">
-                            </a>
-                        </div>
-                    </template>
-                    <div v-if="editingBreedId === breed.id">
-                        <input type="text" v-model="breed.name" class="border rounded px-2 py-1 w-full" />
-                        <div class="flex justify-between mt-2.5">
-                            <button @click="saveEditBreed(breed)"
-                                class="bg-primary px-3 py-1 rounded">Enregistrer</button>
-                            <button @click="cancelEditBreed" class="bg-primary px-3 py-1 rounded">Retour</button>
+                <div class="flex justify-between mt-5">
+                    <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none"
+                        @click="toggleBreedForm">Retour</button>
+                    <button type="submit" class="p-4 bg-primary font-semibold rounded-md focus:outline-none">
+                        Ajouter une race d'animal
+                    </button>
+                </div>
+
+            </form>
+            <div class="w-1/2 flex flex-col justify-around">
+                <template v-for="breed in breeds">
+                    <div class="flex justify-between items-center">
+                        <template v-if="editingBreedId != breed.id">
+                            <p>{{ breed.name }}</p>
+                            <div class="flex gap-2.5">
+                                <a @click.prevent="editBreed(breed.id)">
+                                    <img :src="penUrl" alt="pen-logo" class="w-6">
+                                </a>
+                                <a @click.prevent="delBreed(breed.id)" >
+                                    <img :src="trashUrl" alt="trash-logo" class="w-6">
+                                </a>
+                            </div>
+                        </template>
+                        <div v-if="editingBreedId === breed.id">
+                            <input type="text" v-model="breed.name" class="border rounded px-2 py-1 w-full" />
+                            <div class="flex justify-between mt-2.5">
+                                <button @click="saveEditBreed(breed)"
+                                    class="bg-primary px-3 py-1 rounded">Enregistrer</button>
+                                <button @click="cancelEditBreed" class="bg-primary px-3 py-1 rounded">Retour</button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </template>
+                </template>
+            </div>
         </div>
     </div>
 </template>

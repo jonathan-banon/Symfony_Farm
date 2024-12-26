@@ -265,6 +265,7 @@ export default {
                 if (response.ok) {
                     this.fetchAnimals(this.actualTypeId)
                     this.showBreedForm = false;
+                    this.isPopupVisible = false;
                     this.isAlertVisible = true;
                     this.alertMessage = "Race d\'animal ajoutée avec succès"
                     setTimeout(() => {
@@ -311,15 +312,16 @@ export default {
             }
         },
         toggleAddForm() {
-            this.showAddForm = !this.showAddForm
-            this.isPopupVisible = !this.isPopupVisible
+            this.showAddForm = !this.showAddForm;
+            this.isPopupVisible = !this.isPopupVisible;
         },
         toggleTypeForm() {
-            this.showTypeForm = !this.showTypeForm
-            this.isPopupVisible = !this.isPopupVisible
+            this.showTypeForm = !this.showTypeForm;
+            this.isPopupVisible = !this.isPopupVisible;
         },
         toggleBreedForm() {
-            this.showBreedForm = !this.showBreedForm
+            this.showBreedForm = !this.showBreedForm;
+            this.isPopupVisible = !this.isPopupVisible;
         },
         closeLoginForm(isLoggedIn) {
             this.isPopupVisible = false;
