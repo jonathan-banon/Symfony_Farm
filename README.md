@@ -81,6 +81,8 @@ symfony server:start
 php -S localhost:8000 -t public
 ```
 
+L'application est accessible sur votre navigateur à l'adresse : http://127.0.0.1:8000
+
 ### Accès au backoffice
 
 Un utilisateur administrateur a été créé pour accéder au backoffice :
