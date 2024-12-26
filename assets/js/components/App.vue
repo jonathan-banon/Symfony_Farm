@@ -2,7 +2,7 @@
     <div id="app">
         <div v-if="isPopupVisible"
             class="flex justify-center items-center min-h-screen w-full h-full z-40 fixed bg-black">
-            <LoginPopup :popup="popup" @close="closeLoginPopup" />
+            <LoginForm :popup="popup" @close="closeLoginForm" />
             <template v-if="showAddForm">
                 <AddAnimalForm :types="types" :breeds="breeds" @close="toggleAddForm" @addAnimal="addAnimal"
                     @fetchBreeds="fetchBreeds" />
@@ -18,7 +18,7 @@
             </template>
         </div>
         <Navbar :types="types" :isAlertVisible="isAlertVisible" :alertMessage="alertMessage" :urlLogo="urlLogo"
-            :trashUrl="trashUrl" :penUrl="penUrl" :isUserLoggedIn="isUserLoggedIn" @toggleLogin="toggleLoginPopup"
+            :trashUrl="trashUrl" :penUrl="penUrl" :isUserLoggedIn="isUserLoggedIn" @toggleLogin="toggleLoginForm"
             @fetchAnimals="fetchAnimals" @saveEditType="saveEditType" @delType="delType" :actualTypeId="actualTypeId" />
     </div>
     <template v-if="isUserLoggedIn">
@@ -48,7 +48,7 @@ import AddTypeForm from './AddTypeForm.vue';
 import BreedForm from './BreedForm.vue';
 import AdminAnimals from './AdminAnimals.vue';
 import UserAnimals from './UserAnimals.vue';
-import LoginPopup from './LoginPopup.vue';
+import LoginForm from './LoginForm.vue';
 
 export default {
     components: {
@@ -59,7 +59,7 @@ export default {
         BreedForm,
         AdminAnimals,
         UserAnimals,
-        LoginPopup
+        LoginForm
     },
     data() {
         return {
@@ -301,7 +301,7 @@ export default {
                 console.error('Erreur lors de la récupération des animaux:', error);
             }
         },
-        toggleLoginPopup() {
+        toggleLoginForm() {
             if (!this.isUserLoggedIn) {
                 this.isPopupVisible = true;
                 this.popup = "login";
@@ -319,7 +319,7 @@ export default {
         toggleBreedForm() {
             this.showBreedForm = !this.showBreedForm
         },
-        closeLoginPopup(isLoggedIn) {
+        closeLoginForm(isLoggedIn) {
             this.isPopupVisible = false;
             this.popup = '';
             this.isUserLoggedIn = isLoggedIn;

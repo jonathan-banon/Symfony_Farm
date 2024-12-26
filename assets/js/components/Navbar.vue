@@ -34,7 +34,7 @@
             </div>
         </div>
         <div class="h-44">
-            <button class="btn bg-primary py-2 px-4 rounded-full" @click="toggleLoginPopup">
+            <button class="btn bg-primary py-2 px-4 rounded-full" @click="toggleLoginForm">
                 {{ isUserLoggedIn ? 'Déconnexion' : 'Connexion' }}
             </button>
         </div>
@@ -66,7 +66,7 @@ export default {
         };
     },
     methods: {
-        toggleLoginPopup() {
+        toggleLoginForm() {
             this.$emit('toggleLogin');
         },
         fetchAnimals(typeId) {
