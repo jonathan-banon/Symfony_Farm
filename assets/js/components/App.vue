@@ -237,6 +237,7 @@ export default {
                     this.fetchAnimals(this.actualTypeId)
                     this.fetchTypes();
                     this.showTypeForm = false;
+                    this.isPopupVisible = false;
                     this.isAlertVisible = true;
                     this.alertMessage = "Type d'animal ajouté avec succès"
                     setTimeout(() => {
@@ -315,6 +316,7 @@ export default {
         },
         toggleTypeForm() {
             this.showTypeForm = !this.showTypeForm
+            this.isPopupVisible = !this.isPopupVisible
         },
         toggleBreedForm() {
             this.showBreedForm = !this.showBreedForm
