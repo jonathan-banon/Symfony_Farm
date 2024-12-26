@@ -33,54 +33,58 @@ Exercice Technique
 4. Installez les dépendances JavaScript :
    ```
    npm install
-   # ou
+   ```
+      ou
+   ```
    yarn install
    ```
 
-5. Configurez les variables d'environnement :
+6. Configurez les variables d'environnement :
    - Copiez le fichier `.env` en `.env.local`
    - Modifiez les variables d'environnement dans `.env.local` selon vos besoins, notamment la configuration de la base de données :
      ```
      DATABASE_URL="mysql://db_user:db_password@127.0.0.1:3306/db_name?serverVersion=5.7"
      ```
 
-6. Créez la base de données (assurez-vous que MySQL est en cours d'exécution) :
+7. Créez la base de données (assurez-vous que MySQL est en cours d'exécution) :
    ```
    php bin/console doctrine:database:create
    ```
 
-7. Générez les fichiers de migrations :
+8. Générez les fichiers de migrations :
    ```
-   php bin/console doctrine:make:migrattion
+   php bin/console make:migration
    ```
 
-8. Exécutez les migrations en base de données :
+9. Exécutez les migrations en base de données :
    ```
    php bin/console doctrine:migrations:migrate
    ```
 
-9. Chargez les fixtures pour alimenter la base de données :
+10. Chargez les fixtures pour alimenter la base de données :
    ```
    php bin/console doctrine:fixtures:load
    ```
 
-10. Compilez les assets :
+11. Compilez les assets :
    ```
    npm run build
-   # ou
+   ```
+   ou
+   ```
    yarn build
    ```
-
 ## Utilisation
 
-Pour lancer le serveur local de Symfony :
+   Pour lancer le serveur local de Symfony :
 
-```
-symfony server:start
-# ou
-php -S localhost:8000 -t public
-```
-
+   ```
+   symfony server:start
+   ```
+   ou 
+   ```
+   php -S localhost:8000 -t public
+   ```
 L'application est accessible sur votre navigateur à l'adresse : http://127.0.0.1:8000
 
 ### Accès au backoffice
