@@ -4,7 +4,7 @@
             class="flex justify-center items-center min-h-screen w-full h-full z-40 fixed bg-black">
             <LoginForm :popup="popup" @close="closeLoginForm" />
             <template v-if="showAddForm">
-                <AddAnimalForm :types="types" :breeds="breeds" @close="toggleAddForm" @addAnimal="addAnimal"
+                <AddAnimalForm  :types="types" :breeds="breeds" @close="toggleAddForm" @addAnimal="addAnimal"
                     @fetchBreeds="fetchBreeds" />
             </template>
             <template v-if="showTypeForm">

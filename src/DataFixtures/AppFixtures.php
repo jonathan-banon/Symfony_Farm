@@ -36,9 +36,9 @@ class AppFixtures extends Fixture
         }
 
         $breeds = [
-            'Chien' => ['Labrador', 'Golden Retriever', 'Bulldog'],
-            'Chat' => ['Siamois', 'Persan', 'Maine Coon'],
-            'Cheval' => ['Frison', 'Pottok', 'Irish Cob']
+            'Chien' => ['Labrador', 'Bulldog'],
+            'Chat' => ['Siamois', 'Maine Coon'],
+            'Cheval' => ['Frison', 'Irish Cob']
         ];
 
         $breedObjectsByType = [];
@@ -56,7 +56,7 @@ class AppFixtures extends Fixture
             }
         }
 
-        $animalCountPerType = 6;
+        $animalCountPerType = 3;
 
         foreach ($types as $typeName) {
             for ($i = 0; $i < $animalCountPerType; $i++) {
@@ -73,7 +73,7 @@ class AppFixtures extends Fixture
                 $animal->setBreed($breed);
                 $animal->setOnSale(true);
 
-                for ($j = 1; $j <= 3; $j++) {
+                for ($j = 1; $j <= 2; $j++) {
                     $photo = new Photo();
                     $photo->setFilename("photo-$j.jpg");
                     $photo->setAnimal($animal);

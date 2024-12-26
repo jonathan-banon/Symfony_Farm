@@ -40,8 +40,8 @@
                     backgroundPosition: 'center'
                 }">
                     <div class="carousel-container" v-if="animal.images.length > 1">
-                        <img class="carousel-btn top-50 left-1" @click="prevImage(animal)" />
-                        <img class="carousel-btn top-50 right-1" @click="nextImage(animal)" />
+                        <img :src="leftArrow" class="carousel-btn top-50 left-1 w-10" @click="prevImage(animal)" />
+                        <img :src="rightArrow" class="carousel-btn top-50 right-1 w-10" @click="nextImage(animal)" />
                     </div>
                 </div>
                 <div class="flex p-3 justify-between w-9/12">
@@ -61,6 +61,9 @@
 </template>
 
 <script>
+import rightArrow from '../../images/right-arrow.svg';
+import leftArrow from '../../images/left-arrow.svg';
+
 export default {
     props: {
         animals: {
@@ -78,6 +81,8 @@ export default {
             searchVal: '',
             selectedBreed: null,
             sortOrder: 'alpha-asc',
+            rightArrow: rightArrow,
+            leftArrow: leftArrow
         };
     },
     computed: {

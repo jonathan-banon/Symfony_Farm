@@ -12,8 +12,8 @@
                     </a>
                 </div>
                 <div class="carousel-container" v-if="animal.images.length > 1">
-                    <img class="carousel-btn left-1" @click="prevImage(animal)">
-                    <img class="carousel-btn right-1" @click="nextImage(animal)">
+                    <img :src="leftArrow" class="carousel-btn top-30 left-1 w-10" @click="prevImage(animal)">
+                    <img :src="rightArrow" class="carousel-btn top-30 right-1 w-10" @click="nextImage(animal)">
                 </div>
 
                 <div class="overlay bg-opacity-50 p-2">
@@ -76,7 +76,17 @@
     </div>
 </template>
 <script>
+import rightArrow from '../../images/right-arrow.svg';
+import leftArrow from '../../images/left-arrow.svg';
+
 export default {
+    data() { 
+        return {
+            leftArrow:leftArrow,
+            rightArrow: rightArrow,
+        }
+
+    },
     props: {
         animals: Array,
         breeds: Array,
@@ -108,3 +118,9 @@ export default {
     }
 };
 </script>
+
+<style>
+.top-30 {
+    top: 30% !important;
+}
+</style>
