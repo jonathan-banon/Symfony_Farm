@@ -73,7 +73,7 @@ Exercice Technique
 
 ## Utilisation
 
-Pour lancer le serveur de développement Symfony :
+Pour lancer le serveur local de Symfony :
 
 ```
 symfony server:start
