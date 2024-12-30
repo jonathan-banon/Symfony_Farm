@@ -22,9 +22,9 @@
                     @save-edit-breed="saveEditBreed" @cancel-edit-breed="cancelEditBreed" @fetchBreeds="fetchBreeds" />
             </template>
         </div>
-        <Navbar :types="types" :isAlertVisible="isAlertVisible" :alertMessage="alertMessage" :urlLogo="urlLogo"
-            :trashUrl="trashUrl" :penUrl="penUrl" :isUserLoggedIn="isUserLoggedIn" @toggleLogin="toggleLoginForm"
-            @fetchAnimals="fetchAnimals" @saveEditType="saveEditType" @delType="delType" :actualTypeId="actualTypeId" />
+        <Navbar v-model:types="types" v-model:actualTypeId="actualTypeId" v-model:isAlertVisible="isAlertVisible"
+            v-model:alertMessage="alertMessage" :urlLogo="urlLogo" :trashUrl="trashUrl" :penUrl="penUrl"
+            :isUserLoggedIn="isUserLoggedIn" @toggleLogin="toggleLoginForm" @fetchAnimals="fetchAnimals" />
     </div>
     <template v-if="isUserLoggedIn">
         <div class="home-container flex justify-end p-5">
@@ -195,68 +195,6 @@ export default {
             } catch (error) {
                 console.error('Erreur de déconnexion:', error);
             }
-        },
-       
-        async delType(id) {
-            try {
-                const response = await fetch(`/type/${id}/del`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                })
-                if (response.ok) {
-                    this.isAlertVisible = true;
-                    this.alertMessage = "Type d'animal supprimé avec succès";
-                    const data = await response.json();
-                    if (data.newTypeId) {
-                        this.actualTypeId = data.newTypeId;
-                        this.fetchAnimals(this.actualTypeId);
-                    }
-                    this.types = this.types.filter(type => type.id !== id);
-                    setTimeout(() => {
-                        this.isAlertVisible = false;
-                    }, 3000)
-
-                } else {
-                    console.error('Erreur lors de la suppression du type d\'animal');
-                }
-            } catch {
-                console.error('Erreur lors de l\'envoi du formulaire:', error);
-            }
-        },
-        editType(id) {
-            this.editingTypeId = id;
-        },
-        async saveEditType(type) {
-            this.editingTypeId = null;
-            try {
-                const response = await fetch(`/type/${type.id}/edit`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        name: type.name,
-                    }),
-                });
-
-                if (response.ok) {
-                    this.isAlertVisible = true
-                    this.alertMessage = "Type d\'animal modifié avec succès"
-                    setTimeout(() => {
-                        this.isAlertVisible = false
-                    }, 3000)
-
-                } else {
-                    console.error('Erreur lors de la modification du Type d\'animal');
-                }
-            } catch (error) {
-                console.error('Erreur lors de l\'envoi du formulaire:', error);
-            }
-        },
-        cancelEditType() {
-            this.editingTypeId = null;
         },
         editBreed(id) {
             this.editingBreedId = id;
