@@ -2,11 +2,6 @@ body {
     font-family: Poppins,sans-serif;
 }
 
-.filter-container {
-    width: 28vw;
-    height: 70vh;
-}
-
 .btn {
     font-size: 1.5rem;
     padding: 15px;
@@ -35,7 +30,7 @@ body {
 
 .home-container {
     overflow: scroll;
-    height: 74vh;
+    height: 70vh;
 }
 
 .animal-picture {
@@ -77,8 +72,9 @@ body {
 }
 
 .filter-container{
-    width: 20vw;
     height: 65vh;
+    width: 20vw;
+    box-shadow: 4px 7px 6px #403b3b5e;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -86,5 +82,5 @@ body {
     background-color: #f1f1f1;
     border-radius: 20px;
     position: fixed;
-    left: 20px;
+    left: 3%;
 }

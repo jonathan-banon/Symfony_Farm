@@ -24,10 +24,10 @@
 
                 <div class="flex flex-col justify-between p-1.5" v-if="isUserLoggedIn && editingTypeId != type.id">
                     <a @click.prevent="delType(type.id)">
-                        <img :src="trashUrl" alt="trash-logo" class="w-6">
+                        <img :src="trashUrl" alt="trash-logo" class="w-6 cursor-pointer">
                     </a>
                     <a @click.prevent="editType(type.id)">
-                        <img :src="penUrl" alt="pen-logo" class="w-6">
+                        <img :src="penUrl" alt="pen-logo" class="w-6 cursor-pointer">
                     </a>
                 </div>
             </div>

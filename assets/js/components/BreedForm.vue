@@ -33,10 +33,10 @@
                             <p>{{ breed.name }}</p>
                             <div class="flex gap-2.5">
                                 <a @click.prevent="editBreed(breed.id)">
-                                    <img :src="penUrl" alt="pen-logo" class="w-6">
+                                    <img :src="penUrl" alt="pen-logo" class="w-6 cursor-pointer">
                                 </a>
                                 <a @click.prevent="delBreed(breed.id)">
-                                    <img :src="trashUrl" alt="trash-logo" class="w-6">
+                                    <img :src="trashUrl" alt="trash-logo" class="w-6 cursor-pointer">
                                 </a>
                             </div>
                         </template>

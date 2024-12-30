@@ -8,7 +8,7 @@
             }">
                 <div class="flex justify-end p-3">
                     <a @click.prevent="delImage(animal)">
-                        <img :src="trashUrl" alt="trash-logo" class="w-10">
+                        <img :src="trashUrl" alt="trash-logo" class="w-10 cursor-pointer">
                     </a>
                 </div>
                 <div class="carousel-container" v-if="animal.images.length > 1">
@@ -66,7 +66,7 @@
             </div>
             <div class="flex flex-col justify-between items-end">
                 <a @click.prevent="delAnimal(animal)">
-                    <img :src="trashUrl" alt="trash-logo" class="w-10">
+                    <img :src="trashUrl" alt="trash-logo" class="w-10 cursor-pointer">
                 </a>
                 <button type="submit" class="p-4 bg-primary font-semibold rounded-md focus:outline-none">
                     Enregistrer les modifications
