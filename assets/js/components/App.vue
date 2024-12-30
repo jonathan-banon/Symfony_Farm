@@ -27,7 +27,7 @@
                 @toggleAddForm="toggleAddForm" @toggleTypeForm="toggleTypeForm" @toggleBreedForm="toggleBreedForm" />
             <div class="w-3/4">
                 <AdminAnimals :animals="animals" :breeds="breeds" :trashUrl="trashUrl" @edit-animal="editAnimal"
-                    @del-image="delImage" @prev-image="prevImage" @next-image="nextImage" @on-file-change="onFileChange"
+                    @del-image="delImage" @prev-image="prevImage" @next-image="nextImage"
                     @upload-image="uploadImage" @del-animal="delAnimal" />
             </div>
         </div>
@@ -99,20 +99,6 @@ export default {
         this.fetchAnimals(this.actualTypeId);
     },
     methods: {
-        onFileChange(e, animal) {
-            const files = e.target.files;
-            if (files && files.length > 0) {
-                if (!animal.files) {
-                    animal.files = [];
-                }
-                for (let i = 0; i < files.length; i++) {
-                    animal.files.push(files[i]);
-                    const imageUrl = URL.createObjectURL(files[i]);
-                    animal.images.push(imageUrl);
-                }
-                animal.currentImageIndex = animal.images.length - 1;
-            }
-        },
         async uploadImage(animal) {
             if (animal.files.length === 0) {
                 alert("Veuillez sélectionner un fichier.");

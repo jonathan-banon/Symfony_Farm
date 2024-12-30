@@ -80,9 +80,9 @@ import rightArrow from '../../images/right-arrow.svg';
 import leftArrow from '../../images/left-arrow.svg';
 
 export default {
-    data() { 
+    data() {
         return {
-            leftArrow:leftArrow,
+            leftArrow: leftArrow,
             rightArrow: rightArrow,
         }
 
@@ -92,7 +92,7 @@ export default {
         breeds: Array,
         trashUrl: String,
     },
-    emits: ['edit-animal', 'del-image', 'prev-image', 'next-image', 'on-file-change', 'upload-image', 'del-animal'],
+    emits: ['edit-animal', 'del-image', 'prev-image', 'next-image', 'upload-image', 'del-animal'],
     methods: {
         editAnimal(animal) {
             this.$emit('edit-animal', animal);
@@ -106,8 +106,19 @@ export default {
         nextImage(animal) {
             this.$emit('next-image', animal);
         },
-        onFileChange(event, animal) {
-            this.$emit('on-file-change', event, animal);
+        onFileChange(e, animal) {
+            const files = e.target.files;
+            if (files && files.length > 0) {
+                if (!animal.files) {
+                    animal.files = [];
+                }
+                for (let i = 0; i < files.length; i++) {
+                    animal.files.push(files[i]);
+                    const imageUrl = URL.createObjectURL(files[i]);
+                    animal.images.push(imageUrl);
+                }
+                animal.currentImageIndex = animal.images.length - 1;
+            }
         },
         uploadImage(animal) {
             this.$emit('upload-image', animal);
