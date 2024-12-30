@@ -101,7 +101,6 @@ export default {
           this.newAnimal.images.push(imageUrl);
         }
       }
-      console.log("animal.files => ", this.newAnimal.files)
     },
 
     fetchBreeds(typeId) {
@@ -153,12 +152,6 @@ export default {
         this.$emit('fetchAnimals', this.actualTypeId);
         this.$emit('update:showAddForm', false);
         this.$emit('update:isPopupVisible', false);
-        this.$emit('update:isAlertVisible', true);
-        this.$emit('update:alertMessage', "Animal ajouté avec succès");
-
-        setTimeout(() => {
-          this.$emit('update:isAlertVisible', false);
-        }, 3000);
       } else {
         console.error('Erreur lors de l\'ajout de l\'animal');
       }

@@ -18,9 +18,8 @@
                 <BreedForm :actualTypeId="actualTypeId" :types="types" :breeds="breeds" :trashUrl="trashUrl"
                     :penUrl="penUrl" v-model:showBreedForm="showBreedForm" v-model:isPopupVisible="isPopupVisible"
                     v-model:isAlertVisible="isAlertVisible" v-model:alertMessage="alertMessage"
-                    @toggle-breed-form="toggleBreedForm"  @del-breed="delBreed"
-                    @edit-breed="editBreed" @save-edit-breed="saveEditBreed" @cancel-edit-breed="cancelEditBreed"
-                    @fetchBreeds="fetchBreeds" />
+                    @toggle-breed-form="toggleBreedForm" @del-breed="delBreed" @edit-breed="editBreed"
+                    @save-edit-breed="saveEditBreed" @cancel-edit-breed="cancelEditBreed" @fetchBreeds="fetchBreeds" />
             </template>
         </div>
         <Navbar :types="types" :isAlertVisible="isAlertVisible" :alertMessage="alertMessage" :urlLogo="urlLogo"
@@ -32,8 +31,9 @@
             <AdminNav :showAddForm="showAddForm" :showTypeForm="showTypeForm" :showBreedForm="showBreedForm"
                 @toggleAddForm="toggleAddForm" @toggleTypeForm="toggleTypeForm" @toggleBreedForm="toggleBreedForm" />
             <div class="w-3/4">
-                <AdminAnimals :animals="animals" :breeds="breeds" :trashUrl="trashUrl" @edit-animal="editAnimal"
-                    @del-image="delImage" @prev-image="prevImage" @next-image="nextImage" @del-animal="delAnimal" />
+                <AdminAnimals v-model:alertMessage="alertMessage" v-model:isAlertVisible="isAlertVisible"
+                    v-model:animals="animals" :breeds="breeds" :trashUrl="trashUrl" @del-image="delImage"
+                    @prev-image="prevImage" @next-image="nextImage" />
             </div>
         </div>
     </template>
@@ -196,63 +196,7 @@ export default {
                 console.error('Erreur de déconnexion:', error);
             }
         },
-        async editAnimal(animal) {
-            try {
-                const response = await fetch(`/animal/${animal.id}/edit`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        name: animal.name,
-                        breed: animal.breed,
-                        description: animal.description,
-                        price: animal.price,
-                        status: animal.isOnSale,
-                        age: animal.age
-                    }),
-                });
-
-                if (response.ok) {
-                    this.isAlertVisible = true
-                    this.alertMessage = "Animal modifié avec succès"
-                    setTimeout(() => {
-                        this.isAlertVisible = false
-                    }, 3000)
-
-                } else {
-                    console.error('Erreur lors de la modification de l\'animal');
-                }
-            } catch (error) {
-                console.error('Erreur lors de l\'envoi du formulaire:', error);
-            }
-        },
-        async delAnimal(animal) {
-            try {
-                const response = await fetch(`/animal/${animal.id}/del`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        id: animal.id
-                    })
-                })
-                if (response.ok) {
-                    this.isAlertVisible = true;
-                    this.alertMessage = "Annonce de l'animal supprimé avec succès"
-                    this.animals = this.animals.filter(a => a.id !== animal.id);
-                    setTimeout(() => {
-                        this.isAlertVisible = false;
-                    }, 3000)
-
-                } else {
-                    console.error('Erreur lors de la suppression de l\'animal');
-                }
-            } catch {
-                console.error('Erreur lors de l\'envoi du formulaire:', error);
-            }
-        },
+       
         async delType(id) {
             try {
                 const response = await fetch(`/type/${id}/del`, {

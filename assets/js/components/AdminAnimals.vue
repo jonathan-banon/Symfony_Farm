@@ -91,11 +91,41 @@ export default {
         animals: Array,
         breeds: Array,
         trashUrl: String,
+        isAlertVisible: Boolean,
+        alertMessage: String
     },
-    emits: ['edit-animal', 'del-image', 'prev-image', 'next-image', 'del-animal'],
+    emits: ['del-image', 'prev-image', 'next-image', 'del-animal', 'update:isAlertVisible', 'update:alertMessage', 'update:animals'],
     methods: {
-        editAnimal(animal) {
-            this.$emit('edit-animal', animal);
+        async editAnimal(animal) {
+            try {
+                const response = await fetch(`/animal/${animal.id}/edit`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: animal.name,
+                        breed: animal.breed,
+                        description: animal.description,
+                        price: animal.price,
+                        status: animal.isOnSale,
+                        age: animal.age
+                    }),
+                });
+
+                if (response.ok) {
+                    this.$emit('update:isAlertVisible', true);
+                    this.$emit('update:alertMessage', "Animal modifié avec succès");
+                    setTimeout(() => {
+                        this.$emit('update:isAlertVisible', false);
+                    }, 3000)
+
+                } else {
+                    console.error('Erreur lors de la modification de l\'animal');
+                }
+            } catch (error) {
+                console.error('Erreur lors de l\'envoi du formulaire:', error);
+            }
         },
         delImage(animal) {
             this.$emit('del-image', animal);
@@ -148,9 +178,32 @@ export default {
                 alert(error.message);
             }
         },
-        delAnimal(animal) {
-            this.$emit('del-animal', animal);
-        }
+        async delAnimal(animal) {
+            try {
+                const response = await fetch(`/animal/${animal.id}/del`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        id: animal.id
+                    })
+                })
+                if (response.ok) {
+                    this.$emit('update:isAlertVisible', true);
+                    this.$emit('update:alertMessage', "Annonce de l'animal supprimé avec succès");
+                    this.$emit('update:animals', this.animals.filter(a => a.id !== animal.id))
+                    setTimeout(() => {
+                        this.$emit('update:isAlertVisible', false);
+                    }, 3000)
+
+                } else {
+                    console.error('Erreur lors de la suppression de l\'animal');
+                }
+            } catch {
+                console.error('Erreur lors de l\'envoi du formulaire:', error);
+            }
+        },
     }
 };
 </script>
