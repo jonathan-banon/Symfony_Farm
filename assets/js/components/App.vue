@@ -15,10 +15,12 @@
                     v-model:alertMessage="alertMessage" @close="toggleTypeForm" @fetchTypes="fetchTypes" />
             </template>
             <template v-if="showBreedForm">
-                <BreedForm :types="types" :breeds="breeds" :trashUrl="trashUrl" :penUrl="penUrl"
-                    @toggle-breed-form="toggleBreedForm" @add-breed="addBreed" @fetch-breeds="fetchBreeds"
-                    @del-breed="delBreed" @edit-breed="editBreed" @save-edit-breed="saveEditBreed"
-                    @cancel-edit-breed="cancelEditBreed" />
+                <BreedForm :actualTypeId="actualTypeId" :types="types" :breeds="breeds" :trashUrl="trashUrl"
+                    :penUrl="penUrl" v-model:showBreedForm="showBreedForm" v-model:isPopupVisible="isPopupVisible"
+                    v-model:isAlertVisible="isAlertVisible" v-model:alertMessage="alertMessage"
+                    @toggle-breed-form="toggleBreedForm"  @del-breed="delBreed"
+                    @edit-breed="editBreed" @save-edit-breed="saveEditBreed" @cancel-edit-breed="cancelEditBreed"
+                    @fetchBreeds="fetchBreeds" />
             </template>
         </div>
         <Navbar :types="types" :isAlertVisible="isAlertVisible" :alertMessage="alertMessage" :urlLogo="urlLogo"
@@ -124,34 +126,6 @@ export default {
                 }
             } catch (error) {
                 console.error('Erreur lors de la récupération des races:', error);
-            }
-        },
-        async addBreed(breed) {
-            try {
-                const response = await fetch((`/breed/${breed.typeId}/add`), {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        name: breed.name,
-                    })
-                });
-
-                if (response.ok) {
-                    this.fetchAnimals(this.actualTypeId)
-                    this.showBreedForm = false;
-                    this.isPopupVisible = false;
-                    this.isAlertVisible = true;
-                    this.alertMessage = "Race d\'animal ajoutée avec succès"
-                    setTimeout(() => {
-                        this.isAlertVisible = false;
-                    }, 3000)
-                } else {
-                    console.error('Erreur lors de l\'ajout');
-                }
-            } catch (error) {
-                console.error('Erreur lors de l\'envoi du formulaire:', error);
             }
         },
         async checkSession() {

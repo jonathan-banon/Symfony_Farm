@@ -2,7 +2,7 @@
     <div class="bg-secondary p-8 rounded-lg shadow-lg w-7/12">
         <h2 class="text-2xl font-semibold text-center mb-6">Gestion des races d'animaux</h2>
         <div class="flex justify-between">
-            <form class="flex flex-col w-2/5" @submit.prevent="addBreed(newBreed.typeId)">
+            <form class="flex flex-col w-2/5" @submit.prevent="addBreed()">
                 <div>
                     <label for="type">Type</label>
                     <select required v-model="newBreed.typeId" id="type" class="animal-input"
@@ -35,7 +35,7 @@
                                 <a @click.prevent="editBreed(breed.id)">
                                     <img :src="penUrl" alt="pen-logo" class="w-6">
                                 </a>
-                                <a @click.prevent="delBreed(breed.id)" >
+                                <a @click.prevent="delBreed(breed.id)">
                                     <img :src="trashUrl" alt="trash-logo" class="w-6">
                                 </a>
                             </div>
@@ -58,6 +58,7 @@
 <script>
 export default {
     props: {
+        actualTypeId: Number,
         types: Array,
         breeds: Array,
         trashUrl: String,
@@ -65,12 +66,16 @@ export default {
     },
     emits: [
         'toggle-breed-form',
-        'add-breed',
-        'fetch-breeds',
         'del-breed',
         'edit-breed',
         'save-edit-breed',
-        'cancel-edit-breed'
+        'cancel-edit-breed',
+        'fetchAnimals',
+        'fetchBreeds',
+        'update:showBreedForm',
+        'update:isPopupVisible',
+        'update:isAlertVisible',
+        'update:alertMessage',
     ],
     data() {
         return {
@@ -85,11 +90,37 @@ export default {
         toggleBreedForm() {
             this.$emit('toggle-breed-form');
         },
-        addBreed(typeId) {
-            this.$emit('add-breed', { ...this.newBreed, typeId });
+        async addBreed() {
+            try {
+                const response = await fetch((`/breed/${this.newBreed.typeId}/add`), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: this.newBreed.name,
+                    })
+                });
+                if (response.ok) {
+                    this.$emit('fetchAnimals', this.actualTypeId);
+                    this.$emit('fetchBreeds', this.actualTypeId);
+                    this.$emit('update:showBreedForm', false);
+                    this.$emit('update:isPopupVisible', false);
+                    this.$emit('update:isAlertVisible', true);
+                    this.$emit('update:alertMessage', "Race d\'animal ajoutée avec succès");
+
+                    setTimeout(() => {
+                        this.$emit('update:isAlertVisible', false);
+                    }, 3000)
+                } else {
+                    console.error('Erreur lors de l\'ajout');
+                }
+            } catch (error) {
+                console.error('Erreur lors de l\'envoi du formulaire:', error);
+            }
         },
         fetchBreeds(typeId) {
-            this.$emit('fetch-breeds', typeId);
+            this.$emit('fetchBreeds', typeId);
         },
         delBreed(id) {
             this.$emit('del-breed', id);
