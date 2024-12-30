@@ -70,6 +70,7 @@ export default {
         'fetchBreeds',
         'update:showBreedForm',
         'update:isPopupVisible',
+        'update:breeds',
     ],
     data() {
         return {
@@ -98,8 +99,6 @@ export default {
                 if (response.ok) {
                     this.$emit('fetchAnimals', this.actualTypeId);
                     this.$emit('fetchBreeds', this.actualTypeId);
-                    this.$emit('update:showBreedForm', false);
-                    this.$emit('update:isPopupVisible', false);
                 } else {
                     console.error('Erreur lors de l\'ajout');
                 }
@@ -123,6 +122,8 @@ export default {
                 })
                 if (response.ok) {
                     this.$emit('fetchAnimals', this.actualTypeId);
+                    this.$emit('update:breeds', this.breeds.filter(breed => breed.id !== id));
+
                 } else {
                     console.error('Erreur lors de la suppression du type d\'animal');
                 }
