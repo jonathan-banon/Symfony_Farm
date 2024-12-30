@@ -4,8 +4,10 @@
             class="flex justify-center items-center min-h-screen w-full h-full z-40 fixed bg-black">
             <LoginForm :popup="popup" @close="closeLoginForm" />
             <template v-if="showAddForm">
-                <AddAnimalForm  :types="types" :breeds="breeds" @close="toggleAddForm" @addAnimal="addAnimal"
-                    @fetchBreeds="fetchBreeds" />
+                <AddAnimalForm :types="types" :breeds="breeds" :actualTypeId="actualTypeId"
+                    v-model:showAddForm="showAddForm" v-model:isPopupVisible="isPopupVisible"
+                    v-model:isAlertVisible="isAlertVisible" v-model:alertMessage="alertMessage" @close="toggleAddForm"
+                    @fetchBreeds="fetchBreeds" @fetchAnimals="fetchAnimals" />
             </template>
             <template v-if="showTypeForm">
                 <AddTypeForm @close="toggleTypeForm" @addType="addType" />
@@ -27,8 +29,7 @@
                 @toggleAddForm="toggleAddForm" @toggleTypeForm="toggleTypeForm" @toggleBreedForm="toggleBreedForm" />
             <div class="w-3/4">
                 <AdminAnimals :animals="animals" :breeds="breeds" :trashUrl="trashUrl" @edit-animal="editAnimal"
-                    @del-image="delImage" @prev-image="prevImage" @next-image="nextImage"
-                    @del-animal="delAnimal" />
+                    @del-image="delImage" @prev-image="prevImage" @next-image="nextImage" @del-animal="delAnimal" />
             </div>
         </div>
     </template>
@@ -121,59 +122,6 @@ export default {
                 }
             } catch (error) {
                 console.error('Erreur lors de la récupération des races:', error);
-            }
-        },
-        async addAnimal(newAnimal) {
-            if (!newAnimal.files || newAnimal.files.length === 0) {
-                alert("Veuillez sélectionner une image pour votre animal.");
-                return;
-            }
-
-            const base64Files = [];
-
-            for (let i = 0; i < newAnimal.files.length; i++) {
-                const file = newAnimal.files[i];
-                const reader = new FileReader();
-
-                const fileBase64 = await new Promise((resolve, reject) => {
-                    reader.onloadend = () => {
-                        const base64File = reader.result.split(',')[1];
-                        resolve(base64File);
-                    };
-                    reader.onerror = reject;
-                    reader.readAsDataURL(file);
-                });
-
-                base64Files.push(fileBase64);
-            }
-
-            const response = await fetch('/animal/new', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    type: newAnimal.type,
-                    name: newAnimal.name,
-                    breed: newAnimal.breed,
-                    age: newAnimal.age,
-                    description: newAnimal.description,
-                    price: newAnimal.price,
-                    files: base64Files,
-                })
-            });
-
-            if (response.ok) {
-                this.fetchAnimals(this.actualTypeId)
-                this.showAddForm = false;
-                this.isPopupVisible = false;
-                this.isAlertVisible = true;
-                this.alertMessage = "Animal ajouté avec succès";
-                setTimeout(() => {
-                    this.isAlertVisible = false;
-                }, 3000)
-            } else {
-                console.error('Erreur lors de l\'ajout de l\'animal');
             }
         },
         async addType(newType) {
