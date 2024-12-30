@@ -9,7 +9,7 @@ Exercice Technique
 - 🐙 Git
 - 🐘 PHP 8.1 ou supérieur
 - 🎼 Composer
-- 🟩 Node.js 14 ou supérieur
+- 🟩 Node.js 22.11.0
 - 📦 npm ou yarn
 - 🐬 MySQL 5.7 ou supérieur
 - 🎵 Symfony CLI (optionnel, mais recommandé pour le développement local)
