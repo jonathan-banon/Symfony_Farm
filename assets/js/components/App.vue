@@ -10,7 +10,9 @@
                     @fetchBreeds="fetchBreeds" @fetchAnimals="fetchAnimals" />
             </template>
             <template v-if="showTypeForm">
-                <AddTypeForm @close="toggleTypeForm" @addType="addType" />
+                <AddTypeForm :actualTypeId="actualTypeId" v-model:showTypeForm="showTypeForm"
+                    v-model:isPopupVisible="isPopupVisible" v-model:isAlertVisible="isAlertVisible"
+                    v-model:alertMessage="alertMessage" @close="toggleTypeForm" @fetchTypes="fetchTypes" />
             </template>
             <template v-if="showBreedForm">
                 <BreedForm :types="types" :breeds="breeds" :trashUrl="trashUrl" :penUrl="penUrl"
@@ -122,35 +124,6 @@ export default {
                 }
             } catch (error) {
                 console.error('Erreur lors de la récupération des races:', error);
-            }
-        },
-        async addType(newType) {
-            try {
-                const response = await fetch('/type/new', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        name: newType.name,
-                    })
-                });
-
-                if (response.ok) {
-                    this.fetchAnimals(this.actualTypeId)
-                    this.fetchTypes();
-                    this.showTypeForm = false;
-                    this.isPopupVisible = false;
-                    this.isAlertVisible = true;
-                    this.alertMessage = "Type d'animal ajouté avec succès"
-                    setTimeout(() => {
-                        this.isAlertVisible = false
-                    }, 3000)
-                } else {
-                    console.error('Erreur lors de l\'ajout du type');
-                }
-            } catch (error) {
-                console.error('Erreur lors de l\'envoi du formulaire:', error);
             }
         },
         async addBreed(breed) {

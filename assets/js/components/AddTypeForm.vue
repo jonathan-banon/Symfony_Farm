@@ -20,7 +20,14 @@
 <script>
 export default {
     name: 'TypeForm',
-    emits: ['close', 'addType'],
+    props: {
+        actualTypeId: Number,
+        showAddForm: Boolean,
+        isPopupVisible: Boolean,
+        isAlertVisible: Boolean,
+        alertMessage: String
+    },
+    emits: ['close', 'fetchAnimals', 'fetchTypes', 'update:showTypeForm', 'update:isPopupVisible', 'update:isAlertVisible', 'update:alertMessage'],
     data() {
         return {
             newType: {
@@ -29,9 +36,35 @@ export default {
         };
     },
     methods: {
-        addType() {
-            this.$emit('addType', this.newType);
-            this.newType.name = '';
+        async addType() {
+            try {
+                const response = await fetch('/type/new', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: this.newType.name,
+                    })
+                });
+
+                if (response.ok) {
+                    this.$emit('fetchAnimals', this.actualTypeId);
+                    this.$emit('fetchTypes');
+                    this.$emit('update:showTypeForm', false);
+                    this.$emit('update:isPopupVisible', false);
+                    this.$emit('update:isAlertVisible', true);
+                    this.$emit('update:alertMessage', "Type d'animal ajouté avec succès");
+
+                    setTimeout(() => {
+                        this.$emit('update:isAlertVisible', false);
+                    }, 3000)
+                } else {
+                    console.error('Erreur lors de l\'ajout du type');
+                }
+            } catch (error) {
+                console.error('Erreur lors de l\'envoi du formulaire:', error);
+            }
         }
     }
 };
