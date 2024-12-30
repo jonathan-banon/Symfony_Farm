@@ -99,9 +99,6 @@ export default {
         this.fetchAnimals(this.actualTypeId);
     },
     methods: {
-        OnTypeSelected(e) {
-            console.log(e.target.value);
-        },
         onFileChange(e, animal) {
             const files = e.target.files;
             if (files && files.length > 0) {
@@ -400,37 +397,6 @@ export default {
                     console.error('Erreur lors de la suppression de l\'animal');
                 }
             } catch {
-                console.error('Erreur lors de l\'envoi du formulaire:', error);
-            }
-        },
-        async editAnimal(animal) {
-            try {
-                const response = await fetch(`/animal/${animal.id}/edit`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        name: animal.name,
-                        breed: animal.breed,
-                        description: animal.description,
-                        price: animal.price,
-                        status: animal.isOnSale
-
-                    }),
-                });
-
-                if (response.ok) {
-                    this.isAlertVisible = true
-                    this.alertMessage = "Animal modifié avec succès"
-                    setTimeout(() => {
-                        this.isAlertVisible = false
-                    }, 3000)
-
-                } else {
-                    console.error('Erreur lors de la modification de l\'animal');
-                }
-            } catch (error) {
                 console.error('Erreur lors de l\'envoi du formulaire:', error);
             }
         },

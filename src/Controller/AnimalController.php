@@ -95,7 +95,6 @@ final class AnimalController extends AbstractController
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
-
             $animal->setName($data['name']);
             $breed = $entityManager->getRepository(Breed::class)->findOneBy(['name' => $data['breed']]);
             if ($breed) {
