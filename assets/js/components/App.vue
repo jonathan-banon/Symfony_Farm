@@ -13,7 +13,7 @@
                     v-model:isPopupVisible="isPopupVisible" @close="toggleTypeForm" @fetchTypes="fetchTypes" />
             </template>
             <template v-if="showBreedForm">
-                <BreedForm :actualTypeId="actualTypeId" :types="types" :breeds="breeds" :trashUrl="trashUrl"
+                <BreedForm :actualTypeId="actualTypeId" :types="types" v-model:breeds="breeds" :trashUrl="trashUrl"
                     :penUrl="penUrl" v-model:showBreedForm="showBreedForm" v-model:isPopupVisible="isPopupVisible"
                     @toggle-breed-form="toggleBreedForm" @fetchBreeds="fetchBreeds" />
             </template>
