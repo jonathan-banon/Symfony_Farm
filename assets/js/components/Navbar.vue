@@ -1,6 +1,5 @@
 <template>
     <div class="bg-secondary min-h-60 flex justify-between items-center p-6">
-        <p class="alert-success bg-primary" v-if="isAlertVisible">{{ alertMessage }}</p>
         <img class="w-60" :src="urlLogo" alt="Logo">
         <div class="nav-container">
             <div v-for="type in types" :key="type.id" class="flex">
@@ -46,8 +45,6 @@ export default {
     name: 'Navbar',
     props: {
         types: Array,
-        isAlertVisible: Boolean,
-        alertMessage: String,
         urlLogo: String,
         trashUrl: String,
         penUrl: String,
@@ -57,8 +54,6 @@ export default {
     emits: [
         'toggleLogin',
         'fetchAnimals',
-        'update:isAlertVisible',
-        'update:alertMessage',
         'update:actualTypeId',
         'update:types',
     ],
@@ -83,8 +78,6 @@ export default {
                     }
                 })
                 if (response.ok) {
-                    this.$emit('update:isAlertVisible', true);
-                    this.$emit('update:alertMessage', "Type d'animal supprimé avec succès");
 
                     const data = await response.json();
                     if (data.newTypeId) {
@@ -92,11 +85,6 @@ export default {
                         this.$emit('fetchAnimals', this.actualTypeId);
                     }
                     this.$emit('update:types', this.types.filter(type => type.id !== id));
-
-                    setTimeout(() => {
-                        this.$emit('update:isAlertVisible', false);
-                    }, 3000)
-
                 } else {
                     console.error('Erreur lors de la suppression du type d\'animal');
                 }
@@ -119,18 +107,6 @@ export default {
                         name: type.name,
                     }),
                 });
-
-                if (response.ok) {
-                    this.$emit('update:isAlertVisible', true);
-                    this.$emit('update:alertMessage', "Type d\'animal modifié avec succès");
-
-                    setTimeout(() => {
-                        this.$emit('update:isAlertVisible', false);
-                    }, 3000)
-
-                } else {
-                    console.error('Erreur lors de la modification du Type d\'animal');
-                }
             } catch (error) {
                 console.error('Erreur lors de l\'envoi du formulaire:', error);
             }
@@ -147,17 +123,6 @@ export default {
     min-width: 50%;
     justify-content: space-around;
     align-items: end;
-}
-
-.alert-success {
-    position: fixed;
-    top: 15%;
-    right: 15px;
-    width: 20%;
-    border-radius: 10px;
-    padding: 10px;
-    text-align: center;
-    font-weight: bold;
 }
 
 .type-container {

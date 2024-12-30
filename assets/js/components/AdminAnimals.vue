@@ -91,10 +91,8 @@ export default {
         animals: Array,
         breeds: Array,
         trashUrl: String,
-        isAlertVisible: Boolean,
-        alertMessage: String
     },
-    emits: ['del-image', 'prev-image', 'next-image', 'del-animal', 'update:isAlertVisible', 'update:alertMessage', 'update:animals'],
+    emits: ['del-image', 'prev-image', 'next-image', 'del-animal', 'update:animals'],
     methods: {
         async editAnimal(animal) {
             try {
@@ -112,17 +110,6 @@ export default {
                         age: animal.age
                     }),
                 });
-
-                if (response.ok) {
-                    this.$emit('update:isAlertVisible', true);
-                    this.$emit('update:alertMessage', "Animal modifié avec succès");
-                    setTimeout(() => {
-                        this.$emit('update:isAlertVisible', false);
-                    }, 3000)
-
-                } else {
-                    console.error('Erreur lors de la modification de l\'animal');
-                }
             } catch (error) {
                 console.error('Erreur lors de l\'envoi du formulaire:', error);
             }
@@ -190,13 +177,7 @@ export default {
                     })
                 })
                 if (response.ok) {
-                    this.$emit('update:isAlertVisible', true);
-                    this.$emit('update:alertMessage', "Annonce de l'animal supprimé avec succès");
                     this.$emit('update:animals', this.animals.filter(a => a.id !== animal.id))
-                    setTimeout(() => {
-                        this.$emit('update:isAlertVisible', false);
-                    }, 3000)
-
                 } else {
                     console.error('Erreur lors de la suppression de l\'animal');
                 }

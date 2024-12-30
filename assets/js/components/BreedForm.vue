@@ -66,16 +66,10 @@ export default {
     },
     emits: [
         'toggle-breed-form',
-        'del-breed',
-        'edit-breed',
-        'save-edit-breed',
-        'cancel-edit-breed',
         'fetchAnimals',
         'fetchBreeds',
         'update:showBreedForm',
         'update:isPopupVisible',
-        'update:isAlertVisible',
-        'update:alertMessage',
     ],
     data() {
         return {
@@ -106,12 +100,6 @@ export default {
                     this.$emit('fetchBreeds', this.actualTypeId);
                     this.$emit('update:showBreedForm', false);
                     this.$emit('update:isPopupVisible', false);
-                    this.$emit('update:isAlertVisible', true);
-                    this.$emit('update:alertMessage', "Race d\'animal ajoutée avec succès");
-
-                    setTimeout(() => {
-                        this.$emit('update:isAlertVisible', false);
-                    }, 3000)
                 } else {
                     console.error('Erreur lors de l\'ajout');
                 }
@@ -122,19 +110,49 @@ export default {
         fetchBreeds(typeId) {
             this.$emit('fetchBreeds', typeId);
         },
-        delBreed(id) {
-            this.$emit('del-breed', id);
-        },
         editBreed(id) {
             this.editingBreedId = id;
-            this.$emit('edit-breed', id);
         },
-        saveEditBreed(breed) {
-            this.$emit('save-edit-breed', breed);
+        async delBreed(id) {
+            try {
+                const response = await fetch(`/breed/${id}/del`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                if (response.ok) {
+                    this.$emit('fetchAnimals', this.actualTypeId);
+                } else {
+                    console.error('Erreur lors de la suppression du type d\'animal');
+                }
+            } catch {
+                console.error('Erreur lors de l\'envoi du formulaire:', error);
+            }
+        },
+        async saveEditBreed(breed) {
+            try {
+                const response = await fetch(`/breed/${breed.id}/edit`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: breed.name,
+                    }),
+                });
+
+                if (response.ok) {
+                    this.editingBreedId = null
+                } else {
+                    console.error('Erreur lors de la modification d\'une race d\'animal');
+                }
+            } catch (error) {
+                console.error('Erreur lors de l\'envoi du formulaire:', error);
+            }
         },
         cancelEditBreed() {
             this.editingBreedId = null;
-            this.$emit('cancel-edit-breed');
         }
     }
 };

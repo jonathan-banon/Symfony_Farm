@@ -5,34 +5,29 @@
             <LoginForm :popup="popup" @close="closeLoginForm" />
             <template v-if="showAddForm">
                 <AddAnimalForm :types="types" :breeds="breeds" :actualTypeId="actualTypeId"
-                    v-model:showAddForm="showAddForm" v-model:isPopupVisible="isPopupVisible"
-                    v-model:isAlertVisible="isAlertVisible" v-model:alertMessage="alertMessage" @close="toggleAddForm"
+                    v-model:showAddForm="showAddForm" v-model:isPopupVisible="isPopupVisible" @close="toggleAddForm"
                     @fetchBreeds="fetchBreeds" @fetchAnimals="fetchAnimals" />
             </template>
             <template v-if="showTypeForm">
                 <AddTypeForm :actualTypeId="actualTypeId" v-model:showTypeForm="showTypeForm"
-                    v-model:isPopupVisible="isPopupVisible" v-model:isAlertVisible="isAlertVisible"
-                    v-model:alertMessage="alertMessage" @close="toggleTypeForm" @fetchTypes="fetchTypes" />
+                    v-model:isPopupVisible="isPopupVisible" @close="toggleTypeForm" @fetchTypes="fetchTypes" />
             </template>
             <template v-if="showBreedForm">
                 <BreedForm :actualTypeId="actualTypeId" :types="types" :breeds="breeds" :trashUrl="trashUrl"
                     :penUrl="penUrl" v-model:showBreedForm="showBreedForm" v-model:isPopupVisible="isPopupVisible"
-                    v-model:isAlertVisible="isAlertVisible" v-model:alertMessage="alertMessage"
-                    @toggle-breed-form="toggleBreedForm" @del-breed="delBreed" @edit-breed="editBreed"
-                    @save-edit-breed="saveEditBreed" @cancel-edit-breed="cancelEditBreed" @fetchBreeds="fetchBreeds" />
+                    @toggle-breed-form="toggleBreedForm" @fetchBreeds="fetchBreeds" />
             </template>
         </div>
-        <Navbar v-model:types="types" v-model:actualTypeId="actualTypeId" v-model:isAlertVisible="isAlertVisible"
-            v-model:alertMessage="alertMessage" :urlLogo="urlLogo" :trashUrl="trashUrl" :penUrl="penUrl"
-            :isUserLoggedIn="isUserLoggedIn" @toggleLogin="toggleLoginForm" @fetchAnimals="fetchAnimals" />
+        <Navbar v-model:types="types" v-model:actualTypeId="actualTypeId" :urlLogo="urlLogo" :trashUrl="trashUrl"
+            :penUrl="penUrl" :isUserLoggedIn="isUserLoggedIn" @toggleLogin="toggleLoginForm"
+            @fetchAnimals="fetchAnimals" />
     </div>
     <template v-if="isUserLoggedIn">
         <div class="home-container flex justify-end p-5">
             <AdminNav :showAddForm="showAddForm" :showTypeForm="showTypeForm" :showBreedForm="showBreedForm"
                 @toggleAddForm="toggleAddForm" @toggleTypeForm="toggleTypeForm" @toggleBreedForm="toggleBreedForm" />
             <div class="w-3/4">
-                <AdminAnimals v-model:alertMessage="alertMessage" v-model:isAlertVisible="isAlertVisible"
-                    v-model:animals="animals" :breeds="breeds" :trashUrl="trashUrl" @del-image="delImage"
+                <AdminAnimals v-model:animals="animals" :breeds="breeds" :trashUrl="trashUrl" @del-image="delImage"
                     @prev-image="prevImage" @next-image="nextImage" />
             </div>
         </div>
@@ -76,14 +71,12 @@ export default {
             urlLogo: logoUrl,
             isPopupVisible: false,
             popup: '',
-            isAlertVisible: false,
             trashUrl: trashUrl,
             penUrl: penUrl,
             showAddForm: false,
             showTypeForm: false,
             showBreedForm: false,
             isTypeSelected: false,
-            alertMessage: "",
             editingTypeId: null,
             editingBreedId: null,
             newBreed: {
@@ -196,62 +189,6 @@ export default {
                 console.error('Erreur de déconnexion:', error);
             }
         },
-        editBreed(id) {
-            this.editingBreedId = id;
-        },
-        async delBreed(id) {
-            try {
-                const response = await fetch(`/breed/${id}/del`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                })
-                if (response.ok) {
-                    this.isAlertVisible = true;
-                    this.alertMessage = "Race d'animal supprimé avec succès";
-                    this.fetchAnimals(this.actualTypeId);
-                    setTimeout(() => {
-                        this.isAlertVisible = false;
-                    }, 3000)
-
-                } else {
-                    console.error('Erreur lors de la suppression du type d\'animal');
-                }
-            } catch {
-                console.error('Erreur lors de l\'envoi du formulaire:', error);
-            }
-        },
-        async saveEditBreed(breed) {
-            try {
-                const response = await fetch(`/breed/${breed.id}/edit`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        name: breed.name,
-                    }),
-                });
-
-                if (response.ok) {
-                    this.editingBreedId = null
-                    this.isAlertVisible = true
-                    this.alertMessage = "Race d\'animal modifié avec succès"
-                    setTimeout(() => {
-                        this.isAlertVisible = false
-                    }, 3000)
-
-                } else {
-                    console.error('Erreur lors de la modification d\'une race d\'animal');
-                }
-            } catch (error) {
-                console.error('Erreur lors de l\'envoi du formulaire:', error);
-            }
-        },
-        cancelEditBreed() {
-            this.editingBreedId = null;
-        },
         prevImage(animal) {
             if (animal.currentImageIndex > 0) {
                 animal.currentImageIndex--;
@@ -281,11 +218,6 @@ export default {
                 })
                 if (response.ok) {
                     this.fetchAnimals(this.actualTypeId)
-                    this.isAlertVisible = true;
-                    this.alertMessage = "Image de l'animal supprimé avec succès"
-                    setTimeout(() => {
-                        this.isAlertVisible = false
-                    }, 3000)
                 }
             } catch {
 

@@ -24,10 +24,8 @@ export default {
         actualTypeId: Number,
         showAddForm: Boolean,
         isPopupVisible: Boolean,
-        isAlertVisible: Boolean,
-        alertMessage: String
     },
-    emits: ['close', 'fetchAnimals', 'fetchTypes', 'update:showTypeForm', 'update:isPopupVisible', 'update:isAlertVisible', 'update:alertMessage'],
+    emits: ['close', 'fetchAnimals', 'fetchTypes', 'update:showTypeForm', 'update:isPopupVisible'],
     data() {
         return {
             newType: {
@@ -53,12 +51,6 @@ export default {
                     this.$emit('fetchTypes');
                     this.$emit('update:showTypeForm', false);
                     this.$emit('update:isPopupVisible', false);
-                    this.$emit('update:isAlertVisible', true);
-                    this.$emit('update:alertMessage', "Type d'animal ajouté avec succès");
-
-                    setTimeout(() => {
-                        this.$emit('update:isAlertVisible', false);
-                    }, 3000)
                 } else {
                     console.error('Erreur lors de l\'ajout du type');
                 }

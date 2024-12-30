@@ -72,10 +72,8 @@ export default {
     actualTypeId: Number,
     showAddForm: Boolean,
     isPopupVisible: Boolean,
-    isAlertVisible: Boolean,
-    alertMessage: String
   },
-  emits: ['close', 'fetchBreeds', 'fetchAnimals', 'update:showAddForm', 'update:isPopupVisible', 'update:isAlertVisible', 'update:alertMessage'],
+  emits: ['close', 'fetchBreeds', 'fetchAnimals', 'update:showAddForm', 'update:isPopupVisible'],
   data() {
     return {
       newAnimal: {
