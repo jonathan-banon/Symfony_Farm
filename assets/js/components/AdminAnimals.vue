@@ -92,7 +92,7 @@ export default {
         breeds: Array,
         trashUrl: String,
     },
-    emits: ['edit-animal', 'del-image', 'prev-image', 'next-image', 'upload-image', 'del-animal'],
+    emits: ['edit-animal', 'del-image', 'prev-image', 'next-image', 'del-animal'],
     methods: {
         editAnimal(animal) {
             this.$emit('edit-animal', animal);
@@ -120,8 +120,33 @@ export default {
                 animal.currentImageIndex = animal.images.length - 1;
             }
         },
-        uploadImage(animal) {
-            this.$emit('upload-image', animal);
+        async uploadImage(animal) {
+            if (animal.files.length === 0) {
+                alert("Veuillez sélectionner un fichier.");
+                return;
+            }
+
+            const formData = new FormData();
+            for (let i = 0; i < animal.files.length; i++) {
+                formData.append("images[]", animal.files[i]);
+            }
+            try {
+                const response = await fetch(`/animal/${animal.id}/upload-image`, {
+                    method: "POST",
+                    body: formData,
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    alert("Image téléchargée avec succès !");
+                    animal.previewImage = data.imagePath;
+                } else {
+                    throw new Error("Échec de l'upload de l'image.");
+                }
+
+            } catch (error) {
+                console.error("Erreur :", error);
+                alert(error.message);
+            }
         },
         delAnimal(animal) {
             this.$emit('del-animal', animal);

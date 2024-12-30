@@ -28,7 +28,7 @@
             <div class="w-3/4">
                 <AdminAnimals :animals="animals" :breeds="breeds" :trashUrl="trashUrl" @edit-animal="editAnimal"
                     @del-image="delImage" @prev-image="prevImage" @next-image="nextImage"
-                    @upload-image="uploadImage" @del-animal="delAnimal" />
+                    @del-animal="delAnimal" />
             </div>
         </div>
     </template>
@@ -99,34 +99,6 @@ export default {
         this.fetchAnimals(this.actualTypeId);
     },
     methods: {
-        async uploadImage(animal) {
-            if (animal.files.length === 0) {
-                alert("Veuillez sélectionner un fichier.");
-                return;
-            }
-
-            const formData = new FormData();
-            for (let i = 0; i < animal.files.length; i++) {
-                formData.append("images[]", animal.files[i]);
-            }
-            try {
-                const response = await fetch(`/animal/${animal.id}/upload-image`, {
-                    method: "POST",
-                    body: formData,
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    alert("Image téléchargée avec succès !");
-                    animal.previewImage = data.imagePath;
-                } else {
-                    throw new Error("Échec de l'upload de l'image.");
-                }
-
-            } catch (error) {
-                console.error("Erreur :", error);
-                alert(error.message);
-            }
-        },
         async fetchTypes() {
             try {
                 const response = await fetch(`/type/all`);
