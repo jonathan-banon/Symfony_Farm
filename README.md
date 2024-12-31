@@ -93,3 +93,40 @@ Un utilisateur administrateur a été créé pour accéder au backoffice :
 
 - Email : test@test.com
 - Mot de passe : test
+
+## Tests
+
+### Configuration des tests
+
+1. Créez un fichier `.env.test.local` à la racine du projet et configurez la base de données de test :
+   ```
+   DATABASE_URL="mysql://db_user:db_password@127.0.0.1:3306/db_name_test?serverVersion=5.7"
+   ```
+
+2. Créez la base de données de test :
+   ```
+   php bin/console --env=test doctrine:database:create
+   ```
+
+3. Créez le schéma de la base de données de test :
+   ```
+   php bin/console --env=test doctrine:schema:create
+   ```
+
+4. Alimentez la base de données de test avec des données fictives:
+   ```
+   php bin/console --env=test doctrine:schema:create
+   ```
+
+### Exécution des tests
+
+Pour exécuter tous les tests :
+```
+php bin/phpunit
+```
+
+### Description des tests
+
+1. `testIndex` : Vérifie que la page d'accueil se charge correctement et contient le titre attendu.
+2. `testCheckSession` : Vérifie que la route `/check-session` renvoie une réponse JSON valide contenant les clés 'isLoggedIn' et 'user'.
+3. `testAnimalsByType` : Vérifie la présence de types en base de donnée et utilise la route `/type/firstTypeId/animals/` qui renvoie une liste d'animaux au format JSON avec les propriétés attendues.
