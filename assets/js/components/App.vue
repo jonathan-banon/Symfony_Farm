@@ -27,8 +27,8 @@
             <AdminNav :showAddForm="showAddForm" :showTypeForm="showTypeForm" :showBreedForm="showBreedForm"
                 @toggleAddForm="toggleAddForm" @toggleTypeForm="toggleTypeForm" @toggleBreedForm="toggleBreedForm" />
             <div class="w-3/4">
-                <AdminAnimals v-model:animals="animals" :breeds="breeds" :trashUrl="trashUrl" @del-image="delImage"
-                    @prev-image="prevImage" @next-image="nextImage" />
+                <AdminAnimals v-model:animals="animals" :breeds="breeds" :actualTypeId="actualTypeId" :trashUrl="trashUrl" @prev-image="prevImage"
+                    @next-image="nextImage" @fetchAnimals='fetchAnimals' />
             </div>
         </div>
     </template>
@@ -201,26 +201,6 @@ export default {
                 animal.currentImageIndex++;
             } else {
                 animal.currentImageIndex = 0;
-            }
-        },
-        async delImage(animal) {
-            try {
-                const response = await fetch(`/animal/${animal.id}/delete-image/${animal.currentImageIndex}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        id: animal.id,
-                        currentImageIndex: animal.currentImageIndex
-                    })
-
-                })
-                if (response.ok) {
-                    this.fetchAnimals(this.actualTypeId)
-                }
-            } catch {
-
             }
         }
     }

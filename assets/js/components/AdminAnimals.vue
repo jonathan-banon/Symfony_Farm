@@ -91,8 +91,9 @@ export default {
         animals: Array,
         breeds: Array,
         trashUrl: String,
+        actualTypeId: Number
     },
-    emits: ['del-image', 'prev-image', 'next-image', 'del-animal', 'update:animals'],
+    emits: ['prev-image', 'next-image', 'del-animal', 'update:animals', 'fetchAnimals'],
     methods: {
         async editAnimal(animal) {
             try {
@@ -114,8 +115,25 @@ export default {
                 console.error('Erreur lors de l\'envoi du formulaire:', error);
             }
         },
-        delImage(animal) {
-            this.$emit('del-image', animal);
+        async delImage(animal) {
+            try {
+                const response = await fetch(`/animal/${animal.id}/delete-image/${animal.currentImageIndex}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        id: animal.id,
+                        currentImageIndex: animal.currentImageIndex
+                    })
+
+                })
+                if (response.ok) {
+                    this.$emit('fetchAnimals', this.actualTypeId);
+                }
+            } catch {
+
+            }
         },
         prevImage(animal) {
             this.$emit('prev-image', animal);
