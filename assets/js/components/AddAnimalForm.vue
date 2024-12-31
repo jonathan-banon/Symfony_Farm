@@ -33,7 +33,14 @@
               <option v-for="breed in breeds" :key="breed.id" :value="breed.id">
                 {{ breed.name }}
               </option>
+              <option value="addBreed">
+                -- Nouvelle race --
+              </option>
             </select>
+          </div>
+          <div v-if="newAnimal.breed === 'addBreed'">
+            <label>Ajouter une race</label>
+            <input required v-model="newBreed.name" type="text" id="name" class="animal-input" />
           </div>
 
           <div>
@@ -63,6 +70,7 @@
     </form>
   </div>
 </template>
+
 <script>
 export default {
   name: 'AddAnimalForm',
@@ -73,9 +81,10 @@ export default {
     showAddForm: Boolean,
     isPopupVisible: Boolean,
   },
-  emits: ['close', 'fetchBreeds', 'fetchAnimals', 'update:showAddForm', 'update:isPopupVisible'],
+  emits: ['close', 'fetchBreeds', 'fetchAnimals', 'update:showAddForm', 'update:isPopupVisible', 'addBreed'],
   data() {
     return {
+      addBreed: false,
       newAnimal: {
         type: '',
         name: '',
@@ -85,6 +94,10 @@ export default {
         price: '',
         files: [],
         images: []
+      },
+      newBreed: {
+        typeId: null,
+        name: ''
       },
       isTypeSelected: false,
     };
@@ -112,46 +125,60 @@ export default {
         return;
       }
 
-      const base64Files = [];
-
-      for (let i = 0; i < this.newAnimal.files.length; i++) {
-        const file = this.newAnimal.files[i];
-        const reader = new FileReader();
-
-        const fileBase64 = await new Promise((resolve, reject) => {
-          reader.onloadend = () => {
-            const base64File = reader.result.split(',')[1];
-            resolve(base64File);
-          };
+      const base64Files = await Promise.all(this.newAnimal.files.map(file => {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result.split(',')[1]);
           reader.onerror = reject;
           reader.readAsDataURL(file);
         });
+      }));
 
-        base64Files.push(fileBase64);
+
+      if (this.newAnimal.breed === "addBreed") {
+        try {
+          const newBreedResult = await new Promise((resolve, reject) => {
+            this.$emit('addBreed', this.newAnimal.type, this.newBreed.name, resolve, reject);
+          });
+          if (newBreedResult) {
+            this.newAnimal.breed = newBreedResult.id;
+          } else {
+            throw new Error('Impossible d\'obtenir l\'ID de la nouvelle race');
+          }
+        } catch (error) {
+          alert(`Erreur lors de l'ajout de la nouvelle race : ${error.message}`);
+          return;
+        }
       }
 
-      const response = await fetch('/animal/new', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          type: this.newAnimal.type,
-          name: this.newAnimal.name,
-          breed: this.newAnimal.breed,
-          age: this.newAnimal.age,
-          description: this.newAnimal.description,
-          price: this.newAnimal.price,
-          files: base64Files,
-        })
-      });
+      try {
+        const response = await fetch('/animal/new', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            type: this.newAnimal.type,
+            name: this.newAnimal.name,
+            breed: this.newAnimal.breed,
+            age: this.newAnimal.age,
+            description: this.newAnimal.description,
+            price: this.newAnimal.price,
+            files: base64Files,
+          })
+        });
 
-      if (response.ok) {
-        this.$emit('fetchAnimals', this.actualTypeId);
-        this.$emit('update:showAddForm', false);
-        this.$emit('update:isPopupVisible', false);
-      } else {
-        console.error('Erreur lors de l\'ajout de l\'animal');
+        if (response.ok) {
+          const result = await response.json();
+          this.$emit('fetchAnimals', this.actualTypeId);
+          this.$emit('update:showAddForm', false);
+          this.$emit('update:isPopupVisible', false);
+        } else {
+          const errorData = await response.text();
+          console.error('Erreur lors de l\'ajout de l\'animal :', errorData);
+        }
+      } catch (error) {
+        console.error('Erreur lors de l\'opération fetch :', error);
       }
     }
   }

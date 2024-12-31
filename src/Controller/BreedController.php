@@ -32,7 +32,7 @@ final class BreedController extends AbstractController
             $entityManager->persist($breed);
             $entityManager->flush();
 
-            return new Response(null, Response::HTTP_OK);
+            return new JsonResponse(['id' => $breed->getId(), 'name' => $breed->getName()], Response::HTTP_OK);
         }
         return new Response('Données invalides', Response::HTTP_BAD_REQUEST);
     }
@@ -82,5 +82,4 @@ final class BreedController extends AbstractController
         }
         return new Response('Données invalides', Response::HTTP_BAD_REQUEST);
     }
-
 }

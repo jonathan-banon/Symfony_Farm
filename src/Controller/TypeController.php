@@ -36,13 +36,17 @@ final class TypeController extends AbstractController
         if (!$type) {
             return new JsonResponse(['error' => 'Type introuvable'], Response::HTTP_NOT_FOUND);
         }
-
-        $breeds = $type->getBreeds();
-        foreach ($breeds as $breed) {
-            $data[] = [
-                'id' => $breed->getId(),
-                'name' => $breed->getName(),
-            ];
+        
+        if(!$type->getBreeds()->isEmpty()) {
+            $breeds = $type->getBreeds();
+            foreach ($breeds as $breed) {
+                $data[] = [
+                    'id' => $breed->getId(),
+                    'name' => $breed->getName(),
+                ];
+            }
+        } else {
+            $data = [];
         }
 
         return new JsonResponse($data);

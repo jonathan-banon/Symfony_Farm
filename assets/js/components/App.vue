@@ -6,7 +6,7 @@
             <template v-if="showAddForm">
                 <AddAnimalForm :types="types" :breeds="breeds" :actualTypeId="actualTypeId"
                     v-model:showAddForm="showAddForm" v-model:isPopupVisible="isPopupVisible" @close="toggleAddForm"
-                    @fetchBreeds="fetchBreeds" @fetchAnimals="fetchAnimals" />
+                    @fetchBreeds="fetchBreeds" @fetchAnimals="fetchAnimals" @addBreed="addBreed" />
             </template>
             <template v-if="showTypeForm">
                 <AddTypeForm :actualTypeId="actualTypeId" v-model:showTypeForm="showTypeForm"
@@ -15,7 +15,7 @@
             <template v-if="showBreedForm">
                 <BreedForm :actualTypeId="actualTypeId" :types="types" v-model:breeds="breeds" :trashUrl="trashUrl"
                     :penUrl="penUrl" v-model:showBreedForm="showBreedForm" v-model:isPopupVisible="isPopupVisible"
-                    @toggle-breed-form="toggleBreedForm" @fetchBreeds="fetchBreeds" />
+                    @toggle-breed-form="toggleBreedForm" @fetchBreeds="fetchBreeds" @addBreed="addBreed" />
             </template>
         </div>
         <Navbar v-model:types="types" v-model:actualTypeId="actualTypeId" :urlLogo="urlLogo" :trashUrl="trashUrl"
@@ -27,8 +27,8 @@
             <AdminNav :showAddForm="showAddForm" :showTypeForm="showTypeForm" :showBreedForm="showBreedForm"
                 @toggleAddForm="toggleAddForm" @toggleTypeForm="toggleTypeForm" @toggleBreedForm="toggleBreedForm" />
             <div class="w-3/4">
-                <AdminAnimals v-model:animals="animals" :breeds="breeds" :actualTypeId="actualTypeId" :trashUrl="trashUrl" @prev-image="prevImage"
-                    @next-image="nextImage" @fetchAnimals='fetchAnimals' />
+                <AdminAnimals v-model:animals="animals" :breeds="breeds" :actualTypeId="actualTypeId"
+                    :trashUrl="trashUrl" @prev-image="prevImage" @next-image="nextImage" @fetchAnimals='fetchAnimals' />
             </div>
         </div>
     </template>
@@ -104,9 +104,8 @@ export default {
                     this.types = await response.json();
                 }
             } catch (error) {
-
+                console.error('Error fetching types:', error);
             }
-
         },
         async fetchBreeds(typeId) {
             this.isTypeSelected = true;
@@ -201,6 +200,30 @@ export default {
                 animal.currentImageIndex++;
             } else {
                 animal.currentImageIndex = 0;
+            }
+        },
+        async addBreed(typeId, breedName, resolve, reject) {
+            try {
+                const response = await fetch(`/breed/${typeId}/add`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: breedName,
+                    })
+                });
+                if (response.ok) {
+                    const newBreed = await response.json();
+                    await this.fetchBreeds(typeId);
+                    resolve(newBreed);
+                } else {
+                    console.error('Error response from server when adding breed');
+                    reject(new Error('Erreur lors de l\'ajout de la race'));
+                }
+            } catch (error) {
+                console.error('Exception in addBreed:', error);
+                reject(error);
             }
         }
     }

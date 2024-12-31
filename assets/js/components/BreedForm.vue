@@ -7,7 +7,7 @@
                     <label for="type">Type</label>
                     <select required v-model="newBreed.typeId" id="type" class="animal-input"
                         @change="fetchBreeds($event.target.value)">
-                        <option value="" disabled selected>Sélectionnez un type</option>
+                        <option value="" disabled>Sélectionnez un type</option>
                         <option v-for="type in types" :key="type.id" :value="type.id">
                             {{ type.name }}
                         </option>
@@ -71,12 +71,13 @@ export default {
         'update:showBreedForm',
         'update:isPopupVisible',
         'update:breeds',
+        'addBreed'
     ],
     data() {
         return {
             newBreed: {
                 name: '',
-                typeId: 1,
+                typeId: this.actualTypeId,
             },
             editingBreedId: null,
         };
@@ -87,23 +88,12 @@ export default {
         },
         async addBreed() {
             try {
-                const response = await fetch((`/breed/${this.newBreed.typeId}/add`), {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        name: this.newBreed.name,
-                    })
+                await new Promise((resolve, reject) => {
+                    this.$emit('addBreed', this.newBreed.typeId, this.newBreed.name, resolve, reject);
                 });
-                if (response.ok) {
-                    this.$emit('fetchAnimals', this.actualTypeId);
-                    this.$emit('fetchBreeds', this.actualTypeId);
-                } else {
-                    console.error('Erreur lors de l\'ajout');
-                }
             } catch (error) {
-                console.error('Erreur lors de l\'envoi du formulaire:', error);
+                alert(`Erreur lors de l'ajout de la nouvelle race : ${error.message}`);
+                return;
             }
         },
         fetchBreeds(typeId) {
