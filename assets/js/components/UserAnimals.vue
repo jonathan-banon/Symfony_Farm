@@ -15,7 +15,7 @@
 
             <div class="space-y-2">
                 <div>
-                    <input type="radio" id="all-breeds" value="" v-model="selectedBreed" name="breed" />
+                    <input type="radio" id="all-breeds" value="" v-model="selectedBreed" name="breed" checked/>
                     <label for="all-breeds"> Toutes les races</label>
                 </div>
 
