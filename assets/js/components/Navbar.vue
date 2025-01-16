@@ -1,8 +1,11 @@
 <template>
-    <div class="bg-secondary min-h-60 flex justify-between items-center p-6">
-        <img class="w-60" :src="urlLogo" alt="Logo">
-        <div class="nav-container">
-            <div v-for="type in types" :key="type.id" class="flex">
+    <div class="bg-secondary flex items-center shadow-lg">
+        <div class="flex w-1/4 pl-4">
+            <img class="w-16" :src="urlLogo" alt="Logo">
+            <img class="w-36 ml-11" :src="textLogoUrl" alt="textLogoUrl">
+        </div>
+        <div class="nav-container text-primary w-3/5">
+            <div v-for="type in types" :key="type.id" class="flex h-full w-1/6">
                 <template v-if="editingTypeId === type.id">
                     <div>
                         <input type="text" v-model="type.name" class="border rounded px-2 py-1 w-full" />
@@ -14,8 +17,8 @@
                     </div>
                 </template>
                 <template v-else>
-                    <button class="type-container text-4xl" @click="fetchAnimals(type.id)" :class="{
-                        'bg-primary': actualTypeId === type.id,
+                    <button class="p-5 text-4xl w-full" @click="fetchAnimals(type.id)" :class="{
+                        'shadow-inner shadow-black': actualTypeId === type.id,
                         'bg-secondary border-white': actualTypeId !== type.id
                     }">
                         {{ type.name }}
@@ -32,9 +35,9 @@
                 </div>
             </div>
         </div>
-        <div class="h-44">
-            <button class="btn bg-primary py-2 px-4 rounded-full" @click="toggleLoginForm">
-                {{ isUserLoggedIn ? 'Déconnexion' : 'Connexion' }}
+        <div class="flex justify-end pr-4 w-1/6">
+            <button class="btn bg-primary text-secondary py-2 px-4 rounded-full" @click="toggleLoginForm">
+                {{ isUserLoggedIn ? 'Déconnexion' : 'Back-office' }}
             </button>
         </div>
     </div>
@@ -46,6 +49,7 @@ export default {
     props: {
         types: Array,
         urlLogo: String,
+        textLogoUrl: String,
         trashUrl: String,
         penUrl: String,
         isUserLoggedIn: Boolean,
@@ -121,14 +125,10 @@ export default {
 .nav-container {
     display: flex;
     min-width: 50%;
-    justify-content: space-around;
+    justify-content: start;
     align-items: end;
-}
-
-.type-container {
-    width: fit-content;
-    border-radius: 20px;
-    padding: 30px;
+    gap: 20px;
+    height: 10vh;
 }
 
 .border-white {

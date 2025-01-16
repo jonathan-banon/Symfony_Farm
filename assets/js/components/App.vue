@@ -1,5 +1,5 @@
 <template>
-    <div id="app">
+    <div>
         <div v-if="isPopupVisible"
             class="flex justify-center items-center min-h-screen w-full h-full z-40 fixed bg-black">
             <LoginForm :popup="popup" @close="closeLoginForm" />
@@ -18,7 +18,7 @@
                     @toggle-breed-form="toggleBreedForm" @fetchBreeds="fetchBreeds" @addBreed="addBreed" />
             </template>
         </div>
-        <Navbar v-model:types="types" v-model:actualTypeId="actualTypeId" :urlLogo="urlLogo" :trashUrl="trashUrl"
+        <Navbar v-model:types="types" v-model:actualTypeId="actualTypeId" :urlLogo="urlLogo" :textLogoUrl="textLogoUrl" :trashUrl="trashUrl"
             :penUrl="penUrl" :isUserLoggedIn="isUserLoggedIn" @toggleLogin="toggleLoginForm"
             @fetchAnimals="fetchAnimals" />
     </div>
@@ -39,6 +39,7 @@
 
 <script>
 import logoUrl from '../../images/logo.svg';
+import textLogoUrl from '../../images/family-farm.svg';
 import trashUrl from '../../images/trash.svg';
 import penUrl from '../../images/pen.svg';
 import Navbar from './Navbar.vue';
@@ -69,6 +70,7 @@ export default {
             animals: [],
             isUserLoggedIn: false,
             urlLogo: logoUrl,
+            textLogoUrl: textLogoUrl,
             isPopupVisible: false,
             popup: '',
             trashUrl: trashUrl,

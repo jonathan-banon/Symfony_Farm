@@ -2,6 +2,11 @@ body {
     font-family: Poppins,sans-serif;
 }
 
+#app {
+    min-height: 96vh;
+
+}
+
 .btn {
     font-size: 1.5rem;
     padding: 15px;
@@ -30,7 +35,7 @@ body {
 
 .home-container {
     overflow: scroll;
-    height: 70vh;
+    height: 83vh;
 }
 
 .animal-picture {
