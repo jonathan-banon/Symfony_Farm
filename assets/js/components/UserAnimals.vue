@@ -1,27 +1,29 @@
 <template>
     <div class="home-container flex justify-end p-5">
-        <div class="filter-container bg-gray-100  rounded-lg p-5 w-80 space-y-4 mr-5">
-            <input type="text" v-model="searchVal" placeholder="Rechercher un animal par son nom"
-                class="w-full p-2 rounded-md" />
+        <div class="filter-container bg-gray-100 rounded-lg p-5 w-80 space-y-4 mr-5">
+            <div class="search-bar-container border-b-2 border-b-greyCustom">
+                <input type="text" v-model="searchVal" placeholder="Recherche ..."
+                    class="w-full p-2 rounded-2xl border-2 border-black-500 bg-fillGrey" />
+            </div>
 
-            <select v-model="sortOrder" class="w-full p-2 rounded-md">
-                <option value="price-asc">Trier par prix croissant</option>
-                <option value="price-desc">Trier par Prix décroissant</option>
-                <option value="alpha-asc">Trier par ordre alphabétique croissant</option>
-                <option value="alpha-desc">Trier par ordre alphabétique décroissant</option>
-                <option value="age-asc">Trier par âge croissant</option>
-                <option value="age-desc">Trier par âge décroissant</option>
-            </select>
+            <div class="h-1/5 border-b-2 border-b-greyCustom">
+                <p class="text-base">Races</p>
+                <div class="flex gap-3 mt-2">
+                    <button class="text-xs border border-primary-500 p-2 rounded-full" :class="{
+                        'bg-primary text-secondary': selectedBreed === null,
+                        'bg-transparent text-primary-500': selectedBreed !== null
+                    }" @click="selectBreedId(null)">
+                        Toutes les races
+                    </button>
 
-            <div class="space-y-2">
-                <div>
-                    <input type="radio" id="all-breeds" value="" v-model="selectedBreed" name="breed" checked/>
-                    <label for="all-breeds"> Toutes les races</label>
-                </div>
-
-                <div v-for="breed in filteredBreeds" :key="breed.id" class="flex items-center space-x-2">
-                    <input type="radio" :id="breed.name" :value="breed.name" v-model="selectedBreed" name="breed" />
-                    <label :for="breed.name">{{ breed.name }}</label>
+                    <template v-for="breed in filteredBreeds" :key="breed.id">
+                        <button class="text-xs border border-primary-500 p-2 rounded-full" :class="{
+                            'bg-primary text-secondary': selectedBreed === breed.name,
+                            'bg-transparent text-primary-500': selectedBreed !== breed.name
+                        }" @click="selectBreedId(breed.name)">
+                            {{ breed.name }}
+                        </button>
+                    </template>
                 </div>
             </div>
 
@@ -33,6 +35,28 @@
         </div>
 
         <div class="w-3/4">
+            <p v-if="displayedAnimals.length != 0" class="text-xs mb-5 mt-5">{{ displayedAnimals.length }} Résultat{{ displayedAnimals.length === 1 ? '' : 's' }} trouvé{{
+                displayedAnimals.length === 1 ? '' : 's' }}</p>
+            <div class="flex items-center gap-2 cursor-pointer relative mb-5" @click="toggleSortMenu">
+                <div class="relative flex items-center justify-between p-2 border border-gray-300 rounded-2xl w-4/12">
+                    <div class="flex">
+                        <img :src="logoSortBar1" class="w-4 mr-2" />
+                        <p class="text-sm">{{ getSortLabel }}</p>
+                    </div>
+                    <img :src="logoSortBar2" class="w-4 ml-2" />
+                </div>
+            </div>
+            <template v-if="sortMenuOpen"
+                class="absolute bg-white border border-gray-300 p-2 rounded-md w-48 mt-2 display-sortBar">
+                <div class="bg-gray-200 p-2 mb-2 rounded-md">
+                    <div v-for="option in sortOptions" :key="option.value"
+                        class="flex items-center py-1 px-2 cursor-pointer hover:bg-gray-300"
+                        @click="selectSortOrder(option.value)">
+                        <p class="text-sm">{{ option.label }}</p>
+                    </div>
+                </div>
+            </template>
+
             <div v-for="animal in displayedAnimals" :key="animal.id" class="animal-item rounded-3xl h-1/2 flex">
                 <div class="animal-picture w-1/4 bg-primary rounded-3xl" :style="{
                     backgroundImage: 'url(' + animal.images[animal.currentImageIndex] + ')',
@@ -63,6 +87,8 @@
 <script>
 import rightArrow from '../../images/right-arrow.svg';
 import leftArrow from '../../images/left-arrow.svg';
+import logoSortBar1 from '../../images/logoSortBar1.svg';
+import logoSortBar2 from '../../images/logoSortBar2.svg';
 
 export default {
     props: {
@@ -81,8 +107,19 @@ export default {
             searchVal: '',
             selectedBreed: null,
             sortOrder: 'alpha-asc',
+            sortMenuOpen: false,
+            sortOptions: [
+                { value: 'price-asc', label: 'Trier par prix croissant' },
+                { value: 'price-desc', label: 'Trier par prix décroissant' },
+                { value: 'alpha-asc', label: 'Trier par ordre alphabétique croissant' },
+                { value: 'alpha-desc', label: 'Trier par ordre alphabétique décroissant' },
+                { value: 'age-asc', label: 'Trier par âge croissant' },
+                { value: 'age-desc', label: 'Trier par âge décroissant' },
+            ],
             rightArrow: rightArrow,
-            leftArrow: leftArrow
+            leftArrow: leftArrow,
+            logoSortBar1: logoSortBar1,
+            logoSortBar2: logoSortBar2,
         };
     },
     computed: {
@@ -109,6 +146,10 @@ export default {
 
             return filtered.slice().sort(this.getSortFunction());
         },
+        getSortLabel() {
+            const option = this.sortOptions.find(opt => opt.value === this.sortOrder);
+            return option ? option.label : '';
+        }
     },
     methods: {
         getSortFunction() {
@@ -135,6 +176,16 @@ export default {
         nextImage(animal) {
             this.$emit('next-image', animal);
         },
+        selectBreedId(breedName) {
+            this.selectedBreed = breedName;
+        },
+        toggleSortMenu() {
+            this.sortMenuOpen = !this.sortMenuOpen;
+        },
+        selectSortOrder(value) {
+            this.sortOrder = value;
+            this.sortMenuOpen = false;
+        }
     },
     watch: {
         animals() {
@@ -145,3 +196,15 @@ export default {
     },
 };
 </script>
+
+<style>
+.search-bar-container {
+    height: 10%;
+}
+
+.display-sortBar {
+    z-index: 100;
+    background-color: blue;
+    width: 20%;
+}
+</style>

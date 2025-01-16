@@ -11,7 +11,10 @@ module.exports = {
       primary: 'rgb(var(--color-primary))',
       secondary: 'rgb(var(--color-secondary))',
       black: 'rgba(var(--black))',
-      red: 'rgb(var(--red))'
+      red: 'rgb(var(--red))',
+      greyCustom: 'rgba(var(--greyCustom))',
+      brown: 'rgba(var(--brown))',
+      fillGrey: 'rgba(var(--fillGrey))'
     }
   },
   plugins: [],

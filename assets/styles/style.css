@@ -1,5 +1,6 @@
 body {
     font-family: Poppins,sans-serif;
+    color: rgba(40, 23, 9, 1)
 }
 
 #app {
@@ -35,7 +36,7 @@ body {
 
 .home-container {
     overflow: scroll;
-    height: 83vh;
+    height: 90vh;
 }
 
 .animal-picture {
@@ -77,15 +78,13 @@ body {
 }
 
 .filter-container{
-    height: 65vh;
+    height: 83vh;
     width: 20vw;
     box-shadow: 4px 7px 6px #403b3b5e;
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
     padding: 20px;
-    background-color: #f1f1f1;
     border-radius: 20px;
     position: fixed;
-    left: 3%;
+    left: 25px;
 }

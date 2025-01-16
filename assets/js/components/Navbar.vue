@@ -4,7 +4,7 @@
             <img class="w-16" :src="urlLogo" alt="Logo">
             <img class="w-36 ml-11" :src="textLogoUrl" alt="textLogoUrl">
         </div>
-        <div class="nav-container text-primary w-3/5">
+        <div class="nav-container w-3/5">
             <div v-for="type in types" :key="type.id" class="flex h-full w-1/6">
                 <template v-if="editingTypeId === type.id">
                     <div>
