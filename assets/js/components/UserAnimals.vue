@@ -72,7 +72,7 @@
                     </div>
                 </div>
             </template>
-            <div v-for="animal in displayedAnimals" :key="animal.id" class="animal-item rounded-3xl h-1/2 flex">
+            <div v-for="animal in displayedAnimals" :key="animal.id" class="animal-item flex">
                 <div class="animal-picture w-1/4 bg-primary rounded-3xl" :style="{
                     backgroundImage: 'url(' + animal.images[animal.currentImageIndex] + ')',
                     backgroundSize: 'cover',
@@ -83,15 +83,14 @@
                         <img :src="rightArrow" class="carousel-btn top-50 right-1 w-10" @click="nextImage(animal)" />
                     </div>
                 </div>
-                <div class="flex p-3 justify-between w-9/12">
+                <div class="flex p-5 justify-between w-9/12">
                     <div class="flex flex-col gap-2.5">
-                        <p><strong>Nom :</strong><br />{{ animal.name }}</p>
-                        <p><strong>Race :</strong><br />{{ animal.breed }}</p>
-                        <p><strong>Âge :</strong><br />{{ animal.age }}</p>
-                        <p><strong>Description :</strong><br />{{ animal.description }}</p>
+                        <p class="text-4xl mt-4">{{ animal.name }} - {{ animal.age }} ans</p>
+                        <p class="text-base font-light">{{ animal.breed }}</p>
+                        <p class="text-base mt-4">{{ animal.description }}</p>
                     </div>
                     <div>
-                        <p><strong>Prix :</strong><br />{{ animal.price }} €</p>
+                        <p class="text-2xl">{{ animal.price }} €</p>
                     </div>
                 </div>
             </div>

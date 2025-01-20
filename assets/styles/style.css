@@ -18,10 +18,10 @@ body {
 
 
 .animal-item {
-    padding: 10px;
+    height: fit-content;
     margin-bottom: 10px;
     background-color: #f1f1f1;
-    border-radius: 15px;
+    border-radius: 30px;
     box-shadow: 4px 7px 6px #403b3b5e;
     margin-bottom: 15px;
 }
