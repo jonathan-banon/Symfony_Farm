@@ -19,7 +19,7 @@
                 <p v-if="passwordError" class="text-sm">{{ passwordError }}</p>
             </div>
 
-            <div class="flex justify-between">
+            <div class="flex justify-between text-secondary">
                 <button @click="closePopUp"
                     class="w-1/3 py-3 bg-primary  font-semibold rounded-md  focus:outline-none ">
                     Retour
