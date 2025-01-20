@@ -28,7 +28,7 @@
                 <p class="text-base">Prix</p>
                 <vue-slider v-model="sliderValues" :dot-style="{ backgroundColor: '#281709' }"
                     :process-style="{ backgroundColor: '#582D09' }" :use-range="true" :enable-cross="false"
-                    :max="value[1]" :min="value[0]"></vue-slider>
+                    :max="value[1]" :min="value[0]" @input="validateSliderValues"></vue-slider>
                 <div class="flex justify-between mt-4 text-xs">
                     <div class="w-fit">
                         <p>Minimum</p>
@@ -145,11 +145,10 @@ export default {
         },
         value: {
             get() {
-                if (this.animals.length === 0) return [0, 0];
-                return [
-                    Math.min(...this.animals.map(animal => animal.price)),
-                    Math.max(...this.animals.map(animal => animal.price)),
-                ];
+                if (this.animals.length === 0) return [0, 1000]; // Plage par défaut si aucun animal
+                const prices = this.animals.map(animal => animal.price).filter(price => price !== undefined);
+                if (prices.length === 0) return [0, 1000]; // Plage par défaut si aucun prix valide
+                return [Math.min(...prices), Math.max(...prices)];
             },
             set(newValue) {
                 this.sliderValues = newValue;
@@ -160,6 +159,7 @@ export default {
             filtered = filtered.filter(
                 (animal) => animal.price >= this.sliderValues[0] && animal.price <= this.sliderValues[1]
             );
+
             return filtered.slice().sort(this.getSortFunction());
         },
         getSortLabel() {
@@ -216,22 +216,27 @@ export default {
         selectSortOrder(value) {
             this.sortOrder = value;
             this.sortMenuOpen = false;
-        }
+        },
+        validateSliderValues(newValues) {
+            const [min, max] = this.value;
+            if (newValues[0] < min) this.sliderValues[0] = min;
+            if (newValues[1] > max) this.sliderValues[1] = max;
+        },
     },
     watch: {
         value(newValue) {
             if (this.sliderValues[0] < newValue[0] || this.sliderValues[1] > newValue[1]) {
-                this.sliderValues = [...newValue]; 
+                this.sliderValues = [...newValue];
             }
         },
         animals(newAnimals) {
             if (newAnimals.length > 0) {
-                const prices = newAnimals.map((animal) => animal.price);
+                const prices = newAnimals.map(animal => animal.price).filter(price => price !== undefined);
                 this.sliderValues = [Math.min(...prices), Math.max(...prices)];
             } else {
-                this.sliderValues = [0, 0];
+                this.sliderValues = [0, 1000];
             }
-        }
+        },
     },
 };
 </script>

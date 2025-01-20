@@ -18,14 +18,13 @@
                     @toggle-breed-form="toggleBreedForm" @fetchBreeds="fetchBreeds" @addBreed="addBreed" />
             </template>
         </div>
-        <Navbar v-model:types="types" v-model:actualTypeId="actualTypeId" :urlLogo="urlLogo" :addLogo="addLogo" :textLogoUrl="textLogoUrl" :trashUrl="trashUrl"
-            :penUrl="penUrl" :isUserLoggedIn="isUserLoggedIn" @toggleLogin="toggleLoginForm"
-            @fetchAnimals="fetchAnimals" @toggleTypeForm="toggleTypeForm"/>
+        <Navbar v-model:types="types" v-model:actualTypeId="actualTypeId" :urlLogo="urlLogo" :addLogo="addLogo"
+            :textLogoUrl="textLogoUrl" :trashUrl="trashUrl" :penUrl="penUrl" :isUserLoggedIn="isUserLoggedIn"
+            @toggleLogin="toggleLoginForm" @fetchAnimals="fetchAnimals" @toggleTypeForm="toggleTypeForm" />
     </div>
     <template v-if="isUserLoggedIn">
         <div class="home-container flex justify-end p-5">
-            <AdminNav
-                @toggleAddForm="toggleAddForm" @toggleBreedForm="toggleBreedForm" />
+            <AdminNav :animals="animals" :breeds="breeds"/>
             <div class="w-3/4">
                 <AdminAnimals v-model:animals="animals" :breeds="breeds" :actualTypeId="actualTypeId"
                     :trashUrl="trashUrl" @prev-image="prevImage" @next-image="nextImage" @fetchAnimals='fetchAnimals' />
@@ -173,6 +172,7 @@ export default {
             this.isPopupVisible = false;
             this.popup = '';
             this.isUserLoggedIn = isLoggedIn;
+            this.fetchAnimals(this.actualTypeId);
         },
         async handleLogout() {
             try {
@@ -185,6 +185,7 @@ export default {
 
                 if (response.ok) {
                     this.isUserLoggedIn = false;
+                    this.fetchAnimals(this.actualTypeId);
                 } else {
                     console.error('Erreur lors de la déconnexion');
                 }
