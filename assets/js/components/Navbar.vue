@@ -7,9 +7,9 @@
         <div class="nav-container w-3/5">
             <div v-for="type in types" :key="type.id" class="flex h-full w-1/6">
                 <template v-if="editingTypeId === type.id">
-                    <div>
+                    <div class="flex flex-col justify-center">
                         <input type="text" v-model="type.name" class="border rounded px-2 py-1 w-full" />
-                        <div class="flex justify-between mt-2.5">
+                        <div class="flex justify-between mt-2.5 text-secondary">
                             <button @click="saveEditType(type)"
                                 class="bg-primary  px-3 py-1 rounded">Enregistrer</button>
                             <button @click="cancelEditType" class="bg-primary  px-3 py-1 rounded">Retour</button>
@@ -22,17 +22,22 @@
                         'bg-secondary border-white': actualTypeId !== type.id
                     }">
                         {{ type.name }}
+                        <div class="flex justify-around p-1.5"
+                            v-if="isUserLoggedIn && editingTypeId != type.id && actualTypeId === type.id">
+                            <a @click.prevent="delType(type.id)">
+                                <img :src="trashUrl" alt="trash-logo" class="w-4 cursor-pointer">
+                            </a>
+                            <a @click.prevent="editType(type.id)">
+                                <img :src="penUrl" alt="pen-logo" class="w-4 cursor-pointer">
+                            </a>
+                        </div>
                     </button>
                 </template>
 
-                <div class="flex flex-col justify-between p-1.5" v-if="isUserLoggedIn && editingTypeId != type.id">
-                    <a @click.prevent="delType(type.id)">
-                        <img :src="trashUrl" alt="trash-logo" class="w-6 cursor-pointer">
-                    </a>
-                    <a @click.prevent="editType(type.id)">
-                        <img :src="penUrl" alt="pen-logo" class="w-6 cursor-pointer">
-                    </a>
-                </div>
+            </div>
+            <div class="h-full flex flex-col justify-center items-center ml-6 cursor-pointer" @click="toggleTypeForm">
+                <img :src="addLogo" alt="add-logo" class="w-6">
+                <p class="text-xl">Nouvelle <br>catégorie</p>
             </div>
         </div>
         <div class="flex justify-end pr-4 w-1/6">
@@ -54,12 +59,14 @@ export default {
         penUrl: String,
         isUserLoggedIn: Boolean,
         actualTypeId: Number,
+        addLogo: String
     },
     emits: [
         'toggleLogin',
         'fetchAnimals',
         'update:actualTypeId',
         'update:types',
+        'toggleTypeForm'
     ],
     data() {
         return {
@@ -117,6 +124,9 @@ export default {
         },
         cancelEditType() {
             this.editingTypeId = null;
+        },
+        toggleTypeForm() {
+            this.$emit('toggleTypeForm');
         },
     }
 };

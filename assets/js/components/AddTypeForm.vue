@@ -6,7 +6,7 @@
                 <label for="name">Nom</label>
                 <input required v-model="newType.name" type="text" id="name" class="animal-input" />
             </div>
-            <div class="flex justify-between mt-5 w-full">
+            <div class="flex justify-between mt-5 w-full text-secondary">
                 <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none"
                     @click="$emit('close')">Retour</button>
                 <button type="submit" class="p-4 bg-primary font-semibold rounded-md focus:outline-none">

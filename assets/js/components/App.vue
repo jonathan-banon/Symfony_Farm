@@ -18,14 +18,14 @@
                     @toggle-breed-form="toggleBreedForm" @fetchBreeds="fetchBreeds" @addBreed="addBreed" />
             </template>
         </div>
-        <Navbar v-model:types="types" v-model:actualTypeId="actualTypeId" :urlLogo="urlLogo" :textLogoUrl="textLogoUrl" :trashUrl="trashUrl"
+        <Navbar v-model:types="types" v-model:actualTypeId="actualTypeId" :urlLogo="urlLogo" :addLogo="addLogo" :textLogoUrl="textLogoUrl" :trashUrl="trashUrl"
             :penUrl="penUrl" :isUserLoggedIn="isUserLoggedIn" @toggleLogin="toggleLoginForm"
-            @fetchAnimals="fetchAnimals" />
+            @fetchAnimals="fetchAnimals" @toggleTypeForm="toggleTypeForm"/>
     </div>
     <template v-if="isUserLoggedIn">
         <div class="home-container flex justify-end p-5">
-            <AdminNav :showAddForm="showAddForm" :showTypeForm="showTypeForm" :showBreedForm="showBreedForm"
-                @toggleAddForm="toggleAddForm" @toggleTypeForm="toggleTypeForm" @toggleBreedForm="toggleBreedForm" />
+            <AdminNav
+                @toggleAddForm="toggleAddForm" @toggleBreedForm="toggleBreedForm" />
             <div class="w-3/4">
                 <AdminAnimals v-model:animals="animals" :breeds="breeds" :actualTypeId="actualTypeId"
                     :trashUrl="trashUrl" @prev-image="prevImage" @next-image="nextImage" @fetchAnimals='fetchAnimals' />
@@ -38,6 +38,7 @@
 </template>
 
 <script>
+import addLogo from '../../images/add.svg';
 import logoUrl from '../../images/logo.svg';
 import textLogoUrl from '../../images/family-farm.svg';
 import trashUrl from '../../images/trash.svg';
@@ -74,6 +75,7 @@ export default {
             isPopupVisible: false,
             popup: '',
             trashUrl: trashUrl,
+            addLogo: addLogo,
             penUrl: penUrl,
             showAddForm: false,
             showTypeForm: false,
