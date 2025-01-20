@@ -64,7 +64,7 @@
             </div>
             <template v-if="sortMenuOpen"
                 class="absolute bg-white border border-gray-300 p-2 rounded-md w-48 mt-2 display-sortBar">
-                <div class="bg-gray-200 p-2 mb-2 rounded-md">
+                <div class="bg-gray-200 p-2 mb-2 rounded-md absolute z-50 bg-secondary">
                     <div v-for="option in sortOptions" :key="option.value"
                         class="flex items-center py-1 px-2 cursor-pointer hover:bg-gray-300"
                         @click="selectSortOrder(option.value)">
