@@ -44,11 +44,6 @@
                     </div>
                 </div>
             </div>
-            <div class="border-t border-gray-300 pt-4 mt-4">
-                <h2 class="text-lg font-semibold">Pour nous contacter :</h2>
-                <p class="text-sm">Portable : 06 00 00 00 00</p>
-                <p class="text-sm">Adresse : 88 Cr de Verdun, 33000 Bordeaux </p>
-            </div>
         </div>
         <div class="w-3/4">
             <p v-if="displayedAnimals.length != 0" class="text-xs mb-5 mt-5">{{ displayedAnimals.length }} Résultat{{
