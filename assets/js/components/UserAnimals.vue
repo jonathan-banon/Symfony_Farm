@@ -5,7 +5,6 @@
                 <input type="text" v-model="searchVal" placeholder="Recherche ..."
                     class="w-full p-2 rounded-2xl border-2 border-black-500 bg-fillGrey" />
             </div>
-
             <div class="h-1/5 border-b-2 border-b-greyCustom">
                 <p class="text-base">Races</p>
                 <div class="flex gap-3 mt-2">
@@ -15,7 +14,6 @@
                     }" @click="selectBreedId(null)">
                         Toutes les races
                     </button>
-
                     <template v-for="breed in filteredBreeds" :key="breed.id">
                         <button class="text-xs border border-primary-500 p-2 rounded-full" :class="{
                             'bg-primary text-secondary': selectedBreed === breed.name,
@@ -26,17 +24,35 @@
                     </template>
                 </div>
             </div>
-
+            <div class="h-1/5 border-b-2 border-b-greyCustom">
+                <p class="text-base">Prix</p>
+                <vue-slider v-model="sliderValues" :dot-style="{ backgroundColor: '#281709' }"
+                    :process-style="{ backgroundColor: '#582D09' }" :use-range="true" :enable-cross="false"
+                    :max="value[1]" :min="value[0]"></vue-slider>
+                <div class="flex justify-between mt-4 text-xs">
+                    <div class="w-fit">
+                        <p>Minimum</p>
+                        <div class="price-container">
+                            {{ sliderValues[0] }} €
+                        </div>
+                    </div>
+                    <div>
+                        <p>Maximum</p>
+                        <div class="price-container">
+                            {{ sliderValues[1] }} €
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="border-t border-gray-300 pt-4 mt-4">
                 <h2 class="text-lg font-semibold">Pour nous contacter :</h2>
                 <p class="text-sm">Portable : 06 00 00 00 00</p>
                 <p class="text-sm">Adresse : 88 Cr de Verdun, 33000 Bordeaux </p>
             </div>
         </div>
-
         <div class="w-3/4">
-            <p v-if="displayedAnimals.length != 0" class="text-xs mb-5 mt-5">{{ displayedAnimals.length }} Résultat{{ displayedAnimals.length === 1 ? '' : 's' }} trouvé{{
-                displayedAnimals.length === 1 ? '' : 's' }}</p>
+            <p v-if="displayedAnimals.length != 0" class="text-xs mb-5 mt-5">{{ displayedAnimals.length }} Résultat{{
+                displayedAnimals.length === 1 ? '' : 's' }} trouvé{{ displayedAnimals.length === 1 ? '' : 's' }}</p>
             <div class="flex items-center gap-2 cursor-pointer relative mb-5" @click="toggleSortMenu">
                 <div class="relative flex items-center justify-between p-2 border border-gray-300 rounded-2xl w-4/12">
                     <div class="flex">
@@ -56,7 +72,6 @@
                     </div>
                 </div>
             </template>
-
             <div v-for="animal in displayedAnimals" :key="animal.id" class="animal-item rounded-3xl h-1/2 flex">
                 <div class="animal-picture w-1/4 bg-primary rounded-3xl" :style="{
                     backgroundImage: 'url(' + animal.images[animal.currentImageIndex] + ')',
@@ -85,12 +100,17 @@
 </template>
 
 <script>
+import VueSlider from 'vue-slider-component'
+import 'vue-slider-component/theme/default.css'
 import rightArrow from '../../images/right-arrow.svg';
 import leftArrow from '../../images/left-arrow.svg';
 import logoSortBar1 from '../../images/logoSortBar1.svg';
 import logoSortBar2 from '../../images/logoSortBar2.svg';
 
 export default {
+    components: {
+        VueSlider
+    },
     props: {
         animals: {
             type: Array,
@@ -108,6 +128,7 @@ export default {
             selectedBreed: null,
             sortOrder: 'alpha-asc',
             sortMenuOpen: false,
+            sliderValues: [0, 0],
             sortOptions: [
                 { value: 'price-asc', label: 'Trier par prix croissant' },
                 { value: 'price-desc', label: 'Trier par prix décroissant' },
@@ -128,22 +149,23 @@ export default {
                 this.animals.some((animal) => animal.breed === breed.name)
             );
         },
+        value: {
+            get() {
+                if (this.animals.length === 0) return [0, 0];
+                return [
+                    Math.min(...this.animals.map(animal => animal.price)),
+                    Math.max(...this.animals.map(animal => animal.price)),
+                ];
+            },
+            set(newValue) {
+                this.sliderValues = newValue;
+            },
+        },
         displayedAnimals() {
-            let filtered = this.animals;
-
-            if (this.searchVal) {
-                const searchLower = this.searchVal.toLowerCase();
-                filtered = filtered.filter((animal) =>
-                    animal.name.toLowerCase().includes(searchLower)
-                );
-            }
-
-            if (this.selectedBreed) {
-                filtered = filtered.filter(
-                    (animal) => animal.breed === this.selectedBreed
-                );
-            }
-
+            let filtered = this.getVisibleAnimals();
+            filtered = filtered.filter(
+                (animal) => animal.price >= this.sliderValues[0] && animal.price <= this.sliderValues[1]
+            );
             return filtered.slice().sort(this.getSortFunction());
         },
         getSortLabel() {
@@ -152,6 +174,21 @@ export default {
         }
     },
     methods: {
+        getVisibleAnimals() {
+            let filtered = this.animals;
+            if (this.searchVal) {
+                const searchLower = this.searchVal.toLowerCase();
+                filtered = filtered.filter((animal) =>
+                    animal.name.toLowerCase().includes(searchLower)
+                );
+            }
+            if (this.selectedBreed) {
+                filtered = filtered.filter(
+                    (animal) => animal.breed === this.selectedBreed
+                );
+            }
+            return filtered;
+        },
         getSortFunction() {
             switch (this.sortOrder) {
                 case 'price-asc':
@@ -188,10 +225,18 @@ export default {
         }
     },
     watch: {
-        animals() {
-            this.searchVal = '';
-            this.selectedBreed = null;
-            this.sortOrder = 'alpha-asc';
+        value(newValue) {
+            if (this.sliderValues[0] < newValue[0] || this.sliderValues[1] > newValue[1]) {
+                this.sliderValues = [...newValue]; 
+            }
+        },
+        animals(newAnimals) {
+            if (newAnimals.length > 0) {
+                const prices = newAnimals.map((animal) => animal.price);
+                this.sliderValues = [Math.min(...prices), Math.max(...prices)];
+            } else {
+                this.sliderValues = [0, 0];
+            }
         }
     },
 };
@@ -202,9 +247,12 @@ export default {
     height: 10%;
 }
 
-.display-sortBar {
-    z-index: 100;
-    background-color: blue;
-    width: 20%;
+.price-container {
+    border-radius: 20px;
+    box-shadow: 1px 4px 1px #15151514;
+    padding: 10px;
+    width: fit-content;
+    text-align: center;
+    width: 100%;
 }
 </style>
