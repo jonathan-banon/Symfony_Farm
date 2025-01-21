@@ -74,8 +74,8 @@
     </div>
     <p v-if="displayedAnimals.length != 0" class="text-xs mb-5 mt-5">{{ displayedAnimals.length }} Résultat{{
         displayedAnimals.length === 1 ? '' : 's' }} trouvé{{ displayedAnimals.length === 1 ? '' : 's' }}</p>
-    <div class="flex items-center gap-2 cursor-pointer relative mb-5" @click="toggleSortMenu">
-        <div class="relative flex items-center justify-between p-2 border border-gray-300 rounded-2xl w-4/12">
+    <div class="flex items-center gap-2 cursor-pointer relative mb-5 w-1/3" @click="toggleSortMenu">
+        <div class="relative flex items-center justify-between p-2 border border-gray-300 rounded-2xl w-full">
             <div class="flex">
                 <img :src="logoSortBar1" class="w-4 mr-2" />
                 <p class="text-sm">{{ getSortLabel }}</p>
@@ -93,6 +93,9 @@
             </div>
         </div>
     </template>
+    <div class="cursor-pointer h-2/6 flex justify-center items-center border-dashed border-2 border-sky-500 mb-6" @click="toggleAddAnimalForm()">
+        <p class="text-4xl">Ajouter un animal</p>
+    </div>
     <div v-for="animal in displayedAnimals" :key="animal.id" class="animal-item rounded-3xl h-1/2 flex">
         <form class="flex justify-between w-full" @submit.prevent="editAnimal(animal)" enctype="multipart/form-data">
             <div class="animal-picture w-1/4 bg-primary rounded-3xl" :style="{
@@ -102,7 +105,7 @@
             }">
                 <div class="flex justify-end p-3">
                     <a @click.prevent="delImage(animal)">
-                        <img :src="trashUrl" alt="trash-logo" class="w-10 cursor-pointer">
+                        <img :src="trashUrl" alt="trash-logo" class="w-8 cursor-pointer">
                     </a>
                 </div>
                 <div class="carousel-container" v-if="animal.images.length > 1">
@@ -164,8 +167,8 @@
                 </div>
             </div>
             <div class="flex flex-col justify-between items-end">
-                <a @click.prevent="delAnimal(animal)">
-                    <img :src="trashUrl" alt="trash-logo" class="w-10 cursor-pointer">
+                <a @click.prevent="delAnimal(animal)" class="mt-3 mr-3">
+                    <img :src="trashUrl" alt="trash-logo" class="w-8 cursor-pointer">
                 </a>
                 <button type="submit" class="p-4 font-semibold rounded-md focus:outline-none" :class="{
                     'bg-transparent text-primary-500': !formChanged[animal.id],
@@ -186,6 +189,8 @@ import leftArrow from '../../images/left-arrow.svg';
 import addLogo from '../../images/add.svg';
 import logoSortBar1 from '../../images/logoSortBar1.svg';
 import logoSortBar2 from '../../images/logoSortBar2.svg';
+import addAnimal from '../../images/addAnimal.svg';
+
 
 export default {
     components: {
@@ -205,6 +210,7 @@ export default {
             sortMenuOpen: false,
             logoSortBar1: logoSortBar1,
             logoSortBar2: logoSortBar2,
+            addAnimal: addAnimal,
             sortOrder: 'alpha-asc',
             sortOptions: [
                 { value: 'price-asc', label: 'Trier par prix croissant' },
@@ -253,8 +259,11 @@ export default {
         trashUrl: String,
         actualTypeId: Number
     },
-    emits: ['prev-image', 'next-image', 'del-animal', 'update:animals', 'fetchAnimals', 'animal-updated', 'toggleBreedForm'],
+    emits: ['prev-image', 'next-image', 'del-animal', 'update:animals', 'fetchAnimals', 'animal-updated', 'toggleBreedForm', 'toggleAddAnimalForm'],
     methods: {
+        toggleAddAnimalForm() {
+            this.$emit('toggleAddAnimalForm');
+        },
         selectSortOrder(value) {
             this.sortOrder = value;
             this.sortMenuOpen = false;

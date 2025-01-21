@@ -27,7 +27,7 @@
             <div class="w-3/4">
                 <AdminAnimals v-model:animals="animals" :breeds="breeds" :actualTypeId="actualTypeId"
                     :trashUrl="trashUrl" @prev-image="prevImage" @next-image="nextImage" @fetchAnimals='fetchAnimals'
-                    @toggleBreedForm="toggleBreedForm" />
+                    @toggleBreedForm="toggleBreedForm" @toggleAddAnimalForm="toggleAddAnimalForm"/>
             </div>
         </div>
     </template>
@@ -43,7 +43,6 @@ import textLogoUrl from '../../images/family-farm.svg';
 import trashUrl from '../../images/trash.svg';
 import penUrl from '../../images/pen.svg';
 import Navbar from './Navbar.vue';
-import AdminNav from './AdminNav.vue';
 import AddAnimalForm from './AddAnimalForm.vue';
 import AddTypeForm from './AddTypeForm.vue';
 import BreedForm from './BreedForm.vue';
@@ -54,7 +53,6 @@ import LoginForm from './LoginForm.vue';
 export default {
     components: {
         Navbar,
-        AdminNav,
         AddAnimalForm,
         AddTypeForm,
         BreedForm,
@@ -166,6 +164,10 @@ export default {
         },
         toggleBreedForm() {
             this.showBreedForm = !this.showBreedForm;
+            this.isPopupVisible = !this.isPopupVisible;
+        },
+        toggleAddAnimalForm() {
+            this.showAddForm = !this.showAddForm;
             this.isPopupVisible = !this.isPopupVisible;
         },
         closeLoginForm(isLoggedIn) {

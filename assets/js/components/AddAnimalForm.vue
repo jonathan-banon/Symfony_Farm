@@ -60,7 +60,7 @@
         </div>
       </div>
 
-      <div class="flex justify-between items-end mt-5">
+      <div class="flex justify-between items-end mt-5 text-secondary">
         <button class="p-4 bg-primary font-semibold rounded-md focus:outline-none"
           @click="$emit('close')">Retour</button>
         <button type="submit" class="p-4 bg-primary font-semibold rounded-md focus:outline-none">
