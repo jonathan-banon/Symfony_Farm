@@ -1,5 +1,32 @@
 <template>
     <div class="filter-container bg-gray-100 rounded-lg p-5 w-80 space-y-4 mr-5">
+        <div
+            class="search-bar-container border-b-2 border-b-greyCustom flex justify-around items-center justify-center">
+            <div class="w-1/3 h-4/6 border-r-2 border-r-greyCustom flex items-center">
+                <button class="text-xs border border-primary-500 p-2 rounded-full" :class="{
+                    'bg-primary text-secondary': selectedStatus === 'all',
+                    'bg-transparent text-primary-500': selectedStatus !== 'all'
+                }" @click="selectStatus('all')">
+                    Tout les animaux
+                </button>
+            </div>
+            <div class="w-1/3 h-4/6 border-r-2 border-r-greyCustom flex items-center justify-center">
+                <button class="text-xs border border-primary-500 p-2 rounded-full" :class="{
+                    'bg-primary text-secondary': selectedStatus === 'onSale',
+                    'bg-transparent text-primary-500': selectedStatus !== 'onSale'
+                }" @click="selectStatus('onSale')">
+                    À vendre
+                </button>
+            </div>
+            <div class="w-1/3 h-4/6 flex items-center justify-center">
+                <button class="text-xs border border-primary-500 p-2 rounded-full" :class="{
+                    'bg-primary text-secondary': selectedStatus === 'sale',
+                    'bg-transparent text-primary-500': selectedStatus !== 'sale'
+                }" @click="selectStatus('sale')">
+                    Vendu
+                </button>
+            </div>
+        </div>
         <div class="search-bar-container border-b-2 border-b-greyCustom">
             <input type="text" v-model="searchVal" placeholder="Recherche ..."
                 class="w-full p-2 rounded-2xl border-2 border-black-500 bg-fillGrey" />
@@ -69,11 +96,12 @@
             <div>
                 <div>
                     <label for="name">Nom</label>
-                    <input v-model="animal.name" type="text" id="name" class="animal-input" />
+                    <input v-model="animal.name" type="text" id="name" class="animal-input"
+                        @input="trackFormChanges(animal)" />
                 </div>
 
                 <label for="breed">Race</label>
-                <select v-model="animal.breed" id="breed" class="animal-input">
+                <select v-model="animal.breed" id="breed" class="animal-input" @change="trackFormChanges(animal)">
                     <option :value="animal.breed" disabled>
                         {{ animal.breed }}
                     </option>
@@ -84,27 +112,30 @@
 
                 <div>
                     <label for="description">Description</label>
-                    <textarea v-model="animal.description" id="description" class="animal-input"></textarea>
+                    <textarea v-model="animal.description" id="description" class="animal-input"
+                        @input="trackFormChanges(animal)"></textarea>
                 </div>
             </div>
             <div>
                 <div>
                     <label for="age">Âge</label>
-                    <input v-model="animal.age" type="number" id="age" class="animal-input" />
+                    <input v-model="animal.age" type="number" id="age" class="animal-input"
+                        @input="trackFormChanges(animal)" />
                 </div>
 
                 <div>
                     <label for="price">Prix</label>
-                    <input v-model="animal.price" type="number" id="price" class="animal-input" />
+                    <input v-model="animal.price" type="number" id="price" class="animal-input"
+                        @input="trackFormChanges(animal)" />
                 </div>
                 <label for="isOnSale">Status</label>
                 <div>
                     <div>
-                        <input type="radio" v-model="animal.isOnSale" :value="true" />
+                        <input type="radio" v-model="animal.isOnSale" :value=true @change="trackFormChanges(animal)" />
                         <span class="ml-2">En vente</span>
                     </div>
                     <div>
-                        <input type="radio" v-model="animal.isOnSale" :value="false" />
+                        <input type="radio" v-model="animal.isOnSale" :value=false @change="trackFormChanges(animal)" />
                         <span class="ml-2">Vendu</span>
                     </div>
                 </div>
@@ -113,7 +144,11 @@
                 <a @click.prevent="delAnimal(animal)">
                     <img :src="trashUrl" alt="trash-logo" class="w-10 cursor-pointer">
                 </a>
-                <button type="submit" class="p-4 bg-primary font-semibold rounded-md focus:outline-none">
+                <button type="submit" class="p-4 font-semibold rounded-md focus:outline-none" :class="{
+                    'bg-transparent text-primary-500': !formChanged[animal.id],
+                    'bg-primary text-secondary': formChanged[animal.id],
+                    'cursor-not-allowed opacity-50': !formChanged[animal.id]
+                }" :disabled="!formChanged[animal.id]">
                     Enregistrer les modifications
                 </button>
             </div>
@@ -132,11 +167,14 @@ export default {
     },
     data() {
         return {
+            selectedStatus: "all",
             leftArrow: leftArrow,
             rightArrow: rightArrow,
             searchVal: '',
             selectedBreed: null,
             sliderValues: [0, 0],
+            formChanged: {},
+            temporaryAnimals: {}
         }
 
     },
@@ -176,21 +214,35 @@ export default {
         trashUrl: String,
         actualTypeId: Number
     },
-    emits: ['prev-image', 'next-image', 'del-animal', 'update:animals', 'fetchAnimals'],
+    emits: ['prev-image', 'next-image', 'del-animal', 'update:animals', 'fetchAnimals', 'animal-updated'],
     methods: {
+        selectStatus(status) {
+            this.selectedStatus = status
+        },
         getVisibleAnimals() {
-            let filtered = this.animals;
+            let filtered = [...this.animals]; 
+
+            filtered = filtered.filter(animal => !this.temporaryAnimals[animal.id]);
+
+            if (this.selectedStatus === 'onSale') {
+                filtered = filtered.filter((animal) => animal.isOnSale === true || animal.isOnSale === "true");
+            } else if (this.selectedStatus === 'sale') {
+                filtered = filtered.filter((animal) => animal.isOnSale === false || animal.isOnSale === "false");
+            }
+
             if (this.searchVal) {
                 const searchLower = this.searchVal.toLowerCase();
                 filtered = filtered.filter((animal) =>
                     animal.name.toLowerCase().includes(searchLower)
                 );
             }
+
             if (this.selectedBreed) {
                 filtered = filtered.filter(
                     (animal) => animal.breed === this.selectedBreed
                 );
             }
+
             return filtered;
         },
         getSortFunction() {
@@ -216,6 +268,8 @@ export default {
         },
         async editAnimal(animal) {
             try {
+                this.temporaryAnimals[animal.id] = { ...animal };
+
                 const response = await fetch(`/animal/${animal.id}/edit`, {
                     method: 'POST',
                     headers: {
@@ -230,6 +284,11 @@ export default {
                         age: animal.age
                     }),
                 });
+                if (response.ok) {
+                    this.formChanged[animal.id] = false;
+                    this.$emit('animal-updated', animal);
+                    delete this.temporaryAnimals[animal.id];
+                }
             } catch (error) {
                 console.error('Erreur lors de l\'envoi du formulaire:', error);
             }
@@ -322,15 +381,22 @@ export default {
                 console.error('Erreur lors de l\'envoi du formulaire:', error);
             }
         },
+        trackFormChanges(animal) {
+            this.formChanged[animal.id] = true;
+        }
     },
     watch: {
-        animals(newAnimals) {
-            if (newAnimals.length > 0) {
-                const prices = newAnimals.map((animal) => animal.price);
-                this.sliderValues = [Math.min(...prices), Math.max(...prices)];
-            } else {
-                this.sliderValues = [0, 0];
-            }
+        animals: {
+            handler(newAnimals) {
+                if (newAnimals.length > 0) {
+                    const prices = newAnimals.map((animal) => animal.price);
+                    this.sliderValues = [Math.min(...prices), Math.max(...prices)];
+                } else {
+                    this.sliderValues = [0, 0];
+                }
+                this.formChanged = Object.fromEntries(newAnimals.map(animal => [animal.id, false]));
+            },
+            immediate: true
         }
     },
 };
