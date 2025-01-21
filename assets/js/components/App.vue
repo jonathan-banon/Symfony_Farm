@@ -26,7 +26,8 @@
         <div class="home-container flex justify-end p-5">
             <div class="w-3/4">
                 <AdminAnimals v-model:animals="animals" :breeds="breeds" :actualTypeId="actualTypeId"
-                    :trashUrl="trashUrl" @prev-image="prevImage" @next-image="nextImage" @fetchAnimals='fetchAnimals' />
+                    :trashUrl="trashUrl" @prev-image="prevImage" @next-image="nextImage" @fetchAnimals='fetchAnimals'
+                    @toggleBreedForm="toggleBreedForm" />
             </div>
         </div>
     </template>

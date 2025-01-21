@@ -2,7 +2,7 @@
     <div class="filter-container bg-gray-100 rounded-lg p-5 w-80 space-y-4 mr-5">
         <div
             class="search-bar-container border-b-2 border-b-greyCustom flex justify-around items-center justify-center">
-            <div class="w-1/3 h-4/6 border-r-2 border-r-greyCustom flex items-center">
+            <div class="w-1/3 h-4/6 border-r-2 border-r-greyCustom flex items-center p-3">
                 <button class="text-xs border border-primary-500 p-2 rounded-full" :class="{
                     'bg-primary text-secondary': selectedStatus === 'all',
                     'bg-transparent text-primary-500': selectedStatus !== 'all'
@@ -48,6 +48,7 @@
                         {{ breed.name }}
                     </button>
                 </template>
+                <img @click="toggleBreedForm()" :src="addLogo" alt="add-logo" class="w-6">
             </div>
         </div>
         <div class="h-1/5 border-b-2 border-b-greyCustom">
@@ -109,6 +110,7 @@
                         {{ breed.name }}
                     </option>
                 </select>
+                <img src="" alt="">
 
                 <div>
                     <label for="description">Description</label>
@@ -160,6 +162,7 @@ import VueSlider from 'vue-slider-component';
 import 'vue-slider-component/theme/default.css';
 import rightArrow from '../../images/right-arrow.svg';
 import leftArrow from '../../images/left-arrow.svg';
+import addLogo from '../../images/add.svg';
 
 export default {
     components: {
@@ -174,7 +177,8 @@ export default {
             selectedBreed: null,
             sliderValues: [0, 0],
             formChanged: {},
-            temporaryAnimals: {}
+            temporaryAnimals: {},
+            addLogo: addLogo
         }
 
     },
@@ -214,13 +218,13 @@ export default {
         trashUrl: String,
         actualTypeId: Number
     },
-    emits: ['prev-image', 'next-image', 'del-animal', 'update:animals', 'fetchAnimals', 'animal-updated'],
+    emits: ['prev-image', 'next-image', 'del-animal', 'update:animals', 'fetchAnimals', 'animal-updated', 'toggleBreedForm'],
     methods: {
         selectStatus(status) {
             this.selectedStatus = status
         },
         getVisibleAnimals() {
-            let filtered = [...this.animals]; 
+            let filtered = [...this.animals];
 
             filtered = filtered.filter(animal => !this.temporaryAnimals[animal.id]);
 
@@ -244,6 +248,9 @@ export default {
             }
 
             return filtered;
+        },
+        toggleBreedForm() {
+            this.$emit('toggleBreedForm');
         },
         getSortFunction() {
             switch (this.sortOrder) {
