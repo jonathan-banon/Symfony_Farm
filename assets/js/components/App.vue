@@ -24,7 +24,6 @@
     </div>
     <template v-if="isUserLoggedIn">
         <div class="home-container flex justify-end p-5">
-            <AdminNav :animals="animals" :breeds="breeds"/>
             <div class="w-3/4">
                 <AdminAnimals v-model:animals="animals" :breeds="breeds" :actualTypeId="actualTypeId"
                     :trashUrl="trashUrl" @prev-image="prevImage" @next-image="nextImage" @fetchAnimals='fetchAnimals' />
