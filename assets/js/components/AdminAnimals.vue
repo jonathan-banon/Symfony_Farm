@@ -72,6 +72,27 @@
             </div>
         </div>
     </div>
+    <p v-if="displayedAnimals.length != 0" class="text-xs mb-5 mt-5">{{ displayedAnimals.length }} Résultat{{
+        displayedAnimals.length === 1 ? '' : 's' }} trouvé{{ displayedAnimals.length === 1 ? '' : 's' }}</p>
+    <div class="flex items-center gap-2 cursor-pointer relative mb-5" @click="toggleSortMenu">
+        <div class="relative flex items-center justify-between p-2 border border-gray-300 rounded-2xl w-4/12">
+            <div class="flex">
+                <img :src="logoSortBar1" class="w-4 mr-2" />
+                <p class="text-sm">{{ getSortLabel }}</p>
+            </div>
+            <img :src="logoSortBar2" class="w-4 ml-2" />
+        </div>
+    </div>
+    <template v-if="sortMenuOpen"
+        class="absolute bg-white border border-gray-300 p-2 rounded-md w-48 mt-2 display-sortBar">
+        <div class="bg-gray-200 p-2 mb-2 rounded-md absolute z-50 bg-secondary">
+            <div v-for="option in sortOptions" :key="option.value"
+                class="flex items-center py-1 px-2 cursor-pointer hover:bg-gray-300"
+                @click="selectSortOrder(option.value)">
+                <p class="text-sm">{{ option.label }}</p>
+            </div>
+        </div>
+    </template>
     <div v-for="animal in displayedAnimals" :key="animal.id" class="animal-item rounded-3xl h-1/2 flex">
         <form class="flex justify-between w-full" @submit.prevent="editAnimal(animal)" enctype="multipart/form-data">
             <div class="animal-picture w-1/4 bg-primary rounded-3xl" :style="{
@@ -163,6 +184,8 @@ import 'vue-slider-component/theme/default.css';
 import rightArrow from '../../images/right-arrow.svg';
 import leftArrow from '../../images/left-arrow.svg';
 import addLogo from '../../images/add.svg';
+import logoSortBar1 from '../../images/logoSortBar1.svg';
+import logoSortBar2 from '../../images/logoSortBar2.svg';
 
 export default {
     components: {
@@ -178,7 +201,19 @@ export default {
             sliderValues: [0, 0],
             formChanged: {},
             temporaryAnimals: {},
-            addLogo: addLogo
+            addLogo: addLogo,
+            sortMenuOpen: false,
+            logoSortBar1: logoSortBar1,
+            logoSortBar2: logoSortBar2,
+            sortOrder: 'alpha-asc',
+            sortOptions: [
+                { value: 'price-asc', label: 'Trier par prix croissant' },
+                { value: 'price-desc', label: 'Trier par prix décroissant' },
+                { value: 'alpha-asc', label: 'Trier par ordre alphabétique croissant' },
+                { value: 'alpha-desc', label: 'Trier par ordre alphabétique décroissant' },
+                { value: 'age-asc', label: 'Trier par âge croissant' },
+                { value: 'age-desc', label: 'Trier par âge décroissant' },
+            ],
         }
 
     },
@@ -220,6 +255,13 @@ export default {
     },
     emits: ['prev-image', 'next-image', 'del-animal', 'update:animals', 'fetchAnimals', 'animal-updated', 'toggleBreedForm'],
     methods: {
+        selectSortOrder(value) {
+            this.sortOrder = value;
+            this.sortMenuOpen = false;
+        },
+        toggleSortMenu() {
+            this.sortMenuOpen = !this.sortMenuOpen;
+        },
         selectStatus(status) {
             this.selectedStatus = status
         },
