@@ -93,7 +93,8 @@
             </div>
         </div>
     </template>
-    <div class="cursor-pointer h-2/6 flex justify-center items-center border-dashed border-2 border-sky-500 mb-6" @click="toggleAddAnimalForm()">
+    <div class="cursor-pointer h-2/6 flex justify-center items-center border-dashed border-2 border-sky-500 mb-6"
+        @click="toggleAddAnimalForm()">
         <p class="text-4xl">Ajouter un animal</p>
     </div>
     <div v-for="animal in displayedAnimals" :key="animal.id" class="animal-item rounded-3xl h-1/2 flex">
@@ -167,10 +168,10 @@
                 </div>
             </div>
             <div class="flex flex-col justify-between items-end">
-                <a @click.prevent="delAnimal(animal)" class="mt-3 mr-3">
+                <a @click.prevent="delAnimal(animal)" class="mt-6 mr-6">
                     <img :src="trashUrl" alt="trash-logo" class="w-8 cursor-pointer">
                 </a>
-                <button type="submit" class="p-4 font-semibold rounded-md focus:outline-none" :class="{
+                <button type="submit" class="p-4 font-semibold rounded-md focus:outline-none mb-6 mr-6" :class="{
                     'bg-transparent text-primary-500': !formChanged[animal.id],
                     'bg-primary text-secondary': formChanged[animal.id],
                     'cursor-not-allowed opacity-50': !formChanged[animal.id]
@@ -212,6 +213,7 @@ export default {
             logoSortBar2: logoSortBar2,
             addAnimal: addAnimal,
             sortOrder: 'alpha-asc',
+            displayedAnimals: [],
             sortOptions: [
                 { value: 'price-asc', label: 'Trier par prix croissant' },
                 { value: 'price-desc', label: 'Trier par prix décroissant' },
@@ -223,15 +225,10 @@ export default {
         }
 
     },
+    mounted() {
+        this.calculateDisplayedAnimals();
+    },
     computed: {
-        displayedAnimals() {
-            let filtered = this.getVisibleAnimals();
-            filtered = filtered.filter(
-                (animal) => animal.price >= this.sliderValues[0] && animal.price <= this.sliderValues[1]
-            );
-
-            return filtered.slice().sort(this.getSortFunction());
-        },
         getSortLabel() {
             const option = this.sortOptions.find(opt => opt.value === this.sortOrder);
             return option ? option.label : '';
@@ -261,8 +258,17 @@ export default {
     },
     emits: ['prev-image', 'next-image', 'del-animal', 'update:animals', 'fetchAnimals', 'animal-updated', 'toggleBreedForm', 'toggleAddAnimalForm'],
     methods: {
+        calculateDisplayedAnimals() {
+            let filtered = this.getVisibleAnimals();
+            filtered = filtered.filter(
+                (animal) => animal.price >= this.sliderValues[0] && animal.price <= this.sliderValues[1]
+            );
+
+            this.displayedAnimals = filtered.slice().sort(this.getSortFunction());
+        },
         toggleAddAnimalForm() {
             this.$emit('toggleAddAnimalForm');
+            this.calculateDisplayedAnimals();
         },
         selectSortOrder(value) {
             this.sortOrder = value;
@@ -273,6 +279,7 @@ export default {
         },
         selectStatus(status) {
             this.selectedStatus = status
+            this.calculateDisplayedAnimals();
         },
         getVisibleAnimals() {
             let filtered = [...this.animals];
@@ -323,6 +330,7 @@ export default {
         },
         selectBreedId(breedName) {
             this.selectedBreed = breedName;
+            this.calculateDisplayedAnimals();
         },
         async editAnimal(animal) {
             try {
@@ -346,6 +354,7 @@ export default {
                     this.formChanged[animal.id] = false;
                     this.$emit('animal-updated', animal);
                     delete this.temporaryAnimals[animal.id];
+                    this.calculateDisplayedAnimals();
                 }
             } catch (error) {
                 console.error('Erreur lors de l\'envoi du formulaire:', error);
@@ -444,6 +453,16 @@ export default {
         }
     },
     watch: {
+        sliderValues: {
+            handler() {
+                this.calculateDisplayedAnimals();
+            }
+        },
+        searchVal: {
+            handler() {
+                this.calculateDisplayedAnimals();
+            }
+        },
         animals: {
             handler(newAnimals) {
                 if (newAnimals.length > 0) {
@@ -453,6 +472,7 @@ export default {
                     this.sliderValues = [0, 0];
                 }
                 this.formChanged = Object.fromEntries(newAnimals.map(animal => [animal.id, false]));
+                this.calculateDisplayedAnimals();
             },
             immediate: true
         }

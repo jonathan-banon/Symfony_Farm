@@ -42,7 +42,7 @@
                         </template>
                         <div v-if="editingBreedId === breed.id">
                             <input type="text" v-model="breed.name" class="border rounded px-2 py-1 w-full" />
-                            <div class="flex justify-between mt-2.5">
+                            <div class="flex justify-between mt-2.5 text-secondary">
                                 <button @click="saveEditBreed(breed)"
                                     class="bg-primary px-3 py-1 rounded">Enregistrer</button>
                                 <button @click="cancelEditBreed" class="bg-primary px-3 py-1 rounded">Retour</button>
