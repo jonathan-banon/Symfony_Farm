@@ -1,11 +1,11 @@
 <template>
-    <div class="bg-secondary flex items-center shadow-lg">
-        <div class="flex w-1/4 pl-4">
+    <div class="bg-secondary flex items-center shadow-lg justify-between max-h-40">
+        <div class="hidden xl:flex w-1/4 pl-4">
             <img class="w-16" :src="urlLogo" alt="Logo">
             <img class="w-36 ml-11" :src="textLogoUrl" alt="textLogoUrl">
         </div>
-        <div class="nav-container w-3/5">
-            <div v-for="type in types" :key="type.id" class="flex h-full w-1/6">
+        <div class="flex justify-start items-end gap-5 h-[5vh] lg:h-[10vh] w-9/12 lg:w-3/5">
+            <div v-for="type in types" :key="type.id" class="flex h-full w-1/4 xl:w-1/6">
                 <template v-if="editingTypeId === type.id">
                     <div class="flex flex-col justify-center">
                         <input type="text" v-model="type.name" class="border rounded px-2 py-1 w-full" />
@@ -17,7 +17,7 @@
                     </div>
                 </template>
                 <template v-else>
-                    <button class="p-5 text-4xl w-full" @click="fetchAnimals(type.id)" :class="{
+                    <button class="text-4xl w-full" @click="fetchAnimals(type.id)" :class="{
                         'shadow-inner shadow-black': actualTypeId === type.id,
                         'bg-secondary border-white': actualTypeId !== type.id
                     }">
@@ -35,13 +35,13 @@
                 </template>
 
             </div>
-            <div class="h-full flex flex-col justify-center items-center ml-6 cursor-pointer" @click="toggleTypeForm">
+            <div v-if="isUserLoggedIn" class="h-full flex flex-col justify-center items-center ml-6 cursor-pointer" @click="toggleTypeForm">
                 <img :src="addLogo" alt="add-logo" class="w-6">
                 <p class="text-xl">Nouvelle <br>catégorie</p>
             </div>
         </div>
-        <div class="flex justify-end pr-4 w-1/6">
-            <button class="btn bg-primary text-secondary py-2 px-4 rounded-full" @click="toggleLoginForm">
+        <div class="flex justify-end pr-4">
+            <button class="w-fit btn bg-primary text-secondary py-2 px-4 rounded-full" @click="toggleLoginForm">
                 {{ isUserLoggedIn ? 'Déconnexion' : 'Back-office' }}
             </button>
         </div>
@@ -132,15 +132,6 @@ export default {
 };
 </script>
 <style>
-.nav-container {
-    display: flex;
-    min-width: 50%;
-    justify-content: start;
-    align-items: end;
-    gap: 20px;
-    height: 10vh;
-}
-
 .border-white {
     border: 2px solid white;
 }
