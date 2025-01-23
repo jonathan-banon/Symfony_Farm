@@ -1,12 +1,14 @@
 <template>
-    <div class="home-container flex justify-end p-5">
-        <div class="filter-container bg-gray-100 rounded-lg p-5 w-80 space-y-4 mr-5">
-            <div class="search-bar-container border-b-2 border-b-greyCustom">
+    <div class="home-container flex xl:justify-end p-5">
+        <div
+            class="filter-container left-0 w-full lx:w-1/5 p-20 xl:p-5 xl:left-6 z-40 xl:z-0 bg-secondary rounded-lg p-28 w-80 space-y-4 mr-5 hidden xl:flex">
+            <div class="w-[20%] h-[20px] bg-fillGrey rounded-full mx-auto mt-0 absolute top-[20px] left-[40%]"></div>
+            <div class="border-b-2 border-b-greyCustom">
                 <input type="text" v-model="searchVal" placeholder="Recherche ..."
-                    class="w-full p-2 rounded-2xl border-2 border-black-500 bg-fillGrey" />
+                    class="w-full p-2 mb-16 rounded-2xl border border-black-500 bg-fillGrey" />
             </div>
-            <div class="h-1/5 border-b-2 border-b-greyCustom">
-                <p class="text-base">Races</p>
+            <div class="p-7 h-1/5 border-b-2 border-b-greyCustom">
+                <p class=" mb-5 text-base">Races</p>
                 <div class="flex gap-3 mt-2">
                     <button class="text-xs border border-primary-500 p-2 rounded-full" :class="{
                         'bg-primary text-secondary': selectedBreed === null,
@@ -45,28 +47,36 @@
                 </div>
             </div>
         </div>
-        <div class="w-3/4">
-            <p v-if="displayedAnimals.length != 0" class="text-xs mb-5 mt-5">{{ displayedAnimals.length }} Résultat{{
+        <div class="w-full xl:w-3/4">
+            <p v-if="displayedAnimals.length != 0" class="text-xl mb-5 mt-5">{{ displayedAnimals.length }} Résultat{{
                 displayedAnimals.length === 1 ? '' : 's' }} trouvé{{ displayedAnimals.length === 1 ? '' : 's' }}</p>
-            <div class="flex items-center gap-2 cursor-pointer relative mb-5" @click="toggleSortMenu">
-                <div class="relative flex items-center justify-between p-2 border border-gray-300 rounded-2xl w-4/12">
-                    <div class="flex">
-                        <img :src="logoSortBar1" class="w-4 mr-2" />
-                        <p class="text-sm">{{ getSortLabel }}</p>
+            <div class="flex justify-between">
+                <div class="flex items-center gap-2 cursor-pointer relative mb-5" @click="toggleSortMenu">
+                    <div
+                        class="relative flex items-center justify-between p-2 border border-gray-300 rounded-2xl w-fit">
+                        <div class="flex">
+                            <img :src="logoSortBar1" class="w-4 mr-2" />
+                            <p class="text-sm">{{ getSortLabel }}</p>
+                        </div>
+                        <img :src="logoSortBar2" class="w-4 ml-2" />
                     </div>
-                    <img :src="logoSortBar2" class="w-4 ml-2" />
+                </div>
+                <template v-if="sortMenuOpen"
+                    class="absolute bg-white border border-gray-300 p-2 rounded-md w-48 mt-2 display-sortBar">
+                    <div class="bg-gray-200 p-2 mb-2 rounded-md absolute z-50 bg-secondary">
+                        <div v-for="option in sortOptions" :key="option.value"
+                            class="flex items-center py-1 px-2 cursor-pointer hover:bg-gray-300"
+                            @click="selectSortOrder(option.value)">
+                            <p class="text-sm">{{ option.label }}</p>
+                        </div>
+                    </div>
+                </template>
+                <div class="bg-white border border-gray-300 p-2 rounded-full cursor-pointer h-fit flex items-center xl:hidden"
+                    @click="toggleFilter">
+                    <img :src="logoFilter" class="w-4 mr-2" />
+                    <p class="text-sm">Filtres</p>
                 </div>
             </div>
-            <template v-if="sortMenuOpen"
-                class="absolute bg-white border border-gray-300 p-2 rounded-md w-48 mt-2 display-sortBar">
-                <div class="bg-gray-200 p-2 mb-2 rounded-md absolute z-50 bg-secondary">
-                    <div v-for="option in sortOptions" :key="option.value"
-                        class="flex items-center py-1 px-2 cursor-pointer hover:bg-gray-300"
-                        @click="selectSortOrder(option.value)">
-                        <p class="text-sm">{{ option.label }}</p>
-                    </div>
-                </div>
-            </template>
             <div v-for="animal in displayedAnimals" :key="animal.id" class="animal-item flex">
                 <div class="animal-picture w-1/4 bg-primary rounded-3xl" :style="{
                     backgroundImage: 'url(' + animal.images[animal.currentImageIndex] + ')',
@@ -79,13 +89,13 @@
                     </div>
                 </div>
                 <div class="flex p-5 justify-between w-9/12">
-                    <div class="flex flex-col gap-2.5">
+                    <div class="flex flex-col w-9/12 gap-2.5">
                         <p class="text-4xl mt-4">{{ animal.name }} - {{ animal.age }} ans</p>
                         <p class="text-base font-light">{{ animal.breed }}</p>
                         <p class="text-base mt-4">{{ animal.description }}</p>
                     </div>
                     <div>
-                        <p class="text-2xl">{{ animal.price }} €</p>
+                        <p class="font-bold text-2xl">{{ animal.price }} €</p>
                     </div>
                 </div>
             </div>
@@ -100,6 +110,8 @@ import rightArrow from '../../images/right-arrow.svg';
 import leftArrow from '../../images/left-arrow.svg';
 import logoSortBar1 from '../../images/logoSortBar1.svg';
 import logoSortBar2 from '../../images/logoSortBar2.svg';
+import logoFilter from '../../images/filter.svg';
+
 
 export default {
     components: {
@@ -115,7 +127,7 @@ export default {
             required: true,
         },
     },
-    emits: ['prev-image', 'next-image'],
+    emits: ['prev-image', 'next-image', 'toggleFilter'],
     data() {
         return {
             searchVal: '',
@@ -135,6 +147,7 @@ export default {
             leftArrow: leftArrow,
             logoSortBar1: logoSortBar1,
             logoSortBar2: logoSortBar2,
+            logoFilter: logoFilter,
         };
     },
     computed: {
@@ -217,6 +230,19 @@ export default {
             this.sortOrder = value;
             this.sortMenuOpen = false;
         },
+        toggleFilter() {
+            this.$emit('toggleFilter');
+            const filterContainer = document.querySelector('.filter-container');
+            if (filterContainer) {
+                if (filterContainer.classList.contains('hidden')) {
+                    filterContainer.classList.remove('hidden');
+                    filterContainer.classList.add('flex');
+                } else {
+                    filterContainer.classList.remove('flex');
+                    filterContainer.classList.add('hidden');
+                }
+            }
+        },
         validateSliderValues(newValues) {
             const [min, max] = this.value;
             if (newValues[0] < min) this.sliderValues[0] = min;
@@ -242,10 +268,6 @@ export default {
 </script>
 
 <style>
-.search-bar-container {
-    height: 10%;
-}
-
 .price-container {
     border-radius: 20px;
     box-shadow: 1px 4px 1px #15151514;

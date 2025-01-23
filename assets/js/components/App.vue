@@ -1,7 +1,7 @@
 <template>
     <div>
         <div v-if="isPopupVisible"
-            class="flex justify-center items-center min-h-screen w-full h-full z-40 fixed bg-black">
+            class="flex justify-center items-center min-h-screen w-full h-full z-30 fixed bg-black">
             <LoginForm :popup="popup" @close="closeLoginForm" />
             <template v-if="showAddForm">
                 <AddAnimalForm :types="types" :breeds="breeds" :actualTypeId="actualTypeId"
@@ -32,7 +32,7 @@
         </div>
     </template>
     <template v-else>
-        <UserAnimals :animals="animals" :breeds="breeds" @prev-image="prevImage" @next-image="nextImage" />
+        <UserAnimals  @toggleFilter="toggleFilter" :animals="animals" :breeds="breeds" @prev-image="prevImage" @next-image="nextImage" />
     </template>
 </template>
 
@@ -145,6 +145,9 @@ export default {
             } catch (error) {
                 console.error('Erreur lors de la récupération des animaux:', error);
             }
+        },
+        toggleFilter() {
+            this.isPopupVisible = !this.isPopupVisible;
         },
         toggleLoginForm() {
             if (!this.isUserLoggedIn) {

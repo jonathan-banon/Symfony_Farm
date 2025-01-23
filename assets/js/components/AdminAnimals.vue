@@ -1,5 +1,5 @@
 <template>
-    <div class="filter-container bg-gray-100 rounded-lg p-5 w-80 space-y-4 mr-5">
+    <div class="filter-container-xl bg-gray-100 rounded-lg p-5 w-80 space-y-4 mr-5">
         <div
             class="search-bar-container border-b-2 border-b-greyCustom flex justify-around items-center justify-center">
             <div class="w-1/3 h-4/6 border-r-2 border-r-greyCustom flex items-center p-3">

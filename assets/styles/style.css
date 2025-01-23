@@ -79,12 +79,9 @@ body {
 
 .filter-container{
     height: 83vh;
-    width: 20vw;
     box-shadow: 4px 7px 6px #403b3b5e;
-    display: flex;
     flex-direction: column;
-    padding: 20px;
     border-radius: 20px;
     position: fixed;
-    left: 25px;
 }
+
