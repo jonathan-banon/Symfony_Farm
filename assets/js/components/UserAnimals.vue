@@ -1,8 +1,8 @@
 <template>
     <div class="home-container flex xl:justify-end p-5">
         <div
-            class="filter-container left-0 w-full lx:w-1/5 p-20 xl:p-5 xl:left-6 z-40 xl:z-0 bg-secondary rounded-lg p-28 w-80 space-y-4 mr-5 hidden xl:flex">
-            <div class="w-[20%] h-[20px] bg-fillGrey rounded-full mx-auto mt-0 absolute top-[20px] left-[40%]"></div>
+            class="filter-container left-0 w-full xl:w-1/5 p-20 xl:p-5 xl:left-6 z-40 xl:z-0 bg-secondary rounded-lg p-28 space-y-4 mr-5 hidden xl:flex">
+            <div class="w-[20%] h-[20px] bg-fillGrey rounded-full mx-auto mt-0 absolute top-[20px] left-[40%] xl:hidden"></div>
             <div class="border-b-2 border-b-greyCustom">
                 <input type="text" v-model="searchVal" placeholder="Recherche ..."
                     class="w-full p-2 mb-16 rounded-2xl border border-black-500 bg-fillGrey" />
