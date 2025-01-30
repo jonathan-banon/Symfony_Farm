@@ -2,7 +2,9 @@
     <div class="home-container flex xl:justify-end p-5">
         <div
             class="filter-container left-0 w-full xl:w-1/5 p-20 xl:p-5 xl:left-6 z-40 xl:z-0 bg-secondary rounded-lg p-28 space-y-4 mr-5 hidden xl:flex">
-            <div class="w-[20%] h-[20px] bg-fillGrey rounded-full mx-auto mt-0 absolute top-[20px] left-[40%] xl:hidden"></div>
+            <div
+                class="w-[20%] h-[20px] bg-fillGrey rounded-full mx-auto mt-0 absolute top-[20px] left-[40%] xl:hidden">
+            </div>
             <div class="border-b-2 border-b-greyCustom">
                 <input type="text" v-model="searchVal" placeholder="Recherche ..."
                     class="w-full p-2 mb-16 rounded-2xl border border-black-500 bg-fillGrey" />
@@ -83,10 +85,17 @@
                     backgroundSize: 'cover',
                     backgroundPosition: 'center'
                 }">
-                    <div class="carousel-container" v-if="animal.images.length > 1">
-                        <img :src="leftArrow" class="carousel-btn top-50 left-1 w-10" @click="prevImage(animal)" />
-                        <img :src="rightArrow" class="carousel-btn top-50 right-1 w-10" @click="nextImage(animal)" />
-                    </div>
+                    <template v-if="animal.images.length > 1">
+                        <div class="absolute bottom-2.5 w-full flex justify-center">
+                            <div class="flex  gap-2.5 p-2 rounded-3xl bg-grey items-center">
+                                <template v-for="(image, index) in animal.images">
+                                    <span class="rounded-3xl cursor-pointer"
+                                        :class="index === animal.currentImageIndex ? 'carousel-button-on' : 'carousel-button-off'"
+                                        @click="changeImage(index, animal)"> </span>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
                 </div>
                 <div class="flex p-5 justify-between w-9/12">
                     <div class="flex flex-col w-9/12 gap-2.5">
@@ -127,7 +136,7 @@ export default {
             required: true,
         },
     },
-    emits: ['prev-image', 'next-image', 'toggleFilter'],
+    emits: ['toggleFilter'],
     data() {
         return {
             searchVal: '',
@@ -158,9 +167,9 @@ export default {
         },
         value: {
             get() {
-                if (this.animals.length === 0) return [0, 1000]; // Plage par défaut si aucun animal
+                if (this.animals.length === 0) return [0, 1000];
                 const prices = this.animals.map(animal => animal.price).filter(price => price !== undefined);
-                if (prices.length === 0) return [0, 1000]; // Plage par défaut si aucun prix valide
+                if (prices.length === 0) return [0, 1000];
                 return [Math.min(...prices), Math.max(...prices)];
             },
             set(newValue) {
@@ -181,6 +190,11 @@ export default {
         }
     },
     methods: {
+        changeImage(index, animal) {
+            console.log("index => ", index)
+            console.log("animal =>", animal)
+            animal.currentImageIndex = index;
+        },
         getVisibleAnimals() {
             let filtered = this.animals;
             if (this.searchVal) {
@@ -213,12 +227,6 @@ export default {
                 default:
                     return () => 0;
             }
-        },
-        prevImage(animal) {
-            this.$emit('prev-image', animal);
-        },
-        nextImage(animal) {
-            this.$emit('next-image', animal);
         },
         selectBreedId(breedName) {
             this.selectedBreed = breedName;
@@ -275,5 +283,23 @@ export default {
     width: fit-content;
     text-align: center;
     width: 100%;
+}
+
+.carousel-button-on {
+    width: 20px;
+    height: 20px;
+    background-color: rgb(35, 31, 32);
+}
+
+.carousel-button-off {
+    width: 10px;
+    height: 10px;
+    background-color: #F0F0F0;
+
+}
+
+.bg-grey {
+    background-color: rgba(40, 23, 9, 0.3);
+    backdrop-filter: blur(8px);
 }
 </style>

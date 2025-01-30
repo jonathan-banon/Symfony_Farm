@@ -27,12 +27,12 @@
             <div class="w-3/4">
                 <AdminAnimals v-model:animals="animals" :breeds="breeds" :actualTypeId="actualTypeId"
                     :trashUrl="trashUrl" @prev-image="prevImage" @next-image="nextImage" @fetchAnimals='fetchAnimals'
-                    @toggleBreedForm="toggleBreedForm" @toggleAddAnimalForm="toggleAddAnimalForm"/>
+                    @toggleBreedForm="toggleBreedForm" @toggleAddAnimalForm="toggleAddAnimalForm" />
             </div>
         </div>
     </template>
     <template v-else>
-        <UserAnimals  @toggleFilter="toggleFilter" :animals="animals" :breeds="breeds" @prev-image="prevImage" @next-image="nextImage" />
+        <UserAnimals @toggleFilter="toggleFilter" :animals="animals" :breeds="breeds"/>
     </template>
 </template>
 

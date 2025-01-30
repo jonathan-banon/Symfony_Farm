@@ -35,3 +35,5 @@ yarn-error.log
 
 /migrations/*
 !/migrations/.gitkeep
+
+/assets/public/images/
