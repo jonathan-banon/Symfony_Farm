@@ -50,26 +50,25 @@
             </div>
         </div>
         <div class="w-full xl:w-3/4">
-            <p v-if="displayedAnimals.length != 0" class="text-xl mb-5 mt-5">{{ displayedAnimals.length }} Résultat{{
-                displayedAnimals.length === 1 ? '' : 's' }} trouvé{{ displayedAnimals.length === 1 ? '' : 's' }}</p>
-            <div class="flex justify-between">
-                <div class="flex items-center gap-2 cursor-pointer relative mb-5" @click="toggleSortMenu">
-                    <div
-                        class="relative flex items-center justify-between p-2 border border-gray-300 rounded-2xl w-fit">
-                        <div class="flex">
-                            <img :src="logoSortBar1" class="w-4 mr-2" />
-                            <p class="text-sm">{{ getSortLabel }}</p>
-                        </div>
-                        <img :src="logoSortBar2" class="w-4 ml-2" />
+            <p v-if="displayedAnimals.length != 0" class="text-3xl xl:text-xl mb-5 mt-5">{{ displayedAnimals.length }}
+                Résultat{{
+                    displayedAnimals.length === 1 ? '' : 's' }} trouvé{{ displayedAnimals.length === 1 ? '' : 's' }}</p>
+            <div class="flex justify-between p-5">
+                <div class="flex items-center gap-2 cursor-pointer relative justify-between mb-5  p-5 xl:p-2 border-2 border-gray-300 rounded-2xl w-3/5"
+                    @click="toggleSortMenu">
+                    <div class="flex">
+                        <img :src="logoSortBar1" class="w-6 xl:w-4 mr-2" />
+                        <p class="text-2xl xl:text-sm">{{ getSortLabel }}</p>
                     </div>
+                    <img :src="logoSortBar2" class="w-6 xl:w-4 ml-2" />
                 </div>
                 <template v-if="sortMenuOpen"
-                    class="absolute bg-white border border-gray-300 p-2 rounded-md w-48 mt-2 display-sortBar">
-                    <div class="bg-gray-200 p-2 mb-2 rounded-md absolute z-50 bg-secondary">
+                    class="absolute bg-white border border-gray-300 p-2 rounded-2xl w-48 mt-2 display-sortBar">
+                    <div class="bg-gray-200 p-2 mb-2 rounded-md absolute z-50 bg-secondary w-3/5">
                         <div v-for="option in sortOptions" :key="option.value"
                             class="flex items-center py-1 px-2 cursor-pointer hover:bg-gray-300"
                             @click="selectSortOrder(option.value)">
-                            <p class="text-sm">{{ option.label }}</p>
+                            <p class="text-2xl xl:text-sm">{{ option.label }}</p>
                         </div>
                     </div>
                 </template>

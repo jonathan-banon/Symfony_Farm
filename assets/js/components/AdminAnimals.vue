@@ -1,185 +1,195 @@
 <template>
-    <div class="filter-container-xl bg-gray-100 rounded-lg p-5 w-80 space-y-4 mr-5">
+    <div class="home-container flex xl:justify-end p-5">
         <div
-            class="search-bar-container border-b-2 border-b-greyCustom flex justify-around items-center justify-center">
-            <div class="w-1/3 h-4/6 border-r-2 border-r-greyCustom flex items-center p-3">
-                <button class="text-xs border border-primary-500 p-2 rounded-full" :class="{
-                    'bg-primary text-secondary': selectedStatus === 'all',
-                    'bg-transparent text-primary-500': selectedStatus !== 'all'
-                }" @click="selectStatus('all')">
-                    Tout les animaux
-                </button>
-            </div>
-            <div class="w-1/3 h-4/6 border-r-2 border-r-greyCustom flex items-center justify-center">
-                <button class="text-xs border border-primary-500 p-2 rounded-full" :class="{
-                    'bg-primary text-secondary': selectedStatus === 'onSale',
-                    'bg-transparent text-primary-500': selectedStatus !== 'onSale'
-                }" @click="selectStatus('onSale')">
-                    À vendre
-                </button>
-            </div>
-            <div class="w-1/3 h-4/6 flex items-center justify-center">
-                <button class="text-xs border border-primary-500 p-2 rounded-full" :class="{
-                    'bg-primary text-secondary': selectedStatus === 'sale',
-                    'bg-transparent text-primary-500': selectedStatus !== 'sale'
-                }" @click="selectStatus('sale')">
-                    Vendu
-                </button>
-            </div>
-        </div>
-        <div class="search-bar-container border-b-2 border-b-greyCustom">
-            <input type="text" v-model="searchVal" placeholder="Recherche ..."
-                class="w-full p-2 rounded-2xl border-2 border-black-500 bg-fillGrey" />
-        </div>
-        <div class="h-1/5 border-b-2 border-b-greyCustom">
-            <p class="text-base">Races</p>
-            <div class="flex gap-3 mt-2">
-                <button class="text-xs border border-primary-500 p-2 rounded-full" :class="{
-                    'bg-primary text-secondary': selectedBreed === null,
-                    'bg-transparent text-primary-500': selectedBreed !== null
-                }" @click="selectBreedId(null)">
-                    Toutes les races
-                </button>
-                <template v-for="breed in filteredBreeds" :key="breed.id">
+            class="filter-container left-0 w-full xl:w-1/5 p-20 xl:p-5 xl:left-6 z-40 xl:z-0 bg-secondary rounded-lg p-28 space-y-4 mr-5 hidden xl:flex">
+            <div
+                class="search-bar-container border-b-2 border-b-greyCustom flex justify-around items-center justify-center">
+                <div class="w-1/3 h-4/6 border-r-2 border-r-greyCustom flex items-center p-3">
                     <button class="text-xs border border-primary-500 p-2 rounded-full" :class="{
-                        'bg-primary text-secondary': selectedBreed === breed.name,
-                        'bg-transparent text-primary-500': selectedBreed !== breed.name
-                    }" @click="selectBreedId(breed.name)">
-                        {{ breed.name }}
+                        'bg-primary text-secondary': selectedStatus === 'all',
+                        'bg-transparent text-primary-500': selectedStatus !== 'all'
+                    }" @click="selectStatus('all')">
+                        Tout les animaux
                     </button>
-                </template>
-                <img @click="toggleBreedForm()" :src="addLogo" alt="add-logo" class="w-6">
-            </div>
-        </div>
-        <div class="h-1/5 border-b-2 border-b-greyCustom">
-            <p class="text-base">Prix</p>
-            <vue-slider v-model="sliderValues" :dot-style="{ backgroundColor: '#281709' }"
-                :process-style="{ backgroundColor: '#582D09' }" :use-range="true" :enable-cross="false" :max="value[1]"
-                :min="value[0]"></vue-slider>
-            <div class="flex justify-between mt-4 text-xs">
-                <div class="w-fit">
-                    <p>Minimum</p>
-                    <div class="price-container">
-                        {{ sliderValues[0] }} €
-                    </div>
                 </div>
-                <div>
-                    <p>Maximum</p>
-                    <div class="price-container">
-                        {{ sliderValues[1] }} €
-                    </div>
+                <div class="w-1/3 h-4/6 border-r-2 border-r-greyCustom flex items-center justify-center">
+                    <button class="text-xs border border-primary-500 p-2 rounded-full" :class="{
+                        'bg-primary text-secondary': selectedStatus === 'onSale',
+                        'bg-transparent text-primary-500': selectedStatus !== 'onSale'
+                    }" @click="selectStatus('onSale')">
+                        À vendre
+                    </button>
+                </div>
+                <div class="w-1/3 h-4/6 flex items-center justify-center">
+                    <button class="text-xs border border-primary-500 p-2 rounded-full" :class="{
+                        'bg-primary text-secondary': selectedStatus === 'sale',
+                        'bg-transparent text-primary-500': selectedStatus !== 'sale'
+                    }" @click="selectStatus('sale')">
+                        Vendu
+                    </button>
                 </div>
             </div>
-        </div>
-    </div>
-    <p v-if="displayedAnimals.length != 0" class="text-xs mb-5 mt-5">{{ displayedAnimals.length }} Résultat{{
-        displayedAnimals.length === 1 ? '' : 's' }} trouvé{{ displayedAnimals.length === 1 ? '' : 's' }}</p>
-    <div class="flex items-center gap-2 cursor-pointer relative mb-5 w-1/3" @click="toggleSortMenu">
-        <div class="relative flex items-center justify-between p-2 border border-gray-300 rounded-2xl w-full">
-            <div class="flex">
-                <img :src="logoSortBar1" class="w-4 mr-2" />
-                <p class="text-sm">{{ getSortLabel }}</p>
+            <div class="search-bar-container border-b-2 border-b-greyCustom">
+                <input type="text" v-model="searchVal" placeholder="Recherche ..."
+                    class="w-full p-2 rounded-2xl border-2 border-black-500 bg-fillGrey" />
             </div>
-            <img :src="logoSortBar2" class="w-4 ml-2" />
-        </div>
-    </div>
-    <template v-if="sortMenuOpen"
-        class="absolute bg-white border border-gray-300 p-2 rounded-md w-48 mt-2 display-sortBar">
-        <div class="bg-gray-200 p-2 mb-2 rounded-md absolute z-50 bg-secondary">
-            <div v-for="option in sortOptions" :key="option.value"
-                class="flex items-center py-1 px-2 cursor-pointer hover:bg-gray-300"
-                @click="selectSortOrder(option.value)">
-                <p class="text-sm">{{ option.label }}</p>
-            </div>
-        </div>
-    </template>
-    <div class="cursor-pointer h-2/6 flex justify-center items-center border-dashed border-2 border-sky-500 mb-6"
-        @click="toggleAddAnimalForm()">
-        <p class="text-4xl">Ajouter un animal</p>
-    </div>
-    <div v-for="animal in displayedAnimals" :key="animal.id" class="animal-item rounded-3xl h-1/2 flex">
-        <form class="flex justify-between w-full" @submit.prevent="editAnimal(animal)" enctype="multipart/form-data">
-            <div class="animal-picture w-1/4 bg-primary rounded-3xl" :style="{
-                backgroundImage: 'url(' + animal.images[animal.currentImageIndex] + ')',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center'
-            }">
-                <div class="flex justify-end p-3">
-                    <a @click.prevent="delImage(animal)">
-                        <img :src="trashUrl" alt="trash-logo" class="w-8 cursor-pointer">
-                    </a>
-                </div>
-                <div class="carousel-container" v-if="animal.images.length > 1">
-                    <img :src="leftArrow" class="carousel-btn top-30 left-1 w-10" @click="prevImage(animal)">
-                    <img :src="rightArrow" class="carousel-btn top-30 right-1 w-10" @click="nextImage(animal)">
-                </div>
-
-                <div class="overlay bg-opacity-50 p-2">
-                    <input type="file" @change="onFileChange($event, animal)" multiple>
-                    <button @click="uploadImage(animal)">Télécharger</button>
+            <div class="h-1/5 border-b-2 border-b-greyCustom">
+                <p class="text-base">Races</p>
+                <div class="flex gap-3 mt-2">
+                    <button class="text-xs border border-primary-500 p-2 rounded-full" :class="{
+                        'bg-primary text-secondary': selectedBreed === null,
+                        'bg-transparent text-primary-500': selectedBreed !== null
+                    }" @click="selectBreedId(null)">
+                        Toutes les races
+                    </button>
+                    <template v-for="breed in filteredBreeds" :key="breed.id">
+                        <button class="text-xs border border-primary-500 p-2 rounded-full" :class="{
+                            'bg-primary text-secondary': selectedBreed === breed.name,
+                            'bg-transparent text-primary-500': selectedBreed !== breed.name
+                        }" @click="selectBreedId(breed.name)">
+                            {{ breed.name }}
+                        </button>
+                    </template>
+                    <img @click="toggleBreedForm()" :src="addLogo" alt="add-logo" class="w-6">
                 </div>
             </div>
-            <div>
-                <div>
-                    <label for="name">Nom</label>
-                    <input v-model="animal.name" type="text" id="name" class="animal-input"
-                        @input="trackFormChanges(animal)" />
-                </div>
-
-                <label for="breed">Race</label>
-                <select v-model="animal.breed" id="breed" class="animal-input" @change="trackFormChanges(animal)">
-                    <option :value="animal.breed" disabled>
-                        {{ animal.breed }}
-                    </option>
-                    <option v-for="breed in breeds" :key="breed.id" :value="breed.id">
-                        {{ breed.name }}
-                    </option>
-                </select>
-                <img src="" alt="">
-
-                <div>
-                    <label for="description">Description</label>
-                    <textarea v-model="animal.description" id="description" class="animal-input"
-                        @input="trackFormChanges(animal)"></textarea>
-                </div>
-            </div>
-            <div>
-                <div>
-                    <label for="age">Âge</label>
-                    <input v-model="animal.age" type="number" id="age" class="animal-input"
-                        @input="trackFormChanges(animal)" />
-                </div>
-
-                <div>
-                    <label for="price">Prix</label>
-                    <input v-model="animal.price" type="number" id="price" class="animal-input"
-                        @input="trackFormChanges(animal)" />
-                </div>
-                <label for="isOnSale">Status</label>
-                <div>
-                    <div>
-                        <input type="radio" v-model="animal.isOnSale" :value=true @change="trackFormChanges(animal)" />
-                        <span class="ml-2">En vente</span>
+            <div class="h-1/5 border-b-2 border-b-greyCustom">
+                <p class="text-base">Prix</p>
+                <vue-slider v-model="sliderValues" :dot-style="{ backgroundColor: '#281709' }"
+                    :process-style="{ backgroundColor: '#582D09' }" :use-range="true" :enable-cross="false"
+                    :max="value[1]" :min="value[0]"></vue-slider>
+                <div class="flex justify-between mt-4 text-xs">
+                    <div class="w-fit">
+                        <p>Minimum</p>
+                        <div class="price-container">
+                            {{ sliderValues[0] }} €
+                        </div>
                     </div>
                     <div>
-                        <input type="radio" v-model="animal.isOnSale" :value=false @change="trackFormChanges(animal)" />
-                        <span class="ml-2">Vendu</span>
+                        <p>Maximum</p>
+                        <div class="price-container">
+                            {{ sliderValues[1] }} €
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="flex flex-col justify-between items-end">
-                <a @click.prevent="delAnimal(animal)" class="mt-6 mr-6">
-                    <img :src="trashUrl" alt="trash-logo" class="w-8 cursor-pointer">
-                </a>
-                <button type="submit" class="p-4 font-semibold rounded-md focus:outline-none mb-6 mr-6" :class="{
-                    'bg-transparent text-primary-500': !formChanged[animal.id],
-                    'bg-primary text-secondary': formChanged[animal.id],
-                    'cursor-not-allowed opacity-50': !formChanged[animal.id]
-                }" :disabled="!formChanged[animal.id]">
-                    Enregistrer les modifications
-                </button>
+        </div>
+
+        <div class="w-full xl:w-3/4">
+            <p v-if="displayedAnimals.length != 0" class="text-xs mb-5 mt-5">{{ displayedAnimals.length }} Résultat{{
+                displayedAnimals.length === 1 ? '' : 's' }} trouvé{{ displayedAnimals.length === 1 ? '' : 's' }}</p>
+            <div class="flex items-center gap-2 cursor-pointer relative mb-5 w-1/3" @click="toggleSortMenu">
+                <div class="relative flex items-center justify-between p-2 border border-gray-300 rounded-2xl w-full">
+                    <div class="flex">
+                        <img :src="logoSortBar1" class="w-4 mr-2" />
+                        <p class="text-sm">{{ getSortLabel }}</p>
+                    </div>
+                    <img :src="logoSortBar2" class="w-4 ml-2" />
+                </div>
             </div>
-        </form>
+            <template v-if="sortMenuOpen"
+                class="absolute bg-white border border-gray-300 p-2 rounded-md w-48 mt-2 display-sortBar">
+                <div class="bg-gray-200 p-2 mb-2 rounded-md absolute z-50 bg-secondary">
+                    <div v-for="option in sortOptions" :key="option.value"
+                        class="flex items-center py-1 px-2 cursor-pointer hover:bg-gray-300"
+                        @click="selectSortOrder(option.value)">
+                        <p class="text-sm">{{ option.label }}</p>
+                    </div>
+                </div>
+            </template>
+            <div class="cursor-pointer h-2/6 flex justify-center items-center border-dashed border-2 border-sky-500 mb-6"
+                @click="toggleAddAnimalForm()">
+                <p class="text-4xl">Ajouter un animal</p>
+            </div>
+            <div v-for="animal in displayedAnimals" :key="animal.id" class="animal-item rounded-3xl h-1/2 flex">
+                <form class="flex justify-between w-full" @submit.prevent="editAnimal(animal)"
+                    enctype="multipart/form-data">
+                    <div class="animal-picture w-1/4 bg-primary rounded-3xl" :style="{
+                        backgroundImage: 'url(' + animal.images[animal.currentImageIndex] + ')',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center'
+                    }">
+                        <div class="flex justify-end p-3">
+                            <a @click.prevent="delImage(animal)">
+                                <img :src="trashUrl" alt="trash-logo" class="w-8 cursor-pointer">
+                            </a>
+                        </div>
+                        <div class="carousel-container" v-if="animal.images.length > 1">
+                            <img :src="leftArrow" class="carousel-btn top-30 left-1 w-10" @click="prevImage(animal)">
+                            <img :src="rightArrow" class="carousel-btn top-30 right-1 w-10" @click="nextImage(animal)">
+                        </div>
+
+                        <div class="overlay bg-opacity-50 p-2">
+                            <input type="file" @change="onFileChange($event, animal)" multiple>
+                            <button @click="uploadImage(animal)">Télécharger</button>
+                        </div>
+                    </div>
+                    <div>
+                        <div>
+                            <label for="name">Nom</label>
+                            <input v-model="animal.name" type="text" id="name" class="animal-input"
+                                @input="trackFormChanges(animal)" />
+                        </div>
+
+                        <label for="breed">Race</label>
+                        <select v-model="animal.breed" id="breed" class="animal-input"
+                            @change="trackFormChanges(animal)">
+                            <option :value="animal.breed" disabled>
+                                {{ animal.breed }}
+                            </option>
+                            <option v-for="breed in breeds" :key="breed.id" :value="breed.id">
+                                {{ breed.name }}
+                            </option>
+                        </select>
+                        <img src="" alt="">
+
+                        <div>
+                            <label for="description">Description</label>
+                            <textarea v-model="animal.description" id="description" class="animal-input"
+                                @input="trackFormChanges(animal)"></textarea>
+                        </div>
+                    </div>
+                    <div>
+                        <div>
+                            <label for="age">Âge</label>
+                            <input v-model="animal.age" type="number" id="age" class="animal-input"
+                                @input="trackFormChanges(animal)" />
+                        </div>
+
+                        <div>
+                            <label for="price">Prix</label>
+                            <input v-model="animal.price" type="number" id="price" class="animal-input"
+                                @input="trackFormChanges(animal)" />
+                        </div>
+                        <label for="isOnSale">Status</label>
+                        <div>
+                            <div>
+                                <input type="radio" v-model="animal.isOnSale" :value=true
+                                    @change="trackFormChanges(animal)" />
+                                <span class="ml-2">En vente</span>
+                            </div>
+                            <div>
+                                <input type="radio" v-model="animal.isOnSale" :value=false
+                                    @change="trackFormChanges(animal)" />
+                                <span class="ml-2">Vendu</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col justify-between items-end">
+                        <a @click.prevent="delAnimal(animal)" class="mt-6 mr-6">
+                            <img :src="trashUrl" alt="trash-logo" class="w-8 cursor-pointer">
+                        </a>
+                        <button type="submit" class="p-4 font-semibold rounded-md focus:outline-none mb-6 mr-6" :class="{
+                            'bg-transparent text-primary-500': !formChanged[animal.id],
+                            'bg-primary text-secondary': formChanged[animal.id],
+                            'cursor-not-allowed opacity-50': !formChanged[animal.id]
+                        }" :disabled="!formChanged[animal.id]">
+                            Enregistrer les modifications
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </template>
 <script>
@@ -398,6 +408,7 @@ export default {
                     animal.images.push(imageUrl);
                 }
                 animal.currentImageIndex = animal.images.length - 1;
+                this.formChanged[animal.id] = true;
             }
         },
         async uploadImage(animal) {
