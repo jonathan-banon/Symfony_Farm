@@ -77,8 +77,17 @@ body {
     color: white;
 }
 
-.filter-container {
+.h-xs {
+    height: 94vh;
+
+}
+
+.h-xl {
     height: 83vh;
+
+}
+
+.filter-container {
     box-shadow: 4px 7px 6px #403b3b5e;
     flex-direction: column;
     border-radius: 20px;

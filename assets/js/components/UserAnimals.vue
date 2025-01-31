@@ -1,25 +1,25 @@
 <template>
     <div class="home-container flex xl:justify-end p-5">
-        <div
-            class="filter-container left-0 w-full xl:w-1/5 p-20 xl:p-5 xl:left-6 z-40 xl:z-0 bg-secondary rounded-lg p-28 space-y-4 mr-5 hidden xl:flex">
+        <div class="h-xs xl:h-xl filter-container xl:filter-container left-0 w-full xl:w-1/5 p-20 xl:p-5 xl:left-6 z-40 xl:z-0 bg-secondary rounded-lg p-28 space-y-4 mr-5 hidden xl:flex"
+            v-if="isMobile" @touchstart="handleTouchStart" @touchmove="handleTouchMove">
             <div
                 class="w-[20%] h-[20px] bg-fillGrey rounded-full mx-auto mt-0 absolute top-[20px] left-[40%] xl:hidden">
             </div>
-            <div class="border-b-2 border-b-greyCustom">
+            <div class="text-4xl xl:text-xs border-b-2 border-b-greyCustom">
                 <input type="text" v-model="searchVal" placeholder="Recherche ..."
-                    class="w-full p-2 mb-16 rounded-2xl border border-black-500 bg-fillGrey" />
+                    class="w-full p-2 mb-16 rounded-2xl xl:border xl:border-black-500 bg-fillGrey" />
             </div>
             <div class="p-7 h-1/5 border-b-2 border-b-greyCustom">
-                <p class=" mb-5 text-base">Races</p>
+                <p class="text-4xl mb-5 xl:text-base">Races</p>
                 <div class="flex gap-3 mt-2">
-                    <button class="text-xs border border-primary-500 p-2 rounded-full" :class="{
+                    <button class="text-3xl xl:text-xs xl:border b-shadow p-5 xl:p-2 rounded-full" :class="{
                         'bg-primary text-secondary': selectedBreed === null,
                         'bg-transparent text-primary-500': selectedBreed !== null
                     }" @click="selectBreedId(null)">
                         Toutes les races
                     </button>
                     <template v-for="breed in filteredBreeds" :key="breed.id">
-                        <button class="text-xs border border-primary-500 p-2 rounded-full" :class="{
+                        <button class="text-3xl xl:text-xs b-shadow xl:border p-5 xl:p-2 rounded-full" :class="{
                             'bg-primary text-secondary': selectedBreed === breed.name,
                             'bg-transparent text-primary-500': selectedBreed !== breed.name
                         }" @click="selectBreedId(breed.name)">
@@ -28,21 +28,21 @@
                     </template>
                 </div>
             </div>
-            <div class="h-1/5 border-b-2 border-b-greyCustom">
-                <p class="text-base">Prix</p>
+            <div class="p-7 h-1/5">
+                <p class="text-4xl xl:text-base mb-5">Prix</p>
                 <vue-slider v-model="sliderValues" :dot-style="{ backgroundColor: '#281709' }"
                     :process-style="{ backgroundColor: '#582D09' }" :use-range="true" :enable-cross="false"
                     :max="value[1]" :min="value[0]" @input="validateSliderValues"></vue-slider>
                 <div class="flex justify-between mt-4 text-xs">
                     <div class="w-fit">
-                        <p>Minimum</p>
-                        <div class="price-container">
+                        <p class="text-3xl xl:text-xs">Minimum</p>
+                        <div class="price-container text-3xl xl:text-xs">
                             {{ sliderValues[0] }} €
                         </div>
                     </div>
                     <div>
-                        <p>Maximum</p>
-                        <div class="price-container">
+                        <p class="text-3xl xl:text-xs">Maximum</p>
+                        <div class="price-container text-3xl xl:text-xs">
                             {{ sliderValues[1] }} €
                         </div>
                     </div>
@@ -68,14 +68,14 @@
                         <div v-for="option in sortOptions" :key="option.value"
                             class="flex items-center py-1 px-2 cursor-pointer hover:bg-gray-300"
                             @click="selectSortOrder(option.value)">
-                            <p class="text-2xl xl:text-sm">{{ option.label }}</p>
+                            <p class="text-3xl xl:text-sm">{{ option.label }}</p>
                         </div>
                     </div>
                 </template>
                 <div class="bg-white filter-xs-container rounded-full cursor-pointer h-fit flex items-center xl:hidden"
                     @click="toggleFilter">
                     <img :src="logoFilter" class="w-7 xl:w-4 mr-2" />
-                    <p class="text-2xl xl:text-sm">Filtres</p>
+                    <p class="text-3xl xl:text-sm">Filtres</p>
                 </div>
             </div>
             <div v-for="animal in displayedAnimals" :key="animal.id" class="animal-item flex">
@@ -99,11 +99,11 @@
                 <div class="flex p-5 justify-between w-9/12">
                     <div class="flex flex-col w-9/12 gap-2.5">
                         <p class="text-4xl mt-4">{{ animal.name }} - {{ animal.age }} ans</p>
-                        <p class="text-2xl xl:text-base font-light">{{ animal.breed }}</p>
-                        <p class="text-2xl xl:text-base mt-4">{{ animal.description }}</p>
+                        <p class="text-3xl xl:text-base font-light">{{ animal.breed }}</p>
+                        <p class="text-3xl xl:text-base mt-4">{{ animal.description }}</p>
                     </div>
                     <div>
-                        <p class="font-bold text-2xl">{{ animal.price }} €</p>
+                        <p class="font-bold text-3xl">{{ animal.price }} €</p>
                     </div>
                 </div>
             </div>
@@ -138,6 +138,7 @@ export default {
     emits: ['toggleFilter'],
     data() {
         return {
+            isMobile: window.innerWidth < 1024,
             searchVal: '',
             selectedBreed: null,
             sortOrder: 'alpha-asc',
@@ -189,6 +190,29 @@ export default {
         }
     },
     methods: {
+        handleTouchStart(event) {
+            if (window.innerWidth >= 1024) return;
+            this.touchStartY = event.touches[0].clientY;
+        },
+        handleTouchMove(event) {
+            if (window.innerWidth >= 1024) return; 
+
+            const touchEndY = event.touches[0].clientY;
+            const distance = touchEndY - this.touchStartY;
+
+            if (this.lastDistance !== undefined && this.lastDistance !== distance) {
+                this.hideFilterContainer(); 
+            }
+
+            this.lastDistance = distance; 
+        },
+        hideFilterContainer() {
+            const filterContainer = document.querySelector('.filter-container');
+            if (filterContainer) {
+                this.$emit('toggleFilter');
+                filterContainer.classList.add('hidden');
+            }
+        },
         changeImage(index, animal) {
             console.log("index => ", index)
             console.log("animal =>", animal)
@@ -300,5 +324,9 @@ export default {
 .bg-grey {
     background-color: rgba(40, 23, 9, 0.3);
     backdrop-filter: blur(8px);
+}
+
+.b-shadow {
+    box-shadow: 1px 4px 1px #15151570;
 }
 </style>
