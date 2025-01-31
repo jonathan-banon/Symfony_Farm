@@ -72,10 +72,10 @@
                         </div>
                     </div>
                 </template>
-                <div class="bg-white border border-gray-300 p-2 rounded-full cursor-pointer h-fit flex items-center xl:hidden"
+                <div class="bg-white filter-xs-container rounded-full cursor-pointer h-fit flex items-center xl:hidden"
                     @click="toggleFilter">
-                    <img :src="logoFilter" class="w-4 mr-2" />
-                    <p class="text-sm">Filtres</p>
+                    <img :src="logoFilter" class="w-7 xl:w-4 mr-2" />
+                    <p class="text-2xl xl:text-sm">Filtres</p>
                 </div>
             </div>
             <div v-for="animal in displayedAnimals" :key="animal.id" class="animal-item flex">
@@ -99,8 +99,8 @@
                 <div class="flex p-5 justify-between w-9/12">
                     <div class="flex flex-col w-9/12 gap-2.5">
                         <p class="text-4xl mt-4">{{ animal.name }} - {{ animal.age }} ans</p>
-                        <p class="text-base font-light">{{ animal.breed }}</p>
-                        <p class="text-base mt-4">{{ animal.description }}</p>
+                        <p class="text-2xl xl:text-base font-light">{{ animal.breed }}</p>
+                        <p class="text-2xl xl:text-base mt-4">{{ animal.description }}</p>
                     </div>
                     <div>
                         <p class="font-bold text-2xl">{{ animal.price }} €</p>
