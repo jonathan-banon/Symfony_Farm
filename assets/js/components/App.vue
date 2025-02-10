@@ -186,7 +186,7 @@ export default {
         },
         async handleLogout() {
             try {
-                const response = await fetch('http://127.0.0.1:8000/disconnect', {
+                const response = await fetch('/disconnect', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
