@@ -1,11 +1,11 @@
 <template>
     <div class="home-container flex xl:justify-end p-5">
         <div
-            class="filter-container left-0 w-full xl:w-1/5 p-20 xl:p-5 xl:left-6 z-40 xl:z-0 bg-secondary rounded-lg p-28 space-y-4 mr-5 hidden xl:flex">
+            class="xl:h-5/6 filter-container left-0 w-full xl:w-1/5 p-20 xl:p-5 xl:left-6 z-40 xl:z-0 bg-secondary rounded-lg p-28 space-y-4 mr-5 hidden xl:flex">
             <div
-                class="search-bar-container border-b-2 border-b-greyCustom flex justify-around items-center justify-center">
+                class="border-b-2 border-b-greyCustom flex justify-around items-center justify-center">
                 <div class="w-1/3 h-4/6 border-r-2 border-r-greyCustom flex items-center p-3">
-                    <button class="text-xs border border-primary-500 p-2 rounded-full" :class="{
+                    <button class="text-3xl xl:text-xs  b-shadow p-5 xl:p-2 rounded-full" :class="{
                         'bg-primary text-secondary': selectedStatus === 'all',
                         'bg-transparent text-primary-500': selectedStatus !== 'all'
                     }" @click="selectStatus('all')">
@@ -13,7 +13,7 @@
                     </button>
                 </div>
                 <div class="w-1/3 h-4/6 border-r-2 border-r-greyCustom flex items-center justify-center">
-                    <button class="text-xs border border-primary-500 p-2 rounded-full" :class="{
+                    <button class="text-3xl xl:text-xs  b-shadow p-5 xl:p-2 rounded-full" :class="{
                         'bg-primary text-secondary': selectedStatus === 'onSale',
                         'bg-transparent text-primary-500': selectedStatus !== 'onSale'
                     }" @click="selectStatus('onSale')">
@@ -21,7 +21,7 @@
                     </button>
                 </div>
                 <div class="w-1/3 h-4/6 flex items-center justify-center">
-                    <button class="text-xs border border-primary-500 p-2 rounded-full" :class="{
+                    <button class="text-3xl xl:text-xs  b-shadow p-5 xl:p-2 rounded-full" :class="{
                         'bg-primary text-secondary': selectedStatus === 'sale',
                         'bg-transparent text-primary-500': selectedStatus !== 'sale'
                     }" @click="selectStatus('sale')">
@@ -29,21 +29,21 @@
                     </button>
                 </div>
             </div>
-            <div class="search-bar-container border-b-2 border-b-greyCustom">
+            <div class="border-b-2 border-b-greyCustom">
                 <input type="text" v-model="searchVal" placeholder="Recherche ..."
-                    class="w-full p-2 rounded-2xl border-2 border-black-500 bg-fillGrey" />
+                    class="w-full p-2 mb-16 rounded-2xl bg-fillGrey" />
             </div>
-            <div class="h-1/5 border-b-2 border-b-greyCustom">
+            <div class="p-7 h-1/5 border-b-2 border-b-greyCustom">
                 <p class="text-base">Races</p>
                 <div class="flex gap-3 mt-2">
-                    <button class="text-xs border border-primary-500 p-2 rounded-full" :class="{
+                    <button class="text-3xl xl:text-xs  b-shadow p-5 xl:p-2 rounded-full" :class="{
                         'bg-primary text-secondary': selectedBreed === null,
                         'bg-transparent text-primary-500': selectedBreed !== null
                     }" @click="selectBreedId(null)">
                         Toutes les races
                     </button>
                     <template v-for="breed in filteredBreeds" :key="breed.id">
-                        <button class="text-xs border border-primary-500 p-2 rounded-full" :class="{
+                        <button class="text-3xl xl:text-xs b-shadow p-5 xl:p-2 rounded-full" :class="{
                             'bg-primary text-secondary': selectedBreed === breed.name,
                             'bg-transparent text-primary-500': selectedBreed !== breed.name
                         }" @click="selectBreedId(breed.name)">
@@ -53,7 +53,7 @@
                     <img @click="toggleBreedForm()" :src="addLogo" alt="add-logo" class="w-6">
                 </div>
             </div>
-            <div class="h-1/5 border-b-2 border-b-greyCustom">
+            <div class="p-7 h-1/5">
                 <p class="text-base">Prix</p>
                 <vue-slider v-model="sliderValues" :dot-style="{ backgroundColor: '#281709' }"
                     :process-style="{ backgroundColor: '#582D09' }" :use-range="true" :enable-cross="false"
@@ -492,9 +492,6 @@ export default {
 </script>
 
 <style>
-.search-bar-container {
-    height: 10%;
-}
 
 .price-container {
     border-radius: 20px;

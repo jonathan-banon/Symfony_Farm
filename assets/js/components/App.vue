@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <template v-if="isDesktop">
         <div v-if="isPopupVisible"
             class="flex justify-center items-center min-h-screen w-full h-full z-30 fixed bg-black">
             <LoginForm :popup="popup" @close="closeLoginForm" />
@@ -21,14 +21,22 @@
         <Navbar v-model:types="types" v-model:actualTypeId="actualTypeId" :urlLogo="urlLogo" :addLogo="addLogo"
             :textLogoUrl="textLogoUrl" :trashUrl="trashUrl" :penUrl="penUrl" :isUserLoggedIn="isUserLoggedIn"
             @toggleLogin="toggleLoginForm" @fetchAnimals="fetchAnimals" @toggleTypeForm="toggleTypeForm" />
-    </div>
-    <template v-if="isUserLoggedIn">
-        <AdminAnimals v-model:animals="animals" :breeds="breeds" :actualTypeId="actualTypeId" :trashUrl="trashUrl"
-            @prev-image="prevImage" @next-image="nextImage" @fetchAnimals='fetchAnimals'
-            @toggleBreedForm="toggleBreedForm" @toggleAddAnimalForm="toggleAddAnimalForm" />
+
+        <template v-if="isUserLoggedIn">
+            <AdminAnimals v-model:animals="animals" :breeds="breeds" :actualTypeId="actualTypeId" :trashUrl="trashUrl"
+                @prev-image="prevImage" @next-image="nextImage" @fetchAnimals='fetchAnimals'
+                @toggleBreedForm="toggleBreedForm" @toggleAddAnimalForm="toggleAddAnimalForm" />
+        </template>
+        <template v-else>
+            <UserAnimals @toggleFilter="toggleFilter" :animals="animals" :breeds="breeds" />
+        </template>
     </template>
     <template v-else>
-        <UserAnimals @toggleFilter="toggleFilter" :animals="animals" :breeds="breeds" />
+        <div id="mobile-wip">
+            <div class="mobile-popup">
+                <span>version mobile :<br>work in progress</span>
+            </div>
+        </div>
     </template>
 </template>
 
@@ -58,6 +66,7 @@ export default {
     },
     data() {
         return {
+            isDesktop: window.innerWidth > 1024,
             actualTypeId: 1,
             types: [],
             breeds: [],
@@ -238,4 +247,40 @@ export default {
 
 <style>
 @import '../../../assets/styles/style.css';
+
+
+#mobile-wip {
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(8px);
+    width: 100vw;
+    height: 100vh;
+}
+
+.mobile-popup {
+    width: 300px;
+    height: 200px;
+    background-color: white;
+    color: rgba(88, 45, 9);
+    display: flex;
+    text-align: center;
+    align-items: center;
+    margin: auto;
+    margin-top: 20vh;
+    border-radius: 10px;
+    filter: drop-shadow(0 2px 4px rgba(40, 23, 9, 0.25));
+}
+
+.mobile-popup span {
+    margin: auto;
+    font-size: 1.5rem;
+    font-weight: bold;
+    line-height: 2rem;
+    text-transform: uppercase;
+}
 </style>
