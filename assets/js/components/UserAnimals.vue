@@ -1,25 +1,25 @@
 <template>
     <div class="home-container flex xl:justify-end p-5">
-        <div class="h-xs xl:h-xl filter-container xl:filter-container left-0 w-full xl:w-1/5 p-20 xl:p-5 xl:left-6 z-40 xl:z-0 bg-secondary rounded-lg p-28 space-y-4 mr-5 hidden xl:flex"
-            v-if="isMobile" @touchstart="handleTouchStart" @touchmove="handleTouchMove">
+        <div class="xl:h-5/6 filter-container left-0 w-full xl:w-1/5 p-20 xl:p-5 xl:left-6 z-40 xl:z-0 bg-secondary rounded-lg p-28 space-y-4 mr-5 hidden xl:flex"
+            @touchstart="handleTouchStart" @touchmove="handleTouchMove">
             <div
                 class="w-[20%] h-[20px] bg-fillGrey rounded-full mx-auto mt-0 absolute top-[20px] left-[40%] xl:hidden">
             </div>
             <div class="text-4xl xl:text-xs border-b-2 border-b-greyCustom">
                 <input type="text" v-model="searchVal" placeholder="Recherche ..."
-                    class="w-full p-2 mb-16 rounded-2xl xl:border xl:border-black-500 bg-fillGrey" />
+                    class="w-full p-2 mb-16 rounded-2xl bg-fillGrey" />
             </div>
             <div class="p-7 h-1/5 border-b-2 border-b-greyCustom">
                 <p class="text-4xl mb-5 xl:text-base">Races</p>
                 <div class="flex gap-3 mt-2">
-                    <button class="text-3xl xl:text-xs xl:border b-shadow p-5 xl:p-2 rounded-full" :class="{
+                    <button class="text-3xl xl:text-xs  b-shadow p-5 xl:p-2 rounded-full" :class="{
                         'bg-primary text-secondary': selectedBreed === null,
                         'bg-transparent text-primary-500': selectedBreed !== null
                     }" @click="selectBreedId(null)">
                         Toutes les races
                     </button>
                     <template v-for="breed in filteredBreeds" :key="breed.id">
-                        <button class="text-3xl xl:text-xs b-shadow xl:border p-5 xl:p-2 rounded-full" :class="{
+                        <button class="text-3xl xl:text-xs b-shadow p-5 xl:p-2 rounded-full" :class="{
                             'bg-primary text-secondary': selectedBreed === breed.name,
                             'bg-transparent text-primary-500': selectedBreed !== breed.name
                         }" @click="selectBreedId(breed.name)">
@@ -138,7 +138,6 @@ export default {
     emits: ['toggleFilter'],
     data() {
         return {
-            isMobile: window.innerWidth < 1024,
             searchVal: '',
             selectedBreed: null,
             sortOrder: 'alpha-asc',
