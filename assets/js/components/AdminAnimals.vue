@@ -426,6 +426,7 @@ export default {
                     method: "POST",
                     body: formData,
                 });
+                console.log("response upluad => ", response)
                 if (response.ok) {
                     const data = await response.json();
                     alert("Image téléchargée avec succès !");
