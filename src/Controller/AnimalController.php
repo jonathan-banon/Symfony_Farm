@@ -179,7 +179,7 @@ final class AnimalController extends AbstractController
     public function uploadImage(Request $request, Animal $animal, EntityManagerInterface $entityManager): JsonResponse
     {
         $files = $request->files->get('images');
-
+        dump($files);
         if (!$files || count($files) === 0) {
             return $this->json(['error' => 'Aucun fichier fourni'], 400);
         }
