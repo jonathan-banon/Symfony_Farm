@@ -5,8 +5,7 @@
       <div class="flex justify-between">
         <div class="animal-picture w-2/5 bg-primary rounded-3xl" :style="{
           backgroundImage: 'url(' + newAnimal.images[0] + ')',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center'
+          backgroundSize: 'cover'
         }">
           <div class="overlay bg-opacity-50 p-2">
             <input type="file" @change="newOnFileChange($event)" multiple>

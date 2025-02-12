@@ -81,8 +81,7 @@
             <div v-for="animal in displayedAnimals" :key="animal.id" class="animal-item flex">
                 <div class="animal-picture w-1/4 bg-primary rounded-3xl" :style="{
                     backgroundImage: 'url(' + animal.images[animal.currentImageIndex] + ')',
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center'
+                    backgroundSize: 'cover'
                 }">
                     <template v-if="animal.images.length > 1">
                         <div class="absolute bottom-2.5 w-full flex justify-center">

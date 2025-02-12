@@ -106,8 +106,7 @@
                     enctype="multipart/form-data">
                     <div class="animal-picture w-1/4 bg-primary rounded-3xl" :style="{
                         backgroundImage: 'url(' + animal.images[animal.currentImageIndex] + ')',
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center'
+                        backgroundSize: 'cover'
                     }">
                         <div class="flex justify-end p-3">
                             <a @click.prevent="delImage(animal)">
