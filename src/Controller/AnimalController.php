@@ -178,9 +178,6 @@ final class AnimalController extends AbstractController
     #[Route('/{id}/upload-image', name: 'animal_upload_image', methods: ['POST'])]
     public function uploadImage(Request $request, Animal $animal, EntityManagerInterface $entityManager): JsonResponse
     {
-        dump($request->files->all());
-        dump($request->files->get('images')); 
-        exit;
         $files = $request->files->get('images');
         if (!$files || count($files) === 0) {
             return $this->json(['error' => 'Aucun fichier fourni'], 400);
